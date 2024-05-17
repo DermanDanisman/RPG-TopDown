@@ -19,4 +19,12 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+protected:
+	
+	/** Common Variables */
+	UPROPERTY(EditAnywhere, Category="Combat")
+	TObjectPtr<USkeletalMeshComponent> WeaponMesh;
+
+	UPROPERTY(EditAnywhere,Category="Socket Names")
+	FName WeaponAttachmentSocketName = FName("WeaponHandSocket");
 };
