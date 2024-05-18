@@ -11,7 +11,7 @@ ABaseCharacter::ABaseCharacter()
 
 	// Created Weapon Mesh for all the characters derived from BaseCharacter
 	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>("Weapon");
-	//Attached the Weapon Mesh to Character Mesh
+	// Attached the Weapon Mesh to Character Mesh
 	WeaponMesh->SetupAttachment(GetMesh(), WeaponAttachmentSocketName);
 	// Setting collision to NoCollision of the WeaponMesh, so we can edit it in the blueprint
 	WeaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
