@@ -3,13 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "InputAction.h"
-#include "InputActionValue.h"
 #include "GameFramework/PlayerController.h"
 #include "PlayerCharacterController.generated.h"
 
 /** Forward Declaring Classes */
 class UInputMappingContext;
+class UInputAction;
+/** Forward Declaring Structs */
+struct FInputActionValue;
 
 /**
  * 
@@ -27,16 +28,19 @@ protected:
 	
 	virtual void BeginPlay() override;
 
-	void SetCursorSettings();
+	virtual void SetupInputComponent() override;
 
-	void Move(const FInputActionValue& InputActionValue);
+	void SetCursorSettings();
 	
 private:
 
-	/** Input */
+	/** Input Variables*/
 	UPROPERTY(EditAnywhere, Category="Enhanced Input")
 	TObjectPtr<UInputMappingContext> DefaultInputMappingContext;
 
 	UPROPERTY(EditAnywhere, Category="Enhanced Input")
-	TObjectPtr<UInputAction> IA_Move;
+	TObjectPtr<UInputAction> InputActionMove;
+
+	/** Input Functions */
+	void Move(const FInputActionValue& InputActionValue);
 };
