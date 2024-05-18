@@ -71,6 +71,7 @@ void APlayerCharacterController::SetCursorSettings()
 
 void APlayerCharacterController::Move(const FInputActionValue& InputActionValue)
 {
+	
 	// Extracts the 2D input vector (X and Y) from the input action value
 	const FVector2D InputAxisVector = InputActionValue.Get<FVector2D>();
 
@@ -95,4 +96,22 @@ void APlayerCharacterController::Move(const FInputActionValue& InputActionValue)
 		// Adds movement in the right direction based on the X input value (left/right)
 		ControlledPawn->AddMovementInput(RightDirection, InputAxisVector.X);
 	}
+	
+	/*
+	// Extract the 2D input vector (X and Y) from the input action value
+	const FVector2D InputAxisVector = InputActionValue.Get<FVector2D>();
+
+	// Get the pawn the controller is possessing
+	APawn* ControlledPawn = GetPawn<APawn>();
+
+	if (ControlledPawn)
+	{
+		// Create movement vectors based on input
+		const FVector ForwardDirection = FVector::ForwardVector;
+		const FVector RightDirection = FVector::RightVector;
+
+		// Add movement in the forward and right directions based on input
+		ControlledPawn->AddMovementInput(ForwardDirection, InputAxisVector.Y);
+		ControlledPawn->AddMovementInput(RightDirection, InputAxisVector.X);
+	}*/
 }
