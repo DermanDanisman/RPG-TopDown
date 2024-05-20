@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Character/BaseCharacter.h"
+#include "Interface/Interaction/HighlightActorInterface.h"
 #include "PlayerCharacter.generated.h"
 
 /* Forward Declaring Classes */
@@ -14,13 +15,17 @@ class USpringArmComponent;
  * 
  */
 UCLASS()
-class RPG_TOPDOWN_API APlayerCharacter : public ABaseCharacter
+class RPG_TOPDOWN_API APlayerCharacter : public ABaseCharacter, public IHighlightActorInterface
 {
 	GENERATED_BODY()
 
 public:
 
 	APlayerCharacter();
+
+	/** Highlight Actor Interface */
+	virtual void HighlightActor() override;
+	virtual void UnHighlightActor() override;
 	
 private:
 

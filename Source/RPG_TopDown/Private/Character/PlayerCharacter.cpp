@@ -38,3 +38,11 @@ APlayerCharacter::APlayerCharacter()
 	GetCharacterMovement()->bSnapToPlaneAtStart = true;  // Snap to the plane at the start
 
 }
+
+void APlayerCharacter::HighlightActor()
+{
+}
+
+void APlayerCharacter::UnHighlightActor()
+{
+}

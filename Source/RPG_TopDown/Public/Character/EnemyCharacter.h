@@ -4,14 +4,22 @@
 
 #include "CoreMinimal.h"
 #include "Character/BaseCharacter.h"
+#include "Interface/Interaction/HighlightActorInterface.h"
 #include "EnemyCharacter.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class RPG_TOPDOWN_API AEnemyCharacter : public ABaseCharacter
+class RPG_TOPDOWN_API AEnemyCharacter : public ABaseCharacter, public IHighlightActorInterface
 {
 	GENERATED_BODY()
 	
+public:
+	
+	AEnemyCharacter();
+
+	/** Highlight Actor Interface */
+	virtual void HighlightActor() override;
+	virtual void UnHighlightActor() override;
 };
