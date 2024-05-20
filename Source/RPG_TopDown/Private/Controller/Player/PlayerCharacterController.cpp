@@ -6,11 +6,19 @@
 #include "EnhancedInputComponent.h"
 #include "InputAction.h"
 #include "InputActionValue.h"
+#include "Interface/Interaction/HighlightActorInterface.h"
 
 APlayerCharacterController::APlayerCharacterController()
 {
 	// Enabling Controller replication
 	bReplicates = true;
+}
+
+void APlayerCharacterController::PlayerTick(float DeltaTime)
+{
+	Super::PlayerTick(DeltaTime);
+
+	CursorTrace();
 }
 
 void APlayerCharacterController::BeginPlay()
@@ -114,4 +122,31 @@ void APlayerCharacterController::Move(const FInputActionValue& InputActionValue)
 		ControlledPawn->AddMovementInput(ForwardDirection, InputAxisVector.Y);
 		ControlledPawn->AddMovementInput(RightDirection, InputAxisVector.X);
 	}*/
+}
+
+void APlayerCharacterController::CursorTrace()
+{
+	// Declare a hit result to store the outcome of the trace
+	FHitResult CursorHitResult;
+	// Perform a line trace (ray cast) under the cursor using the visibility channel
+	GetHitResultUnderCursor(ECC_Visibility, false, CursorHitResult);
+	// If the trace did not hit anything, exit the function
+	if (!CursorHitResult.bBlockingHit) return;
+	
+	// Store the actor hit by the previous trace
+	LastActor = ThisActor;
+	// Store the actor hit by the current trace
+	ThisActor = CursorHitResult.GetActor();
+	GEngine->AddOnScreenDebugMessage(-1, 0.f, FColor::Blue,
+		FString::Printf(TEXT("EnemyCharacter %s: HighlightActor Called"), *CursorHitResult.GetActor()->GetName()));
+    
+	// If the actor under the cursor has changed since the last frame
+	if (ThisActor != LastActor)
+	{
+		// If the previous actor is valid, unhighlight it
+		if (LastActor != nullptr) LastActor->UnHighlightActor();
+        
+		// If the current actor is valid, highlight it
+		if (ThisActor != nullptr) ThisActor->HighlightActor();
+	}
 }

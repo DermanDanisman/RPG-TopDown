@@ -9,6 +9,7 @@
 /** Forward Declaring Classes */
 class UInputMappingContext;
 class UInputAction;
+class IHighlightActorInterface;
 /** Forward Declaring Structs */
 struct FInputActionValue;
 
@@ -23,6 +24,8 @@ class RPG_TOPDOWN_API APlayerCharacterController : public APlayerController
 public:
 
 	APlayerCharacterController();
+
+	virtual void PlayerTick(float DeltaTime) override;
 
 protected:
 	
@@ -43,4 +46,9 @@ private:
 
 	/** Input Functions */
 	void Move(const FInputActionValue& InputActionValue);
+
+	/** Mouse Cursor */
+	void CursorTrace();
+	TScriptInterface<IHighlightActorInterface> LastActor;
+	TScriptInterface<IHighlightActorInterface> ThisActor;
 };

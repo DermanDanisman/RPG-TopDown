@@ -3,11 +3,15 @@
 
 #include "Character/BaseCharacter.h"
 
+#include "Components/CapsuleComponent.h"
+
 // Sets default values
 ABaseCharacter::ABaseCharacter()
 {
  	// Set this character to call Tick() every frame. You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
+
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
 
 	// Created Weapon Mesh for all the characters derived from BaseCharacter
 	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>("Weapon");
