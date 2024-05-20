@@ -6,7 +6,7 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-
+#include "RPG_TopDown/RPG_TopDown.h"
 
 
 APlayerCharacter::APlayerCharacter()
@@ -41,6 +41,11 @@ APlayerCharacter::APlayerCharacter()
 
 void APlayerCharacter::HighlightActor()
 {
+	GetMesh()->SetRenderCustomDepth(true);
+	GetMesh()->SetCustomDepthStencilValue(CUSTOM_DEPTH_GREEN);
+	WeaponMesh->SetRenderCustomDepth(true);
+	WeaponMesh->SetCustomDepthStencilValue(CUSTOM_DEPTH_GREEN);
+	
 	// TODO: Remove Later!
 	FString ActorName;
 	GetName(ActorName);
@@ -49,6 +54,9 @@ void APlayerCharacter::HighlightActor()
 
 void APlayerCharacter::UnHighlightActor()
 {
+	GetMesh()->SetRenderCustomDepth(false);
+	WeaponMesh->SetRenderCustomDepth(false);
+	
 	// TODO: Remove Later!
 	FString ActorName;
 	GetName(ActorName);

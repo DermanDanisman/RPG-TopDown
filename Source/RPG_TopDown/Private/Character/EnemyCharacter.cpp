@@ -3,12 +3,19 @@
 
 #include "Character/EnemyCharacter.h"
 
+#include "RPG_TopDown/RPG_TopDown.h"
+
 AEnemyCharacter::AEnemyCharacter()
 {
 }
 
 void AEnemyCharacter::HighlightActor()
 {
+	GetMesh()->SetRenderCustomDepth(true);
+	GetMesh()->SetCustomDepthStencilValue(CUSTOM_DEPTH_RED);
+	WeaponMesh->SetRenderCustomDepth(true);
+	WeaponMesh->SetCustomDepthStencilValue(CUSTOM_DEPTH_RED);
+	
 	// TODO: Remove Later!
 	FString ActorName;
 	GetName(ActorName);
@@ -17,6 +24,9 @@ void AEnemyCharacter::HighlightActor()
 
 void AEnemyCharacter::UnHighlightActor()
 {
+	GetMesh()->SetRenderCustomDepth(false);
+	WeaponMesh->SetRenderCustomDepth(false);
+	
 	// TODO: Remove Later!
 	FString ActorName;
 	GetName(ActorName);

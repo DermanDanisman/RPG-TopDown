@@ -30,9 +30,9 @@ public:
 private:
 
 	/** Camera */
-	UPROPERTY(VisibleAnywhere, Category="Camera")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = true), Category="Camera")
 	TObjectPtr<USpringArmComponent> CameraSpringArm;
 
-	UPROPERTY(VisibleAnywhere, Category="Camera")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = true), Category="Camera")
 	TObjectPtr<UCameraComponent> Camera;
 };

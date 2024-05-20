@@ -4,3 +4,10 @@
 
 #include "CoreMinimal.h"
 
+/** Custom Depth Coloring */
+// 250 - Enemy
+// 249 - Player
+// 251 - Items
+#define CUSTOM_DEPTH_RED 250
+#define CUSTOM_DEPTH_GREEN 249
+#define CUSTOM_DEPTH_YELLOW 251
