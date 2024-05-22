@@ -3,14 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/GameModeBase.h"
-#include "TopDownGameModeBase.generated.h"
+#include "AttributeSet.h"
+#include "BaseAttributeSet.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class RPG_TOPDOWN_API ATopDownGameModeBase : public AGameModeBase
+class RPG_TOPDOWN_API UBaseAttributeSet : public UAttributeSet
 {
 	GENERATED_BODY()
+	
 };
