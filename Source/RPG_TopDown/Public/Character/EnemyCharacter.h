@@ -22,4 +22,11 @@ public:
 	/** Highlight Actor Interface */
 	virtual void HighlightActor() override;
 	virtual void UnHighlightActor() override;
+
+protected:
+
+	virtual void BeginPlay() override;
+
+	/** Game Ability System */
+	virtual void InitAbilityActorInfo() override;
 };

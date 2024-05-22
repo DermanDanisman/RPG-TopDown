@@ -3,6 +3,7 @@
 
 #include "Character/BaseCharacter.h"
 
+#include "AttributeSet.h"
 #include "Components/CapsuleComponent.h"
 
 // Sets default values
@@ -12,6 +13,7 @@ ABaseCharacter::ABaseCharacter()
 	PrimaryActorTick.bCanEverTick = false;
 
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
+	GetMesh()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
 
 	// Created Weapon Mesh for all the characters derived from BaseCharacter
 	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>("Weapon");
@@ -25,6 +27,21 @@ ABaseCharacter::ABaseCharacter()
 void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	
+}
+
+UAbilitySystemComponent* ABaseCharacter::GetAbilitySystemComponent() const
+{
+	return AbilitySystemComponent;
+}
+
+UAttributeSet* ABaseCharacter::GetAttributeSet() const
+{
+	return AttributeSet;
+}
+
+void ABaseCharacter::InitAbilityActorInfo()
+{
 	
 }
 

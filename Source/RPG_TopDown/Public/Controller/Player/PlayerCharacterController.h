@@ -33,6 +33,7 @@ protected:
 
 	virtual void SetupInputComponent() override;
 
+	/** Mouse Cursor */
 	void SetCursorSettings();
 	
 private:
