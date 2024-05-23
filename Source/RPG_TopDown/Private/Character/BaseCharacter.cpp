@@ -2,8 +2,6 @@
 
 
 #include "Character/BaseCharacter.h"
-
-#include "AttributeSet.h"
 #include "Components/CapsuleComponent.h"
 
 // Sets default values

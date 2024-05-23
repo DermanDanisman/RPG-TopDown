@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h"
-#include "Interface/Interaction/HighlightActorInterface.h"
 #include "BaseCharacter.generated.h"
 
 /** Forward Declaring Classes */
