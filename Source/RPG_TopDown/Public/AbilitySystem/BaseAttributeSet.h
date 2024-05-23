@@ -51,7 +51,8 @@ public:
 	* Handling: This function, known as the "RepNotify" function, is used to handle any necessary updates or
 	* changes that should occur when the variable's value is updated on the client.
 	*/
-	
+
+	/** Gameplay Attribute Data */
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Health, Category="Vital Attributes")
 	FGameplayAttributeData Health;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, Health);
@@ -68,6 +69,8 @@ public:
 	FGameplayAttributeData MaxMana;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, MaxMana);
 
+
+	/** OnRep Attribute Functions */
 	/**
 	 * These functions are declared to handle the changes to Health and Mana.
 	 * They now receive the old value of the attribute as a parameter.
