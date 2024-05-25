@@ -24,3 +24,8 @@ void UBaseWidgetController::SetWidgetControllerVariables(const FWidgetController
     // Set the AttributeSet reference
     AttributeSet = WidgetControllerVariables.AttributeSet;
 }
+
+void UBaseWidgetController::BroadcastInitialValues()
+{
+	
+}

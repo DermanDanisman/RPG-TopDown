@@ -45,8 +45,10 @@ void ATopDownHUD::InitializeOverlayWidget(APlayerController* PC, APlayerState* P
 	const FWidgetControllerVariables WidgetControllerVariables(PC, PS, ASC, AS);
 	// Get the OverlayWidgetController using the initialized variables
 	UOverlayWidgetController* OverlayWC = GetOverlayWidgetController(WidgetControllerVariables);
+	
 	// Set the widget controller for the OverlayWidget
 	OverlayWidget->SetWidgetController(OverlayWC);
+	OverlayWidgetController->BroadcastInitialValues();
 	
 	// Add the widget to the viewport, making it visible
 	Widget->AddToViewport();

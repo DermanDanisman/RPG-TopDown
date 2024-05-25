@@ -20,9 +20,9 @@ UBaseAttributeSet::UBaseAttributeSet()
 	* I used my attribute accessors macro in header file which calls these four macros,
 	* one of which creates the INITTER and by default that's called init health.
 	*/
-	InitHealth(100.f);
+	InitHealth(75.f);
 	InitMaxHealth(100.f);
-	InitMana(50.f);
+	InitMana(25.f);
 	InitMaxMana(50.f);
 }
 

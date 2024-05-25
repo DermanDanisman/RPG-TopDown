@@ -63,6 +63,9 @@ public:
 	// Function to set the widget controller variables
 	UFUNCTION(BlueprintCallable)
 	void SetWidgetControllerVariables(const FWidgetControllerVariables& WidgetControllerVariables);
+
+	// This will be used in child classes so the base function is empty
+	virtual void BroadcastInitialValues();
 	
 protected:
 
