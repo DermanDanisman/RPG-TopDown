@@ -3,9 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "InputActionValue.h"
 #include "GameFramework/PlayerController.h"
 #include "PlayerCharacterController.generated.h"
 
+class ICameraMovementInterface;
 /** Forward Declaring Classes */
 class UInputMappingContext;
 class UInputAction;
@@ -45,11 +47,22 @@ private:
 	UPROPERTY(EditAnywhere, Category="Enhanced Input")
 	TObjectPtr<UInputAction> InputActionMove;
 
+	UPROPERTY(EditAnywhere, Category="Enhanced Input")
+	TObjectPtr<UInputAction> InputActionCameraZoomInOut;
+	
+	UPROPERTY(EditAnywhere, Category="Enhanced Input")
+	TObjectPtr<UInputAction> InputActionCameraRotate;
+
 	/** Input Functions */
 	void Move(const FInputActionValue& InputActionValue);
+	void CameraZoomInOut(const FInputActionValue& InputActionValue);
+	void RotateCamera(const FInputActionValue& InputActionValue);
 
 	/** Mouse Cursor */
 	void CursorTrace();
 	TScriptInterface<IHighlightActorInterface> LastActor;
 	TScriptInterface<IHighlightActorInterface> ThisActor;
+
+	/** Camera */
+	TScriptInterface<ICameraMovementInterface> CameraMovementInterface;
 };

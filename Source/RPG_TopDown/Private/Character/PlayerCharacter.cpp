@@ -26,7 +26,7 @@ APlayerCharacter::APlayerCharacter()
 	CameraSpringArm->SetupAttachment(GetCapsuleComponent());
 	CameraSpringArm->bDoCollisionTest = false;
 	CameraSpringArm->bInheritYaw = false;
-	CameraSpringArm->TargetArmLength = 1000.f;
+	CameraSpringArm->TargetArmLength = TargetArmLength;
 	CameraSpringArm->SetRelativeRotation(FRotator(-45.f, 0.f, 0.f));
 	CameraSpringArm->bEnableCameraLag = true;
 	CameraSpringArm->CameraLagSpeed = 6.f;
@@ -138,6 +138,16 @@ void APlayerCharacter::UnHighlightActor()
 	GetMesh()->SetRenderCustomDepth(false);
 	// Disable custom depth rendering for the weapon mesh
 	WeaponMesh->SetRenderCustomDepth(false);
+}
+
+// Camera zoom
+void APlayerCharacter::CameraZoom(float ActionInput)
+{
+	// Calculate the new arm length based on input and zoom speed
+	float NewArmLength = CameraSpringArm->TargetArmLength + ActionInput * CameraZoomSpeed * GetWorld()->GetDeltaSeconds();
+
+	// Clamp the arm length to the minimum and maximum zoom values
+	CameraSpringArm->TargetArmLength = FMath::Clamp(NewArmLength, TargetArmLengthMin, TargetArmLength); 
 }
 
 

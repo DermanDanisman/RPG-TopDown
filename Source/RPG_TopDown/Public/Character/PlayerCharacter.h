@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Character/BaseCharacter.h"
+#include "Interface/Camera/CameraMovementInterface.h"
 #include "Interface/Interaction/HighlightActorInterface.h"
 #include "PlayerCharacter.generated.h"
 
@@ -18,7 +19,7 @@ class APlayerCharacterController;
  * 
  */
 UCLASS()
-class RPG_TOPDOWN_API APlayerCharacter : public ABaseCharacter, public IHighlightActorInterface
+class RPG_TOPDOWN_API APlayerCharacter : public ABaseCharacter, public IHighlightActorInterface, public ICameraMovementInterface
 {
 	GENERATED_BODY()
 
@@ -33,6 +34,9 @@ public:
 	virtual void HighlightActor() override;
 	virtual void UnHighlightActor() override;
 
+	/** Camera Movement Interface */
+	virtual void CameraZoom(float ActionInput) override;
+
 protected:
 
 	/** Game Ability System */
@@ -43,8 +47,15 @@ private:
 	/** Camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = true), Category="Camera")
 	TObjectPtr<USpringArmComponent> CameraSpringArm;
+	UPROPERTY(EditAnywhere, Category="Camera")
+	float TargetArmLength = 1000.f;
+	UPROPERTY(EditAnywhere, Category="Camera")
+	float TargetArmLengthMin = 250.f;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = true), Category="Camera")
 	TObjectPtr<UCameraComponent> Camera;
+	UPROPERTY(EditAnywhere, Category="Camera")
+	float CameraZoomSpeed = 750.f;
 
 	/** Game Ability System */
 	UPROPERTY(EditAnywhere, Category="Game Ability System")
