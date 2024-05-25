@@ -58,10 +58,10 @@ public:
 	FOnMaxManaChangedSignature OnMaxManaChanged;
 
 	UPROPERTY(BlueprintAssignable, Category="GAS|Attributes")
-	FOnManaChangedSignature OnStaminaChanged;
+	FOnStaminaChangedSignature OnStaminaChanged;
 
 	UPROPERTY(BlueprintAssignable, Category="GAS|Attributes")
-	FOnMaxManaChangedSignature OnMaxStaminaChanged;
+	FOnMaxStaminaChangedSignature OnMaxStaminaChanged;
 
 protected:
 

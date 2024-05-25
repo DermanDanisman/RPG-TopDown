@@ -43,7 +43,7 @@ void ABaseEffectActor::OnActorOverlap(UPrimitiveComponent* OverlappedComponent, 
 	{
 		const UBaseAttributeSet* BaseAttributeSet = Cast<UBaseAttributeSet>(ASCInterface->GetAbilitySystemComponent()->GetAttributeSet(UBaseAttributeSet::StaticClass()));
 		UBaseAttributeSet* MutableBaseAttributeSet = const_cast<UBaseAttributeSet*>(BaseAttributeSet);
-		MutableBaseAttributeSet->SetStamina(BaseAttributeSet->GetStamina() + 25);
+		MutableBaseAttributeSet->SetMana(BaseAttributeSet->GetMana() + 25);
 		Destroy();
 	}
 }
