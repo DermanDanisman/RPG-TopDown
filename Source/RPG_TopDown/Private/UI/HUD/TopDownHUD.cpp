@@ -49,6 +49,7 @@ void ATopDownHUD::InitializeOverlayWidget(APlayerController* PC, APlayerState* P
 	// Set the widget controller for the OverlayWidget
 	OverlayWidget->SetWidgetController(OverlayWC);
 	OverlayWidgetController->BroadcastInitialValues();
+	OverlayWidgetController->BindCallbacksToDependencies();
 	
 	// Add the widget to the viewport, making it visible
 	Widget->AddToViewport();

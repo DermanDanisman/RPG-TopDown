@@ -24,6 +24,8 @@ UBaseAttributeSet::UBaseAttributeSet()
 	InitMaxHealth(100.f);
 	InitMana(25.f);
 	InitMaxMana(50.f);
+	InitStamina(50.f);
+	InitMaxStamina(100.f);
 }
 
 /**
@@ -46,6 +48,12 @@ void UBaseAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
     
     // Setup replication for MaxMana attribute
     DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, MaxMana, COND_None, REPNOTIFY_Always);
+
+	// Setup replication for Stamina attribute
+	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, Stamina, COND_None, REPNOTIFY_Always);
+    
+	// Setup replication for MaxStamina attribute
+	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, MaxStamina, COND_None, REPNOTIFY_Always);
 }
 
 /**
@@ -94,4 +102,28 @@ void UBaseAttributeSet::OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana) 
     GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, MaxMana, OldMaxMana);
     GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue,
         FString::Printf(TEXT("MaxMana has been updated from %f to %f!"), OldMaxMana.GetCurrentValue(), MaxMana.GetCurrentValue()));
+}
+
+/**
+ * The OnRep_Stamina function is called on the client when the Stamina attribute is updated on the server.
+ * The GAMEPLAYATTRIBUTE_REPNOTIFY macro ensures the attribute is correctly replicated.
+ * This function also adds a debug message to display the old and new MaxMana values.
+ */
+void UBaseAttributeSet::OnRep_Stamina(const FGameplayAttributeData& OldStamina) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, Stamina, OldStamina);
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue,
+		FString::Printf(TEXT("MaxMana has been updated from %f to %f!"), OldStamina.GetCurrentValue(), Stamina.GetCurrentValue()));
+}
+
+/**
+ * The OnRep_MaxStamina function is called on the client when the MaxStamina attribute is updated on the server.
+ * The GAMEPLAYATTRIBUTE_REPNOTIFY macro ensures the attribute is correctly replicated.
+ * This function also adds a debug message to display the old and new MaxMana values.
+ */
+void UBaseAttributeSet::OnRep_MaxStamina(const FGameplayAttributeData& OldMaxStamina) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, MaxStamina, OldMaxStamina);
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue,
+		FString::Printf(TEXT("MaxMana has been updated from %f to %f!"), OldMaxStamina.GetCurrentValue(), MaxStamina.GetCurrentValue()));
 }

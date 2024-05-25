@@ -66,6 +66,9 @@ public:
 
 	// This will be used in child classes so the base function is empty
 	virtual void BroadcastInitialValues();
+
+	// A function to bind callbacks to the dependencies
+	virtual void BindCallbacksToDependencies();
 	
 protected:
 
