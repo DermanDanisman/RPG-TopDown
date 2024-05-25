@@ -11,6 +11,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "PlayerState/TopDownPlayerState.h"
 #include "RPG_TopDown/RPG_TopDown.h"
+#include "UI/HUD/TopDownHUD.h"
 
 
 APlayerCharacter::APlayerCharacter()
@@ -67,13 +68,10 @@ void APlayerCharacter::InitAbilityActorInfo()
 
 	// Get the player state and player controller
 	PlayerPS = GetPlayerState<ATopDownPlayerState>();
-	PlayerPC = Cast<APlayerCharacterController>(GetController());
-
 	// Check if player state and player controller are valid
 	checkf(PlayerPS, TEXT("Player Character State Uninitialized!"));
-	checkf(PlayerPC, TEXT("Player Controller Uninitialized!"));
 
-	if (PlayerPS && PlayerPC)
+	if (PlayerPS)
 	{
 		/**
 		 * InitAbilityActorInfo is a function typically used in the context of Unreal Engine's Gameplay Ability System (GAS).
@@ -103,6 +101,19 @@ void APlayerCharacter::InitAbilityActorInfo()
 		PlayerPS->GetAbilitySystemComponent()->InitAbilityActorInfo(PlayerPS, this);
 		AbilitySystemComponent = PlayerPS->GetAbilitySystemComponent();
 		AttributeSet = PlayerPS->GetAttributeSet();
+
+		// Cast the controller to APlayerCharacterController
+		PlayerPC = Cast<APlayerCharacterController>(GetController());
+        
+		if (PlayerPC)
+		{
+			// Cast the HUD to ATopDownHUD
+			if (ATopDownHUD* TopDownHUD = Cast<ATopDownHUD>(PlayerPC->GetHUD()))
+			{
+				// Initialize the overlay widget with player and ability system info
+				TopDownHUD->InitializeOverlayWidget(PlayerPC, PlayerPS, AbilitySystemComponent, AttributeSet);
+			}
+		}
 	}
 }
 

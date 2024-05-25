@@ -6,6 +6,11 @@
 #include "GameFramework/HUD.h"
 #include "TopDownHUD.generated.h"
 
+class UAttributeSet;
+class UAbilitySystemComponent;
+/* Forward Declaring */
+struct FWidgetControllerVariables;
+class UOverlayWidgetController;
 class UBaseUserWidget;
 /**
  * 
@@ -19,13 +24,22 @@ public:
 	/**
 	* The overlay is the overall widget we'll see on the screen, and it's going to contain a bunch of little widgets inside of it.
 	*/
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, Category="Overlay Widget")
 	TObjectPtr<UBaseUserWidget> OverlayWidget;
-	
-protected:
-	virtual void BeginPlay() override;
+
+	UOverlayWidgetController* GetOverlayWidgetController(const FWidgetControllerVariables& WidgetControllerVariables);
+
+	void InitializeOverlayWidget(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC, UAttributeSet* AS);
 	
 private:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category="Overlay Widget")
 	TSubclassOf<UUserWidget> OverlayWidgetClass;
+
+	UPROPERTY(EditAnywhere, Category="Overlay Widget")
+	TSubclassOf<UOverlayWidgetController> OverlayWidgetControllerClass;
+	
+	UPROPERTY(VisibleAnywhere, Category="Overlay Widget")
+	TObjectPtr<UOverlayWidgetController> OverlayWidgetController;
+
+
 };
