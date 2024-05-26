@@ -36,6 +36,9 @@ public:
 
 	/** Camera Movement Interface */
 	virtual void CameraZoom(float ActionInput) override;
+	virtual void RotateCamera(float ActionInput) override;
+
+	USpringArmComponent* GetCameraSprintArm() { return CameraSpringArm; }
 
 protected:
 
@@ -51,6 +54,11 @@ private:
 	float TargetArmLength = 1000.f;
 	UPROPERTY(EditAnywhere, Category="Camera")
 	float TargetArmLengthMin = 250.f;
+	// Camera rotation speed
+	UPROPERTY(EditAnywhere, Category="Camera")
+	float CameraRotationSpeed = 100.f;
+	// Current yaw rotation of the spring arm
+	float CurrentYaw;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = true), Category="Camera")
 	TObjectPtr<UCameraComponent> Camera;

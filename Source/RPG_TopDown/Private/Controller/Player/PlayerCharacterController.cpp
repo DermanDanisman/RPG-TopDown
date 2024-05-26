@@ -6,6 +6,8 @@
 #include "EnhancedInputComponent.h"
 #include "InputAction.h"
 #include "InputActionValue.h"
+#include "Character/PlayerCharacter.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "Interface/Interaction/HighlightActorInterface.h"
 #include "Interface/Camera/CameraMovementInterface.h"
 
@@ -57,6 +59,7 @@ void APlayerCharacterController::SetupInputComponent()
 	{
 		EnhancedInputComponent->BindAction(InputActionMove, ETriggerEvent::Triggered, this, &APlayerCharacterController::Move);
 		EnhancedInputComponent->BindAction(InputActionCameraRotate, ETriggerEvent::Triggered, this, &APlayerCharacterController::RotateCamera);
+		EnhancedInputComponent->BindAction(InputActionCameraRotate, ETriggerEvent::Completed, this, &APlayerCharacterController::StopRotateCamera);
 		EnhancedInputComponent->BindAction(InputActionCameraZoomInOut, ETriggerEvent::Triggered, this, &APlayerCharacterController::CameraZoomInOut);
 	}
 }
@@ -82,7 +85,6 @@ void APlayerCharacterController::SetCursorSettings()
 
 void APlayerCharacterController::Move(const FInputActionValue& InputActionValue)
 {
-	
 	// Extracts the 2D input vector (X and Y) from the input action value
 	const FVector2D InputAxisVector = InputActionValue.Get<FVector2D>();
 
@@ -130,7 +132,7 @@ void APlayerCharacterController::Move(const FInputActionValue& InputActionValue)
 void APlayerCharacterController::CameraZoomInOut(const FInputActionValue& InputActionValue)
 {
 	const float ActionValue = InputActionValue.Get<float>();
-
+	
 	APawn* ControlledPawn = GetPawn<APawn>();
 	if (ControlledPawn)
 	{
@@ -147,8 +149,21 @@ void APlayerCharacterController::RotateCamera(const FInputActionValue& InputActi
 	APawn* ControlledPawn = GetPawn<APawn>();
 	if (ControlledPawn)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Blue, FString::Printf(TEXT("Input Value: %f"), ActionValue));
-		ControlledPawn->AddControllerYawInput(ActionValue * 100.f * GetWorld()->GetDeltaSeconds());
+		CameraMovementInterface = ControlledPawn;
+		CameraMovementInterface->RotateCamera(ActionValue);
+	}
+}
+
+void APlayerCharacterController::StopRotateCamera(const FInputActionValue& InputActionValue)
+{
+	const float ActionValue = InputActionValue.Get<float>();
+	
+	// Retrieves the pawn that the controller is possessing
+	APawn* ControlledPawn = GetPawn<APawn>();
+	if (ControlledPawn)
+	{
+		CameraMovementInterface = ControlledPawn;
+		CameraMovementInterface->RotateCamera(ActionValue);
 	}
 }
 

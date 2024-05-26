@@ -150,6 +150,31 @@ void APlayerCharacter::CameraZoom(float ActionInput)
 	CameraSpringArm->TargetArmLength = FMath::Clamp(NewArmLength, TargetArmLengthMin, TargetArmLength); 
 }
 
+void APlayerCharacter::RotateCamera(float ActionInput)
+{
+	if (ActionInput != 0)
+	{
+		CameraSpringArm->bUsePawnControlRotation = true;
+		GetCharacterMovement()->bOrientRotationToMovement = false;
+		GetCharacterMovement()->bUseControllerDesiredRotation = true;
+		
+		// Update the current yaw rotation based on input and rotation speed
+		CurrentYaw += ActionInput * CameraRotationSpeed * GetWorld()->GetDeltaSeconds();
+
+		// Create a new rotation based on the current yaw
+		FRotator NewRotation = FRotator(CameraSpringArm->GetComponentRotation().Pitch, CurrentYaw, CameraSpringArm->GetComponentRotation().Roll);
+
+		// Apply the rotation to the camera boom
+		CameraSpringArm->SetWorldRotation(NewRotation);
+	}
+	else
+	{
+		CameraSpringArm->bUsePawnControlRotation = false;
+		GetCharacterMovement()->bOrientRotationToMovement = true;
+		GetCharacterMovement()->bUseControllerDesiredRotation = false;
+	}
+}
+
 
 
 

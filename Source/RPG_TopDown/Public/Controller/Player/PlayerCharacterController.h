@@ -57,6 +57,7 @@ private:
 	void Move(const FInputActionValue& InputActionValue);
 	void CameraZoomInOut(const FInputActionValue& InputActionValue);
 	void RotateCamera(const FInputActionValue& InputActionValue);
+	void StopRotateCamera(const FInputActionValue& InputActionValue);
 
 	/** Mouse Cursor */
 	void CursorTrace();
