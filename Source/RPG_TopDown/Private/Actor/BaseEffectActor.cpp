@@ -3,10 +3,8 @@
 
 #include "Actor/BaseEffectActor.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
-#include "AbilitySystemInterface.h"
-#include "AbilitySystem/BaseAttributeSet.h"
-#include "Components/SphereComponent.h"
 
 // Sets default values
 ABaseEffectActor::ABaseEffectActor()
@@ -16,12 +14,6 @@ ABaseEffectActor::ABaseEffectActor()
 
 	DefaultSceneRoot = CreateDefaultSubobject<USceneComponent>("DefaultSceneRoot");
 	SetRootComponent(DefaultSceneRoot);
-
-	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
-	Mesh->SetupAttachment(GetRootComponent());
-	
-	Sphere = CreateDefaultSubobject<USphereComponent>("Sphere");
-	Sphere->SetupAttachment(Mesh);
 	
 }
 
@@ -30,27 +22,52 @@ void ABaseEffectActor::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	Sphere->OnComponentBeginOverlap.AddDynamic(this, &ABaseEffectActor::OnActorOverlap);
-	Sphere->OnComponentEndOverlap.AddDynamic(this, &ABaseEffectActor::OnActorEndOverlap);
 }
 
-void ABaseEffectActor::OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ABaseEffectActor::ApplyEffectToTarget(AActor* Target, TSubclassOf<UGameplayEffect> GameplayEffectClass)
 {
-	// TODO: Change this to apply a Gameplay Effect. For now, Using const_cast as a hack!
-	IAbilitySystemInterface* ASCInterface = Cast<IAbilitySystemInterface>(OtherActor);
-	if (ASCInterface)
-	{
-		const UBaseAttributeSet* BaseAttributeSet = Cast<UBaseAttributeSet>(ASCInterface->GetAbilitySystemComponent()->GetAttributeSet(UBaseAttributeSet::StaticClass()));
-		UBaseAttributeSet* MutableBaseAttributeSet = const_cast<UBaseAttributeSet*>(BaseAttributeSet);
-		MutableBaseAttributeSet->SetMana(BaseAttributeSet->GetMana() + 25);
-		Destroy();
-	}
-}
+	/*
+	* Purpose: Retrieves the UAbilitySystemComponent from the target actor.
+	* Details: This function is versatile as it checks if the actor implements the IAbilitySystemInterface and
+	* if not, it tries to find an AbilitySystemComponent directly on the actor.
+	* The UAbilitySystemComponent is crucial as it manages abilities, gameplay effects, and attributes.
+	*/
+	UAbilitySystemComponent* TargetAbilitySystemComponent = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Target);
+	if (TargetAbilitySystemComponent == nullptr) return;
 
-void ABaseEffectActor::OnActorEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-{
+	// GameplayEffectClass can not be unset, so we need to check.
+	checkf(GameplayEffectClass, TEXT("Gameplay Effect Class is UNSET! in Base Effect Actor blueprint."));
 	
+	/*
+	* Purpose: Creates a context handle for the gameplay effect.
+	* Details: The FGameplayEffectContextHandle encapsulates contextual information about the effect,
+	* such as the source of the effect, targets, and other relevant data.
+	* This context is essential for applying and replicating gameplay effects properly.
+	* Handle that wraps a FGameplayEffectContext or subclass, to allow it to be polymorphic and replicate properly
+	* The handle is a lightweight wrapper that stores the actual effect context as a pointer. It's called data.
+	*/
+	FGameplayEffectContextHandle EffectContextHandle =TargetAbilitySystemComponent->MakeEffectContext();
+	
+	// Sets the object this effect was created from.
+	/*
+	* Purpose: Adds the ABaseEffectActor as the source object of the effect.
+	* Details: This helps in identifying where the effect originated from, which can be useful for logging, debugging,
+	* or applying additional logic based on the source.
+	*/
+	EffectContextHandle.AddSourceObject(this);
+	/*
+	* Purpose: Creates a specification handle for the gameplay effect.
+	* Details: The FGameplayEffectSpecHandle contains all the necessary details to apply a gameplay effect,
+	* such as its magnitude, duration, and the previously created effect context.
+	* The 1.f represents the level of the effect, which can influence its strength.
+	*/
+	const FGameplayEffectSpecHandle EffectSpecHandle = TargetAbilitySystemComponent->MakeOutgoingSpec(GameplayEffectClass, 1.f, EffectContextHandle);
+
+	/*
+	 * Details: This line effectively executes the gameplay effect on the actor that owns the UAbilitySystemComponent.
+	 * The EffectSpecHandle.Data.Get() part retrieves the raw pointer from the shared pointer Data,
+	 * and * dereferences it to pass a reference to the function.
+	 */
+	TargetAbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
 }
 
