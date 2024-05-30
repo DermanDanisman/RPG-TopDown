@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayEffectTypes.h"
 #include "GameFramework/Actor.h"
 #include "BaseEffectActor.generated.h"
 
@@ -29,6 +30,42 @@
 /** Forward Declaring Classes */
 class USphereComponent;
 class UGameplayEffect;
+class UAbilitySystemComponent;
+
+// ENUM class for effect application and removal policies
+UENUM(BlueprintType)
+enum class EEffectApplicationPolicy : uint8
+{
+	ApplyEffectOnOverlap,
+	ApplyEffectOnEndOverlap,
+	DoNotApplyEffect
+};
+
+UENUM(BlueprintType)
+enum class EEffectRemovalPolicy : uint8
+{
+	RemoveEffectOnEndOverlap,
+	DoNotRemoveEffect
+};
+
+// Struct to store properties of gameplay effects
+USTRUCT(BlueprintType)
+struct FAppliedGameplayEffectProperties
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Applied Gameplay Effects Properties")
+	TSubclassOf<UGameplayEffect> GameplayEffectClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Applied Gameplay Effects Properties")
+	EEffectApplicationPolicy GameplayEffectApplicationPolicy = EEffectApplicationPolicy::DoNotApplyEffect;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Applied Gameplay Effects Properties")
+	EEffectRemovalPolicy GameplayEffectRemovalPolicy = EEffectRemovalPolicy::DoNotRemoveEffect;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category= "Applied Gameplay Effects Properties")
+	int StackRemovalCount = -1;
+};
 
 UCLASS()
 class RPG_TOPDOWN_API ABaseEffectActor : public AActor
@@ -42,21 +79,49 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-	/** Gameplay Effect Classes*/
+	
+	/** Gameplay Effect Properties Struct */
+	// Arrays to store different types of gameplay effects
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Applied Effects")
-	TSubclassOf<UGameplayEffect> InstantGameplayEffectClass;
+	TArray<FAppliedGameplayEffectProperties> InstantGameplayEffects;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Applied Effects")
-	TSubclassOf<UGameplayEffect> DurationGameplayEffectClass;
+	TArray<FAppliedGameplayEffectProperties> DurationGameplayEffects;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Applied Effects")
+	TArray<FAppliedGameplayEffectProperties> PeriodicGameplayEffects;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Applied Effects")
+	TArray<FAppliedGameplayEffectProperties> InfiniteGameplayEffects;
+
+	UPROPERTY(EditAnywhere, Category="Applied Effects")
+	bool bDestroyActorOnEffectApplication = false;
+	
+	UPROPERTY(EditAnywhere, Category="Applied Effects")
+	bool bDestroyActorOnEffectRemoval = false;
 
 	/** Gameplay Effect Functions */
 	UFUNCTION(BlueprintCallable, Category="Gameplay Effect Functions")
-	void ApplyEffectToTarget(AActor* Target, TSubclassOf<UGameplayEffect> GameplayEffectClass);
+	void OnOverlap(AActor* TargetActor);
+	
+	UFUNCTION(BlueprintCallable, Category="Gameplay Effect Functions")
+	void OnEndOverlap(AActor* TargetActor);
+
+	// Deprecated for now
+	TMap<FActiveGameplayEffectHandle, UAbilitySystemComponent*> ActiveGameplayEffectHandlesMap;
+
+
 	
 private:
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USceneComponent> DefaultSceneRoot;
 
+	void ApplyGameplayEffectToTarget(AActor* Target, const FAppliedGameplayEffectProperties& AppliedGameplayEffectProperties);
+
+	void RemoveGameplayEffectFromTarget(AActor* TargetActor, const FAppliedGameplayEffectProperties& AppliedGameplayEffectProperties);
+
+	void ApplyAllGameplayEffects(AActor* TargetActor, const EEffectApplicationPolicy& EffectApplicationPolicy);
+
+	void RemoveAllGameplayEffects(AActor* TargetActor, const EEffectRemovalPolicy& EffectRemovalPolicy);
 };
