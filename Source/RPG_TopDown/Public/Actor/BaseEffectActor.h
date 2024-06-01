@@ -106,6 +106,9 @@ protected:
 	
 	UFUNCTION(BlueprintCallable, Category="Gameplay Effect Functions")
 	void OnEndOverlap(AActor* TargetActor);
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Actor Properties")
+	float ActorLevel = 1.f;
 	
 private:
 

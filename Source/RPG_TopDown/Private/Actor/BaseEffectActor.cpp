@@ -38,11 +38,11 @@ void ABaseEffectActor::OnEndOverlap(AActor* TargetActor)
 void ABaseEffectActor::ApplyGameplayEffectToTarget(AActor* Target, const FAppliedGameplayEffectProperties& AppliedGameplayEffectProperties)
 {
 	/*
-	* Purpose: Retrieves the UAbilitySystemComponent from the target actor.
-	* Details: This function is versatile as it checks if the actor implements the IAbilitySystemInterface and
-	* if not, it tries to find an AbilitySystemComponent directly on the actor.
-	* The UAbilitySystemComponent is crucial as it manages abilities, gameplay effects, and attributes.
-	*/
+	 * Purpose: Retrieves the UAbilitySystemComponent from the target actor.
+	 * Details: This function is versatile as it checks if the actor implements the IAbilitySystemInterface and
+	 * if not, it tries to find an AbilitySystemComponent directly on the actor.
+	 * The UAbilitySystemComponent is crucial as it manages abilities, gameplay effects, and attributes.
+	 */
 	UAbilitySystemComponent* TargetAbilitySystemComponent = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Target);
 	if (TargetAbilitySystemComponent == nullptr) return;
 
@@ -50,34 +50,34 @@ void ABaseEffectActor::ApplyGameplayEffectToTarget(AActor* Target, const FApplie
 	checkf(AppliedGameplayEffectProperties.GameplayEffectClass, TEXT("Gameplay Effect Class is UNSET! in Base Effect Actor blueprint."));
 	
 	/*
-	* Purpose: Creates a context handle for the gameplay effect.
-	* Details: The FGameplayEffectContextHandle encapsulates contextual information about the effect,
-	* such as the source of the effect, targets, and other relevant data.
-	* This context is essential for applying and replicating gameplay effects properly.
-	* Handle that wraps a FGameplayEffectContext or subclass, to allow it to be polymorphic and replicate properly
-	* The handle is a lightweight wrapper that stores the actual effect context as a pointer. It's called data.
-	*/
+	 * Purpose: Creates a context handle for the gameplay effect.
+	 * Details: The FGameplayEffectContextHandle encapsulates contextual information about the effect,
+	 * such as the source of the effect, targets, and other relevant data.
+	 * This context is essential for applying and replicating gameplay effects properly.
+	 * Handle that wraps a FGameplayEffectContext or subclass, to allow it to be polymorphic and replicate properly
+	 * The handle is a lightweight wrapper that stores the actual effect context as a pointer. It's called data.
+	 */
 	FGameplayEffectContextHandle EffectContextHandle =TargetAbilitySystemComponent->MakeEffectContext();
 	
 
-	/**
-	* Purpose: Adds the ABaseEffectActor as the source object of the effect.
-	* Details: This helps in identifying where the effect originated from, which can be useful for logging, debugging,
-	* or applying additional logic based on the source.
-	*/
+	/*
+	 * Purpose: Adds the ABaseEffectActor as the source object of the effect.
+	 * Details: This helps in identifying where the effect originated from, which can be useful for logging, debugging,
+	 * or applying additional logic based on the source.
+	 */
 	// Sets the object this effect was created from.
 	EffectContextHandle.AddSourceObject(this);
 	EffectContextHandle.Get()->SetEffectCauser(this);
 	
-	/**
-	* Purpose: Creates a specification handle for the gameplay effect.
-	* Details: The FGameplayEffectSpecHandle contains all the necessary details to apply a gameplay effect,
-	* such as its magnitude, duration, and the previously created effect context.
-	* The 1.f represents the level of the effect, which can influence its strength.
-	*/
-	const FGameplayEffectSpecHandle EffectSpecHandle = TargetAbilitySystemComponent->MakeOutgoingSpec(AppliedGameplayEffectProperties.GameplayEffectClass, 1.f, EffectContextHandle);
+	/*
+	 * Purpose: Creates a specification handle for the gameplay effect.
+	 * Details: The FGameplayEffectSpecHandle contains all the necessary details to apply a gameplay effect,
+	 * such as its magnitude, duration, and the previously created effect context.
+	 * The 1.f represents the level of the effect, which can influence its strength.
+	 */
+	const FGameplayEffectSpecHandle EffectSpecHandle = TargetAbilitySystemComponent->MakeOutgoingSpec(AppliedGameplayEffectProperties.GameplayEffectClass, ActorLevel, EffectContextHandle);
 
-	/**
+	/*
 	 * Details: This line effectively executes the gameplay effect on the actor that owns the UAbilitySystemComponent.
 	 * The EffectSpecHandle.Data.Get() part retrieves the raw pointer from the shared pointer Data,
 	 * and * dereferences it to pass a reference to the function.
@@ -91,7 +91,7 @@ void ABaseEffectActor::ApplyGameplayEffectToTarget(AActor* Target, const FApplie
 	// If true, Destroys actor on effect application.
 	if (bDestroyActorOnEffectApplication) Destroy();
 
-	/**
+	/*
 	 * DEBUG: Count the active gameplay effects
 	 */
 	const int EffectCount = TargetAbilitySystemComponent->GetGameplayEffectCount(AppliedGameplayEffectProperties.GameplayEffectClass, TargetAbilitySystemComponent);
@@ -110,7 +110,7 @@ void ABaseEffectActor::RemoveGameplayEffectFromTarget(AActor* TargetActor, const
 	// If true, Destroys actor on effect removal.
 	if (bDestroyActorOnEffectRemoval) Destroy();
 
-	/**
+	/*
 	 * DEBUG: Count the active gameplay effects
 	 */
 	const int EffectCount = TargetAbilitySystemComponent->GetGameplayEffectCount(AppliedGameplayEffectProperties.GameplayEffectClass, TargetAbilitySystemComponent);
