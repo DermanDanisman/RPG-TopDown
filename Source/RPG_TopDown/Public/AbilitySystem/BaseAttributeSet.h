@@ -14,6 +14,63 @@
 	GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
 	GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 
+USTRUCT()
+struct FGameplayEffectContextInfo
+{
+	GENERATED_BODY()
+
+	/*
+	 * What Does Transient Mean?
+	 * In Unreal Engine, marking a property with Transient means that this property should not be serialized.
+	 * Serialization is the process of converting an object's state into a format that can be stored or transmitted and then reconstructed later.
+	 * This is typically used for saving game state, replication over the network, etc.
+	 */
+
+	/*
+	 * Why Use Transient?
+	 * ---- Dynamically Set During Gameplay: ----
+	 * The properties in FEffectProperties are meant to be set and used only during gameplay.
+	 * They represent runtime information that is often calculated or retrieved dynamically.
+	 * For instance, when an effect is applied, you fetch the relevant ability system component, actor, controller, and character based on the current state of the game.
+	 * ---- Avoid Unnecessary Serialization: ----
+	 * Since these properties are dynamically set and not part of the persistent state of the game, there's no need to serialize them.
+	 * Serialization of unnecessary data can lead to performance overhead and potential issues during loading/saving of game states.
+	 * ---- Network Efficiency: ----
+	 * In multiplayer games, not serializing transient properties helps in reducing the amount of data that needs to be sent over the network.
+	 * This ensures better performance and less bandwidth usage.
+	 */
+	
+	UPROPERTY(Transient)
+	UAbilitySystemComponent* AbilitySystemComponent = nullptr;
+ 
+	UPROPERTY(Transient)
+	AActor* AvatarActor = nullptr;
+ 
+	UPROPERTY(Transient)
+	AController* Controller = nullptr;
+ 
+	UPROPERTY(Transient)
+	ACharacter* Character = nullptr;
+};
+
+USTRUCT(BlueprintType)
+struct FGameplayEffectContextDetails
+{
+	GENERATED_BODY()
+
+	FGameplayEffectContextDetails()
+	{
+		SourceProperties = MakeShared<FGameplayEffectContextInfo>();
+		TargetProperties = MakeShared<FGameplayEffectContextInfo>();
+	}
+    
+	TSharedPtr<FGameplayEffectContextHandle> GameplayEffectContextHandle;
+    
+	TSharedPtr<FGameplayEffectContextInfo> SourceProperties;
+ 
+	TSharedPtr<FGameplayEffectContextInfo> TargetProperties;
+};
+
 /**
  * 
  */
@@ -86,12 +143,20 @@ public:
 	 */
 	virtual void PreAttributeBaseChange(const FGameplayAttribute& Attribute, float& NewValue) const override;
 
+	/**
+	 *	Called just after a GameplayEffect is executed to modify the base value of an attribute. No more changes can be made.
+	 *	Note this is only called during an 'execute'. E.g., a modification to the 'base value' of an attribute.
+	 *	It is not called during an application of a GameplayEffect, such as a 5 second +10 movement speed buff.
+	 */
+	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
+
 
 	/** OnRep Attribute Functions */
-	/**
+	/*
 	 * These functions are declared to handle the changes to Health and Mana.
 	 * They now receive the old value of the attribute as a parameter.
 	 */
+	
 	// Called when the variables are updated on the client side.
 	UFUNCTION()
 	void OnRep_Health(const FGameplayAttributeData& OldHealth) const;
@@ -112,4 +177,11 @@ public:
 	// Called when the variables are updated on the client side.
 	UFUNCTION()
 	void OnRep_MaxStamina(const FGameplayAttributeData& OldMaxStamina) const;
+
+private:
+
+	/**
+	 * The function is responsible for setting up and populating the FGameplayEffectExecutionContext struct.
+	 */
+	void InitializeEffectExecutionContext(const FGameplayEffectModCallbackData& Data, FGameplayEffectContextDetails& GameplayEffectContextDetails) const;
 };

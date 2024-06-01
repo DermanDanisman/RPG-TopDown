@@ -3,10 +3,12 @@
 
 #include "AbilitySystem/BaseAttributeSet.h"
 
-#include "Kismet/KismetMathLibrary.h"
+#include "AbilitySystemBlueprintLibrary.h"
+#include "GameplayEffectExtension.h"
+#include "GameFramework/Character.h"
 #include "Net/UnrealNetwork.h"
 
-	/**
+	/*
 	 * GAMEPLAYATTRIBUTE_REPNOTIFY macro handles the boilerplate code for notifying clients of attribute changes.
 	 * It ensures that the change in the attribute is properly replicated and triggers any bound delegates.
 	 * GAMEPLAYATTRIBUTE_REPNOTIFY macro ensures the attribute change is properly replicated and triggers any bound delegates.
@@ -17,11 +19,11 @@
 
 UBaseAttributeSet::UBaseAttributeSet()
 {
-	/**
-	* Even though I didn't create an init health function,
-	* I used my attribute accessors macro in header file which calls these four macros,
-	* one of which creates the INITTER and by default that's called init health.
-	*/
+	/*
+	 * Even though I didn't create an init health function,
+	 * I used my attribute accessors macro in header file which calls these four macros,
+	 * one of which creates the INITTER and by default that's called init health.
+	 */
 	InitHealth(50.f);
 	InitMaxHealth(100.f);
 	InitMana(25.f);
@@ -30,7 +32,7 @@ UBaseAttributeSet::UBaseAttributeSet()
 	InitMaxStamina(100.f);
 }
 
-/**
+/*
  * The GetLifetimeReplicatedProps function is used in Unreal Engine to define which properties of a class should be replicated over the network.
  * It is an essential part of the replication system,
  * ensuring that the state of certain properties is kept consistent between the server and the clients in a multiplayer game.
@@ -58,8 +60,10 @@ void UBaseAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, MaxStamina, COND_None, REPNOTIFY_Always);
 }
 
-// This function is called before the base value of an Attribute change happens.
-// It is triggered by changes to Attributes.
+/*
+ * This function is called before the base value of an Attribute change happens.
+ * It is triggered by changes to Attributes.
+ */
 void UBaseAttributeSet::PreAttributeBaseChange(const FGameplayAttribute& Attribute, float& NewValue) const
 {
 	Super::PreAttributeBaseChange(Attribute, NewValue);
@@ -78,7 +82,63 @@ void UBaseAttributeSet::PreAttributeBaseChange(const FGameplayAttribute& Attribu
 	}
 }
 
-/**
+/*
+ * The function is responsible for setting up and populating the FGameplayEffectExecutionContext struct.
+ */
+void UBaseAttributeSet::InitializeEffectExecutionContext(const FGameplayEffectModCallbackData& Data, FGameplayEffectContextDetails& GameplayEffectContextDetails) const
+{
+	// Initialize the context details struct 
+	GameplayEffectContextDetails.GameplayEffectContextHandle = MakeShared<FGameplayEffectContextHandle>(Data.EffectSpec.GetContext());
+
+	// Populate source properties
+	GameplayEffectContextDetails.SourceProperties->AbilitySystemComponent = GameplayEffectContextDetails.GameplayEffectContextHandle->GetOriginalInstigatorAbilitySystemComponent();
+	
+	if (IsValid(GameplayEffectContextDetails.SourceProperties->AbilitySystemComponent) &&
+		GameplayEffectContextDetails.SourceProperties->AbilitySystemComponent->AbilityActorInfo.IsValid() &&
+		GameplayEffectContextDetails.SourceProperties->AbilitySystemComponent->AbilityActorInfo->AvatarActor.IsValid())
+	{
+		GameplayEffectContextDetails.SourceProperties->AvatarActor = GameplayEffectContextDetails.SourceProperties->AbilitySystemComponent->AbilityActorInfo->AvatarActor.Get();
+		GameplayEffectContextDetails.SourceProperties->Controller = GameplayEffectContextDetails.SourceProperties->AbilitySystemComponent->AbilityActorInfo->PlayerController.Get();
+		if (GameplayEffectContextDetails.SourceProperties->Controller == nullptr && GameplayEffectContextDetails.SourceProperties->AvatarActor != nullptr)
+		{
+			if (const APawn* Pawn = Cast<APawn>(GameplayEffectContextDetails.SourceProperties->AvatarActor))
+			{
+				GameplayEffectContextDetails.SourceProperties->Controller = Pawn->GetController();
+			}
+		}
+		if (GameplayEffectContextDetails.SourceProperties->Controller)
+		{
+			GameplayEffectContextDetails.SourceProperties->Character = Cast<ACharacter>(GameplayEffectContextDetails.SourceProperties->Controller->GetPawn());
+		}
+	}
+
+	// Populate target properties
+	if (Data.Target.AbilityActorInfo.IsValid() && Data.Target.AbilityActorInfo->AvatarActor.IsValid())
+	{
+		GameplayEffectContextDetails.TargetProperties->AvatarActor = Data.Target.AbilityActorInfo->AvatarActor.Get();
+		GameplayEffectContextDetails.TargetProperties->Controller = Data.Target.AbilityActorInfo->PlayerController.Get();
+		GameplayEffectContextDetails.TargetProperties->Character = Cast<ACharacter>(GameplayEffectContextDetails.TargetProperties->AvatarActor);
+		GameplayEffectContextDetails.TargetProperties->AbilitySystemComponent = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GameplayEffectContextDetails.TargetProperties->AvatarActor);
+	}
+
+	// Now you can use EffectContextDetails to access all the gathered information
+}
+
+/*
+ * This is executed after a gameplay effect changes an attribute, and we have access to a lot of information via this data input parameter.
+ * We can access a lot of info based on the effect that was just applied, and we're going to harvest some information from this data parameter.
+ * So ultimately, in PostGameplayEffectExecute, we have access to just about every entity involved in this gameplay effect being executed
+ */
+void UBaseAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
+{
+	Super::PostGameplayEffectExecute(Data);
+
+	// The function is responsible for setting up and populating the FGameplayEffectExecutionContext struct.
+	FGameplayEffectContextDetails GameplayEffectContextDetails;
+	InitializeEffectExecutionContext(Data, GameplayEffectContextDetails);
+}
+
+/*
  * The OnRep_Health function is called on the client when the Health attribute is updated on the server.
  * The GAMEPLAYATTRIBUTE_REPNOTIFY macro ensures the attribute is correctly replicated.
  * This function also adds a debug message to display the old and new Health values.
@@ -86,11 +146,11 @@ void UBaseAttributeSet::PreAttributeBaseChange(const FGameplayAttribute& Attribu
 void UBaseAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth) const
 {
     GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, Health, OldHealth);
-    GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green,
-        FString::Printf(TEXT("Health has been updated from %f to %f!"), OldHealth.GetCurrentValue(), Health.GetCurrentValue()));
+    //GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green,
+       // FString::Printf(TEXT("Health has been updated from %f to %f!"), OldHealth.GetCurrentValue(), Health.GetCurrentValue()));
 }
 
-/**
+/*
  * The OnRep_MaxHealth function is called on the client when the MaxHealth attribute is updated on the server.
  * The GAMEPLAYATTRIBUTE_REPNOTIFY macro ensures the attribute is correctly replicated.
  * This function also adds a debug message to display the old and new MaxHealth values.
@@ -98,11 +158,11 @@ void UBaseAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth) co
 void UBaseAttributeSet::OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth) const
 {
     GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, MaxHealth, OldMaxHealth);
-    GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green,
-        FString::Printf(TEXT("MaxHealth has been updated from %f to %f!"), OldMaxHealth.GetCurrentValue(), MaxHealth.GetCurrentValue()));
+    //GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green,
+     //   FString::Printf(TEXT("MaxHealth has been updated from %f to %f!"), OldMaxHealth.GetCurrentValue(), MaxHealth.GetCurrentValue()));
 }
 
-/**
+/*
  * The OnRep_Mana function is called on the client when the Mana attribute is updated on the server.
  * The GAMEPLAYATTRIBUTE_REPNOTIFY macro ensures the attribute is correctly replicated.
  * This function also adds a debug message to display the old and new Mana values.
@@ -110,11 +170,11 @@ void UBaseAttributeSet::OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHeal
 void UBaseAttributeSet::OnRep_Mana(const FGameplayAttributeData& OldMana) const
 {
     GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, Mana, OldMana);
-    GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue,
-        FString::Printf(TEXT("Mana has been updated from %f to %f!"), OldMana.GetCurrentValue(), Mana.GetCurrentValue()));
+   // GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue,
+     //   FString::Printf(TEXT("Mana has been updated from %f to %f!"), OldMana.GetCurrentValue(), Mana.GetCurrentValue()));
 }
 
-/**
+/*
  * The OnRep_MaxMana function is called on the client when the MaxMana attribute is updated on the server.
  * The GAMEPLAYATTRIBUTE_REPNOTIFY macro ensures the attribute is correctly replicated.
  * This function also adds a debug message to display the old and new MaxMana values.
@@ -122,11 +182,11 @@ void UBaseAttributeSet::OnRep_Mana(const FGameplayAttributeData& OldMana) const
 void UBaseAttributeSet::OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana) const
 {
     GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, MaxMana, OldMaxMana);
-    GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue,
-        FString::Printf(TEXT("MaxMana has been updated from %f to %f!"), OldMaxMana.GetCurrentValue(), MaxMana.GetCurrentValue()));
+    //GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue,
+     //   FString::Printf(TEXT("MaxMana has been updated from %f to %f!"), OldMaxMana.GetCurrentValue(), MaxMana.GetCurrentValue()));
 }
 
-/**
+/*
  * The OnRep_Stamina function is called on the client when the Stamina attribute is updated on the server.
  * The GAMEPLAYATTRIBUTE_REPNOTIFY macro ensures the attribute is correctly replicated.
  * This function also adds a debug message to display the old and new MaxMana values.
@@ -134,11 +194,11 @@ void UBaseAttributeSet::OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana) 
 void UBaseAttributeSet::OnRep_Stamina(const FGameplayAttributeData& OldStamina) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, Stamina, OldStamina);
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue,
-		FString::Printf(TEXT("MaxMana has been updated from %f to %f!"), OldStamina.GetCurrentValue(), Stamina.GetCurrentValue()));
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue,
+	//	FString::Printf(TEXT("MaxMana has been updated from %f to %f!"), OldStamina.GetCurrentValue(), Stamina.GetCurrentValue()));
 }
 
-/**
+/*
  * The OnRep_MaxStamina function is called on the client when the MaxStamina attribute is updated on the server.
  * The GAMEPLAYATTRIBUTE_REPNOTIFY macro ensures the attribute is correctly replicated.
  * This function also adds a debug message to display the old and new MaxMana values.
@@ -146,6 +206,6 @@ void UBaseAttributeSet::OnRep_Stamina(const FGameplayAttributeData& OldStamina) 
 void UBaseAttributeSet::OnRep_MaxStamina(const FGameplayAttributeData& OldMaxStamina) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, MaxStamina, OldMaxStamina);
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue,
-		FString::Printf(TEXT("MaxMana has been updated from %f to %f!"), OldMaxStamina.GetCurrentValue(), MaxStamina.GetCurrentValue()));
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue,
+	//	FString::Printf(TEXT("MaxMana has been updated from %f to %f!"), OldMaxStamina.GetCurrentValue(), MaxStamina.GetCurrentValue()));
 }

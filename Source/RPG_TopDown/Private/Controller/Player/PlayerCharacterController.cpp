@@ -6,8 +6,6 @@
 #include "EnhancedInputComponent.h"
 #include "InputAction.h"
 #include "InputActionValue.h"
-#include "Character/PlayerCharacter.h"
-#include "GameFramework/SpringArmComponent.h"
 #include "Interface/Interaction/HighlightActorInterface.h"
 #include "Interface/Camera/CameraMovementInterface.h"
 
@@ -180,8 +178,8 @@ void APlayerCharacterController::CursorTrace()
 	LastActor = ThisActor;
 	// Store the actor hit by the current trace
 	ThisActor = CursorHitResult.GetActor();
-	GEngine->AddOnScreenDebugMessage(-1, 0.f, FColor::Blue,
-		FString::Printf(TEXT("EnemyCharacter %s: HighlightActor Called"), *CursorHitResult.GetActor()->GetName()));
+	//GEngine->AddOnScreenDebugMessage(-1, 0.f, FColor::Blue,
+		//FString::Printf(TEXT("EnemyCharacter %s: HighlightActor Called"), *CursorHitResult.GetActor()->GetName()));
     
 	// If the actor under the cursor has changed since the last frame
 	if (ThisActor != LastActor)

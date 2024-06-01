@@ -106,11 +106,6 @@ protected:
 	
 	UFUNCTION(BlueprintCallable, Category="Gameplay Effect Functions")
 	void OnEndOverlap(AActor* TargetActor);
-
-	// Deprecated for now
-	TMap<FActiveGameplayEffectHandle, UAbilitySystemComponent*> ActiveGameplayEffectHandlesMap;
-
-
 	
 private:
 

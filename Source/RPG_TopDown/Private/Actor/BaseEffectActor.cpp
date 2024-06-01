@@ -59,15 +59,17 @@ void ABaseEffectActor::ApplyGameplayEffectToTarget(AActor* Target, const FApplie
 	*/
 	FGameplayEffectContextHandle EffectContextHandle =TargetAbilitySystemComponent->MakeEffectContext();
 	
-	// Sets the object this effect was created from.
-	/*
+
+	/**
 	* Purpose: Adds the ABaseEffectActor as the source object of the effect.
 	* Details: This helps in identifying where the effect originated from, which can be useful for logging, debugging,
 	* or applying additional logic based on the source.
 	*/
+	// Sets the object this effect was created from.
 	EffectContextHandle.AddSourceObject(this);
 	EffectContextHandle.Get()->SetEffectCauser(this);
-	/*
+	
+	/**
 	* Purpose: Creates a specification handle for the gameplay effect.
 	* Details: The FGameplayEffectSpecHandle contains all the necessary details to apply a gameplay effect,
 	* such as its magnitude, duration, and the previously created effect context.
@@ -75,7 +77,7 @@ void ABaseEffectActor::ApplyGameplayEffectToTarget(AActor* Target, const FApplie
 	*/
 	const FGameplayEffectSpecHandle EffectSpecHandle = TargetAbilitySystemComponent->MakeOutgoingSpec(AppliedGameplayEffectProperties.GameplayEffectClass, 1.f, EffectContextHandle);
 
-	/*
+	/**
 	 * Details: This line effectively executes the gameplay effect on the actor that owns the UAbilitySystemComponent.
 	 * The EffectSpecHandle.Data.Get() part retrieves the raw pointer from the shared pointer Data,
 	 * and * dereferences it to pass a reference to the function.
@@ -85,24 +87,11 @@ void ABaseEffectActor::ApplyGameplayEffectToTarget(AActor* Target, const FApplie
 	 * So once you've applied a gameplay effect, that gameplay effect becomes active and these apply functions return a FActiveGameplayEffectHandle to that effect.
 	 * So we can always use that handle for something later, such as removing it if it's an infinite gameplay effect.
 	 */
-	// const FActiveGameplayEffectHandle ActiveGameplayEffectHandle = 
 	TargetAbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
 	// If true, Destroys actor on effect application.
 	if (bDestroyActorOnEffectApplication) Destroy();
 
-	/*
-	 * Check whether the given gameplay effect duration is infinite or not 
-	 */
-	//const bool bIsInfiniteGameplayEffect = EffectSpecHandle.Data.Get()->Def.Get()->DurationPolicy == EGameplayEffectDurationType::Infinite;
-	//if (bIsInfiniteGameplayEffect && InfiniteEffectRemovalPolicy == EEffectRemovalPolicy::RemoveEffectOnEndOverlap)
-	/*if (AppliedGameplayEffectProperties.GameplayEffectRemovalPolicy == EEffectRemovalPolicy::RemoveEffectOnEndOverlap)
-	{
-		// Added Active Gameplay Effect Handle that has Infinite Duration Policy to a Map called ActiveGameplayEffectHandlesMap.
-		// We should be doing this if we plan on removing the effect.
-		ActiveGameplayEffectHandlesMap.Add(ActiveGameplayEffectHandle, TargetAbilitySystemComponent);
-	}*/
-
-	/*
+	/**
 	 * DEBUG: Count the active gameplay effects
 	 */
 	const int EffectCount = TargetAbilitySystemComponent->GetGameplayEffectCount(AppliedGameplayEffectProperties.GameplayEffectClass, TargetAbilitySystemComponent);
@@ -121,25 +110,7 @@ void ABaseEffectActor::RemoveGameplayEffectFromTarget(AActor* TargetActor, const
 	// If true, Destroys actor on effect removal.
 	if (bDestroyActorOnEffectRemoval) Destroy();
 
-
-	/** Using TMap for removing Active Gameplay Effects
-		// Using TMaps to remove active effects 1 stack at a time 
-		TArray<FActiveGameplayEffectHandle> ActiveGameplayEffectHandlesToRemove;
-		for (TTuple<FActiveGameplayEffectHandle, UAbilitySystemComponent*> HandlePair : ActiveGameplayEffectHandlesMap)
-		{
-			if (TargetAbilitySystemComponent == HandlePair.Value)
-			{
-				TargetAbilitySystemComponent->RemoveActiveGameplayEffect(HandlePair.Key, AppliedGameplayEffectProperties.StackRemovalCount);
-				ActiveGameplayEffectHandlesToRemove.Add(HandlePair.Key);
-			}
-		}
-		for (FActiveGameplayEffectHandle Handle  : ActiveGameplayEffectHandlesToRemove)
-		{
-			ActiveGameplayEffectHandlesMap.FindAndRemoveChecked(Handle);
-		}
-		*/
-
-	/*
+	/**
 	 * DEBUG: Count the active gameplay effects
 	 */
 	const int EffectCount = TargetAbilitySystemComponent->GetGameplayEffectCount(AppliedGameplayEffectProperties.GameplayEffectClass, TargetAbilitySystemComponent);
