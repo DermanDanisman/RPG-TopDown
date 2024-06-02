@@ -5,11 +5,49 @@
 
 void UBaseAbilitySystemComponent::BindOnGameplayEffectAppliedDelegateToSelf()
 {
-	OnGameplayEffectAppliedDelegateToSelf.AddUObject(this, &UBaseAbilitySystemComponent::EffectApplied);
+	OnGameplayEffectAppliedDelegateToSelf.AddUObject(this, &UBaseAbilitySystemComponent::EffectAppliedToSelf);
 }
 
-void UBaseAbilitySystemComponent::EffectApplied(UAbilitySystemComponent* AbilitySystemComponent,
+void UBaseAbilitySystemComponent::EffectAppliedToSelf(UAbilitySystemComponent* AbilitySystemComponent,
                                                 const FGameplayEffectSpec& GameplayEffectSpec, FActiveGameplayEffectHandle ActiveGameplayEffectHandle)
 {
+	FGameplayTagContainer GameplayTagContainer;
+	
+	/*
+	 * GetAllAssetTags()
+	 * Purpose:
+	 * GetAllAssetTags() retrieves all the gameplay tags that are explicitly defined in the GameplayEffect asset.
+	 * These tags are associated with the effect itself and typically represent static, predefined attributes or conditions.
+	 * Usage:
+	 * Asset tags are generally used to categorize or identify effects.
+	 * They can be useful for filtering, applying specific logic, or triggering responses based on the presence of these tags.
+	 * Example:
+	 * A healing effect might have an asset tag like Effect.Healing.
+	 * A damage-over-time effect might have an asset tag like Effect.DamageOverTime.
+	 */
+	GameplayEffectSpec.GetAllAssetTags(GameplayTagContainer);
+	// We make FGameplayTag a const reference, so we don't copy the tag
+	for (const FGameplayTag& Tag : GameplayTagContainer)
+	{
+		// TODO: Broadcast the tag to the Widget Controller
+		const FString Msg = FString::Printf(TEXT("GE Tag: %s"), *Tag.ToString());
+		GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Blue, Msg);
+	}
+	
+	//FGameplayTagContainer GameplayGrantedTagContainer;
+	/*
+	 * GetAllGrantedTags()
+	 * Purpose:
+	 * GetAllGrantedTags() retrieves all the gameplay tags that are dynamically granted to the target when the effect is applied.
+	 * These tags can be conditionally granted based on the effect's configuration or the state of the target.
+	 * Usage:
+	 * Granted tags are used to modify the state of the target actor temporarily.
+	 * These tags can affect how other abilities or effects interact with the target while the effect is active.
+	 * Example:
+	 * Applying a stealth effect might grant the tag State.Stealth, which can prevent enemies from detecting the player.
+	 * A buff effect might grant the tag State.Buffed, enabling the player to benefit from certain abilities or resistances.
+	 */
+	//GameplayEffectSpec.GetAllGrantedTags(GameplayGrantedTagContainer);
+
 	GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, FString::Printf(TEXT("Effect Applied!")));
 }

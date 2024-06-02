@@ -30,5 +30,5 @@ protected:
 	 */
 	// Bind FOnGameplayEffectAppliedDelegate OnGameplayEffectAppliedDelegateToSelf delegate to this function. This function will be called whenever the delegate is broadcasted.
 	// We typically like to do this when the actual game starts and not really in constructors as those are fired off quite early.
-	void EffectApplied(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayEffectSpec& GameplayEffectSpec, FActiveGameplayEffectHandle ActiveGameplayEffectHandle);
+	void EffectAppliedToSelf(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayEffectSpec& GameplayEffectSpec, FActiveGameplayEffectHandle ActiveGameplayEffectHandle);
 };
