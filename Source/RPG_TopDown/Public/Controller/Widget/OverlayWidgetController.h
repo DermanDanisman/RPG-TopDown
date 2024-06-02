@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AbilitySystem/BaseAttributeSet.h"
 #include "Controller/Widget/BaseWidgetController.h"
 #include "OverlayWidgetController.generated.h"
 
@@ -72,4 +73,9 @@ protected:
 	void MaxManaChanged(const FOnAttributeChangeData& Data) const;
 	void StaminaChanged(const FOnAttributeChangeData& Data) const;
 	void MaxStaminaChanged(const FOnAttributeChangeData& Data) const;
+
+private:
+	
+	// Function to bind attribute change callbacks to the Ability System Component
+	void BindVitalAttributeChangeCallbacks(const UBaseAttributeSet* BaseAttributeSet);
 };

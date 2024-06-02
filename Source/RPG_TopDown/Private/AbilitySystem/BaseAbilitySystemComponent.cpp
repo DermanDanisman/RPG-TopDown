@@ -12,7 +12,6 @@ void UBaseAbilitySystemComponent::EffectAppliedToSelf(UAbilitySystemComponent* A
                                                 const FGameplayEffectSpec& GameplayEffectSpec, FActiveGameplayEffectHandle ActiveGameplayEffectHandle)
 {
 	FGameplayTagContainer GameplayTagContainer;
-	
 	/*
 	 * GetAllAssetTags()
 	 * Purpose:
@@ -26,13 +25,9 @@ void UBaseAbilitySystemComponent::EffectAppliedToSelf(UAbilitySystemComponent* A
 	 * A damage-over-time effect might have an asset tag like Effect.DamageOverTime.
 	 */
 	GameplayEffectSpec.GetAllAssetTags(GameplayTagContainer);
-	// We make FGameplayTag a const reference, so we don't copy the tag
-	for (const FGameplayTag& Tag : GameplayTagContainer)
-	{
-		// TODO: Broadcast the tag to the Widget Controller
-		const FString Msg = FString::Printf(TEXT("GE Tag: %s"), *Tag.ToString());
-		GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Blue, Msg);
-	}
+	// Any class who binds to GameplayEffectAssetTags delegate will receive a GameplayTagContainer filled with the asset tags.
+	GameplayEffectAssetTags.Broadcast(GameplayTagContainer);
+
 	
 	//FGameplayTagContainer GameplayGrantedTagContainer;
 	/*

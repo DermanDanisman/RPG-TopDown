@@ -6,6 +6,9 @@
 #include "AbilitySystemComponent.h"
 #include "BaseAbilitySystemComponent.generated.h"
 
+// Created Delegate for Widget Controller communication.
+DECLARE_MULTICAST_DELEGATE_OneParam(FGameplayEffectAssetTags, const FGameplayTagContainer& /* Asset Tags */);
+
 /**
  * 
  */
@@ -18,6 +21,8 @@ public:
 
 	// Function to bind the gameplay effect delegates, This is also called Ability Actor Info Set.
 	void BindOnGameplayEffectAppliedDelegateToSelf();
+
+	FGameplayEffectAssetTags GameplayEffectAssetTags;
 	
 protected:
 
