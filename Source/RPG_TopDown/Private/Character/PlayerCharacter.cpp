@@ -4,6 +4,7 @@
 #include "Character/PlayerCharacter.h"
 
 #include "AbilitySystemComponent.h"
+#include "AbilitySystem/BaseAbilitySystemComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Controller/Player/PlayerCharacterController.h"
@@ -73,32 +74,34 @@ void APlayerCharacter::InitAbilityActorInfo()
 
 	if (PlayerPS)
 	{
-		/**
+		/*
 		 * InitAbilityActorInfo is a function typically used in the context of Unreal Engine's Gameplay Ability System (GAS).
 		 * Its primary purpose is to initialize the ability-related information for an actor,
 		 * such as setting up the AbilitySystemComponent and the associated AttributeSet.
 		 * This function ensures that the actor has all the necessary components and information to use abilities and manage their attributes effectively.
 		 */
-		/**
-		* Typical Responsibilities of InitAbilityActorInfo
+		/*
+		 * Typical Responsibilities of InitAbilityActorInfo
 	
-		1. Retrieve and Set Player State and Controller References:
+		 1. Retrieve and Set Player State and Controller References:
 			It obtains references to the player state and player controller, which are essential for managing the actor's state and abilities.
 	
-		2. Initialize the Ability System Component:
+		 2. Initialize the Ability System Component:
 			It sets up the AbilitySystemComponent, which is responsible for managing abilities and gameplay effects.
 	
-		3. Set the Attribute Set:
+		 3. Set the Attribute Set:
 			It assigns the AttributeSet to manage various attributes like health, mana, strength, etc.
 	
-		4. Setup Initial Ability Info:
+		 4. Setup Initial Ability Info:
 			It initializes the AbilitySystemComponent with the actor's information, linking it to the player state and the actor itself.
 	
-		5. Initialize any UI-related Components:
+		 5. Initialize any UI-related Components:
 			It can also initialize any UI components related to the ability system, such as updating the HUD with the initial attribute values.
 		 */
 		// Initialize the Ability System Component with actor info
 		PlayerPS->GetAbilitySystemComponent()->InitAbilityActorInfo(PlayerPS, this);
+		// Binding FOnGameplayEffectAppliedDelegate OnGameplayEffectAppliedDelegateToSelf delegate.
+		Cast<UBaseAbilitySystemComponent>(PlayerPS->GetAbilitySystemComponent())->BindOnGameplayEffectAppliedDelegateToSelf();
 		AbilitySystemComponent = PlayerPS->GetAbilitySystemComponent();
 		AttributeSet = PlayerPS->GetAttributeSet();
 

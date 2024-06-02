@@ -29,6 +29,8 @@ void AEnemyCharacter::BeginPlay()
 
 void AEnemyCharacter::InitAbilityActorInfo()
 {
+	Super::InitAbilityActorInfo();
+	
 	/**
 	 * InitAbilityActorInfo is a function typically used in the context of Unreal Engine's Gameplay Ability System (GAS).
 	 * Its primary purpose is to initialize the ability-related information for an actor,
@@ -55,6 +57,8 @@ void AEnemyCharacter::InitAbilityActorInfo()
 	 */
 	check(AbilitySystemComponent);
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
+	// Binding FOnGameplayEffectAppliedDelegate OnGameplayEffectAppliedDelegateToSelf delegate.
+	Cast<UBaseAbilitySystemComponent>(AbilitySystemComponent)->BindOnGameplayEffectAppliedDelegateToSelf();
 }
 
 //Highlight the actor by enabling custom depth rendering with a specific stencil value
