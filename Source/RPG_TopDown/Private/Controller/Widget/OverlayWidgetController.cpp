@@ -79,16 +79,31 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 	 * Localization: The lambda function is defined right where it's used, making it easy to see the relationship between the delegate and its handler.
 	 * Simplicity: No need to define a separate member function if the logic is simple and used only in this context.
 	 * Access to Local Variables: Although this example doesn't capture any local variables, lambdas can capture local state if needed, which can be very convenient.
+	 *
+	 * The square brackets are for captures. If we want to access a member variable from something, then that thing, that class that has the member variable must be captured within the lambda.
+	 * Now we can capture variables, we can capture things by reference, we can capture things by pointer.
+	 * So if you want to call a member function in a lambda, you have to capture that object of the class that that function belongs to.
 	 */
 	// Cast to UBaseAbilitySystemComponent and bind a lambda to the GameplayEffectAssetTags delegate
 	Cast<UBaseAbilitySystemComponent>(AbilitySystemComponent)->GameplayEffectAssetTags.AddLambda(
-		[](const FGameplayTagContainer& GameplayTagContainer)
+		[this](const FGameplayTagContainer& AssetTags)
 		{
 			// Iterate over each GameplayTag in the container and print a message
-			for (const FGameplayTag& Tag : GameplayTagContainer)
+			for (const FGameplayTag& Tag : AssetTags)
 			{
-				const FString Msg = FString::Printf(TEXT("GE Tag: %s"), *Tag.ToString());
-				GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Blue, Msg);
+				// For example, say that Tag = Message.HealthPotion
+				// "Message.HealthPotion".MatchesTag("Message") will return True, "Message".MatchesTag("Message.HealthPotion") will return False
+				FGameplayTag MessageTag = FGameplayTag::RequestGameplayTag(FName("Message"));
+				if (Tag.MatchesTag(MessageTag))
+				{
+					const FGameplayTagMessageInfoRow* MessageInfoRow = GetDataTableRowByTag<FGameplayTagMessageInfoRow>(GameplayTagToUIMessageDataTable, Tag);
+					if (MessageInfoRow)
+					{
+						GameplayTagMessageInfoRowDelegate.Broadcast(*MessageInfoRow);
+					}
+					const FString Msg = FString::Printf(TEXT("GE Tag: %s"), *Tag.ToString());
+					GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Blue, Msg);
+				}
 			}
 		}
 	);
