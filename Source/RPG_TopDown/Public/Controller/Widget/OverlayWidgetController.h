@@ -46,12 +46,7 @@ struct FGameplayTagMessageInfoRow : public FTableRowBase
  */
 // Declaration of dynamic multicast delegates with one float parameter.
 // These will be used to notify listeners about attribute changes in Blueprints.
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthChangedSignature, float, NewHealth);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMaxHealthChangedSignature, float, NewMaxHealth);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnManaChangedSignature, float, NewMana);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMaxManaChangedSignature, float, NewMaxMana);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStaminaChangedSignature, float, NewStamina);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMaxStaminaChangedSignature, float, NewMaxStamina);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedSignature, float, NewValue);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGameplayTagMessageInfoRowSignature, const FGameplayTagMessageInfoRow&, GameplayTagMessageInfoRow);
 
 /**
@@ -75,48 +70,64 @@ public:
 	// Dynamic multicast delegates for broadcasting attribute changes.
 	// These properties can be assigned and bound to events in Blueprints.
 	UPROPERTY(BlueprintAssignable, Category="GAS|Attributes")
-	FOnHealthChangedSignature OnHealthChanged;
+	FOnAttributeChangedSignature OnHealthChanged;
 
 	UPROPERTY(BlueprintAssignable, Category="GAS|Attributes")
-	FOnMaxHealthChangedSignature OnMaxHealthChanged;
+	FOnAttributeChangedSignature OnMaxHealthChanged;
 
 	UPROPERTY(BlueprintAssignable, Category="GAS|Attributes")
-	FOnManaChangedSignature OnManaChanged;
+	FOnAttributeChangedSignature OnManaChanged;
 
 	UPROPERTY(BlueprintAssignable, Category="GAS|Attributes")
-	FOnMaxManaChangedSignature OnMaxManaChanged;
+	FOnAttributeChangedSignature OnMaxManaChanged;
 
 	UPROPERTY(BlueprintAssignable, Category="GAS|Attributes")
-	FOnStaminaChangedSignature OnStaminaChanged;
+	FOnAttributeChangedSignature OnStaminaChanged;
 
 	UPROPERTY(BlueprintAssignable, Category="GAS|Attributes")
-	FOnMaxStaminaChangedSignature OnMaxStaminaChanged;
+	FOnAttributeChangedSignature OnMaxStaminaChanged;
 
 	UPROPERTY(BlueprintAssignable, Category="GAS|Messages")
 	FGameplayTagMessageInfoRowSignature GameplayTagMessageInfoRowDelegate;
 
 protected:
 
+	/** GameplayTags Message Tags */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Widget Data")
 	TObjectPtr<UDataTable> GameplayTagToUIMessageDataTable;
-
+	// A versatile template function that gets rows from any type of data table.
 	template<typename T>
 	T* GetDataTableRowByTag(UDataTable* DataTable, const FGameplayTag& GameplayTag);
-
-	/** Callback functions for specified attribute changes */
-	void HealthChanged(const FOnAttributeChangeData& Data) const;
-	void MaxHealthChanged(const FOnAttributeChangeData& Data) const;
-	void ManaChanged(const FOnAttributeChangeData& Data) const;
-	void MaxManaChanged(const FOnAttributeChangeData& Data) const;
-	void StaminaChanged(const FOnAttributeChangeData& Data) const;
-	void MaxStaminaChanged(const FOnAttributeChangeData& Data) const;
 
 private:
 	
 	// Function to bind attribute change callbacks to the Ability System Component
 	void BindVitalAttributeChangeCallbacks(const UBaseAttributeSet* BaseAttributeSet);
+	// Function to bind GameplayEffectAssetTags to a lambda function
+	void BindGameplayEffectTagMessages();
 };
 
+/*
+ * Template functions are a feature in C++ that allow functions to operate with generic types.
+ * This is achieved through the use of templates, which provide a way to write a single function
+ * (or class) to work with different data types without rewriting the entire function (or class) for each type.
+ *
+ * What is a Template Function?
+ * A template function is a function that can operate on data of any type.
+ * The type is specified when the function is called.
+ * The syntax involves the template keyword followed by template parameters enclosed in angle brackets <>.
+ * 
+ * Why Use Template Functions?
+ * Reusability: Write a function once and use it with different data types.
+ * Type Safety: Provides compile-time type checking, ensuring that only valid types are used.
+ * Maintainability: Easier to maintain since the logic for different data types is encapsulated in a single function definition.
+ *
+ * When to Use Template Functions
+ * Generic Operations: When you need a function to perform operations that are independent of the data type.
+ * Data Structures: Implementing data structures like linked lists, stacks, queues, trees, etc., that should work with any data type.
+ * Code Reusability: When you find yourself writing the same function logic for multiple data types, it's a good candidate for templating.
+ */
+// It finds a row in the data table that matches the given gameplay tag name, and returns a pointer to that row cast to type T.
 template <typename T>
 T* UOverlayWidgetController::GetDataTableRowByTag(UDataTable* DataTable, const FGameplayTag& GameplayTag)
 {
