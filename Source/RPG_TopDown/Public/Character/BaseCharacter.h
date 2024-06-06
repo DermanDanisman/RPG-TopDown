@@ -7,9 +7,12 @@
 #include "AbilitySystemInterface.h"
 #include "BaseCharacter.generated.h"
 
+
 /** Forward Declaring Classes */
 class UAttributeSet;
 class UAbilitySystemComponent;
+class UGameplayEffect;
+
 
 UCLASS()
 class RPG_TOPDOWN_API ABaseCharacter : public ACharacter, public IAbilitySystemInterface // Ability System Specific Interface
@@ -42,4 +45,10 @@ protected:
 	TObjectPtr<UAttributeSet> AttributeSet;
 	
 	virtual void InitAbilityActorInfo();
+
+	/** Gameplay Effect Attributes */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attributes")
+	TSubclassOf<UGameplayEffect> DefaultPrimaryAttributes;
+
+	void InitializePrimaryAttributes() const;
 };

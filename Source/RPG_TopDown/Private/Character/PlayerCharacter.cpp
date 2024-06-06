@@ -117,6 +117,8 @@ void APlayerCharacter::InitAbilityActorInfo()
 				TopDownHUD->InitializeOverlayWidget(PlayerPC, PlayerPS, AbilitySystemComponent, AttributeSet);
 			}
 		}
+
+		InitializePrimaryAttributes();
 	}
 }
 

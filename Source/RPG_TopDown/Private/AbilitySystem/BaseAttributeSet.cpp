@@ -40,7 +40,31 @@ UBaseAttributeSet::UBaseAttributeSet()
 void UBaseAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
     Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-    
+
+	/*
+	 * Primary Attributes
+	 */
+	// Setup replication for Strength attribute
+	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, Strength, COND_None, REPNOTIFY_Always);
+	
+	// Setup replication for Agility attribute
+	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, Agility, COND_None, REPNOTIFY_Always);
+
+	// Setup replication for Intelligence attribute
+	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, Intelligence, COND_None, REPNOTIFY_Always);
+
+	// Setup replication for Endurance attribute
+	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, Endurance, COND_None, REPNOTIFY_Always);
+
+	// Setup replication for Charisma attribute
+	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, Charisma, COND_None, REPNOTIFY_Always);
+
+	// Setup replication for Charisma attribute
+	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, Wisdom, COND_None, REPNOTIFY_Always);
+	
+	/*
+	 * Vital Attributes
+	 */
     // Setup replication for Health attribute
     DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, Health, COND_None, REPNOTIFY_Always);
     
@@ -61,7 +85,7 @@ void UBaseAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 }
 
 /*
- * This function is called before the base value of an Attribute change happens.
+ * PreAttributeBaseChange is called for instant and periodic effects that change the base value.
  * It is triggered by changes to Attributes.
  */
 void UBaseAttributeSet::PreAttributeBaseChange(const FGameplayAttribute& Attribute, float& NewValue) const
@@ -79,6 +103,23 @@ void UBaseAttributeSet::PreAttributeBaseChange(const FGameplayAttribute& Attribu
 	if (Attribute == GetStaminaAttribute())
 	{
 		NewValue = FMath::Clamp(NewValue, 0.f, GetMaxStamina());
+	}
+}
+
+/*
+ * PreAttributeChange is called in all cases and is used to react to final attribute value changes.
+ */
+void UBaseAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
+{
+	Super::PreAttributeChange(Attribute, NewValue);
+
+	if (Attribute == GetMaxHealthAttribute())
+	{
+		SetHealth(FMath::Clamp(GetHealth(), 0.f, NewValue));
+	}	
+	if (Attribute == GetMaxManaAttribute())
+	{
+		SetMana(FMath::Clamp(GetMana(), 0.f, NewValue));
 	}
 }
 
@@ -128,6 +169,7 @@ void UBaseAttributeSet::InitializeEffectExecutionContext(const FGameplayEffectMo
  * This is executed after a gameplay effect changes an attribute, and we have access to a lot of information via this data input parameter.
  * We can access a lot of info based on the effect that was just applied, and we're going to harvest some information from this data parameter.
  * So ultimately, in PostGameplayEffectExecute, we have access to just about every entity involved in this gameplay effect being executed
+ * PostGameplayEffectExecute is called after effect execution, primarily for instant and periodic effects.
  */
 void UBaseAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
 {
@@ -136,7 +178,17 @@ void UBaseAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	// The function is responsible for setting up and populating the FGameplayEffectExecutionContext struct.
 	FGameplayEffectContextDetails GameplayEffectContextDetails;
 	InitializeEffectExecutionContext(Data, GameplayEffectContextDetails);
+
+	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green,
+			FString::Printf(TEXT("Health: %f!"), GetHealth()));
+	}
 }
+
+/*
+ * Vital Attributes
+ */
 
 /*
  * The OnRep_Health function is called on the client when the Health attribute is updated on the server.
@@ -208,4 +260,38 @@ void UBaseAttributeSet::OnRep_MaxStamina(const FGameplayAttributeData& OldMaxSta
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, MaxStamina, OldMaxStamina);
 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue,
 	//	FString::Printf(TEXT("MaxMana has been updated from %f to %f!"), OldMaxStamina.GetCurrentValue(), MaxStamina.GetCurrentValue()));
+}
+
+
+/*
+ * Primary Attributes
+ */
+void UBaseAttributeSet::OnRep_Strength(const FGameplayAttributeData& OldStrength) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, Strength, OldStrength);
+}
+
+void UBaseAttributeSet::OnRep_Agility(const FGameplayAttributeData& OldAgility) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, Agility, OldAgility);
+}
+
+void UBaseAttributeSet::OnRep_Intelligence(const FGameplayAttributeData& OldIntelligence) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, Intelligence, OldIntelligence);
+}
+
+void UBaseAttributeSet::OnRep_Endurance(const FGameplayAttributeData& OldEndurance) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, Endurance, OldEndurance);
+}
+
+void UBaseAttributeSet::OnRep_Charisma(const FGameplayAttributeData& OldCharisma) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, Charisma, OldCharisma);
+}
+
+void UBaseAttributeSet::OnRep_Wisdom(const FGameplayAttributeData& OldWisdom) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, Wisdom, OldWisdom);
 }

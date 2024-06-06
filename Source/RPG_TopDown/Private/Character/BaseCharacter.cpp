@@ -2,6 +2,8 @@
 
 
 #include "Character/BaseCharacter.h"
+
+#include "AbilitySystemComponent.h"
 #include "Components/CapsuleComponent.h"
 
 // Sets default values
@@ -41,5 +43,15 @@ UAttributeSet* ABaseCharacter::GetAttributeSet() const
 void ABaseCharacter::InitAbilityActorInfo()
 {
 	
+}
+
+void ABaseCharacter::InitializePrimaryAttributes() const
+{
+	check(IsValid(GetAbilitySystemComponent()))
+	check(DefaultPrimaryAttributes)
+	
+	const FGameplayEffectContextHandle GameplayEffectContextHandle = GetAbilitySystemComponent()->MakeEffectContext();
+	const FGameplayEffectSpecHandle GameplayEffectSpecHandle = GetAbilitySystemComponent()->MakeOutgoingSpec(DefaultPrimaryAttributes, 1.f, GameplayEffectContextHandle);
+	GetAbilitySystemComponent()->ApplyGameplayEffectSpecToTarget(*GameplayEffectSpecHandle.Data.Get(), GetAbilitySystemComponent());
 }
 

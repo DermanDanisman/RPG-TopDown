@@ -109,7 +109,36 @@ public:
 	* changes that should occur when the variable's value is updated on the client.
 	*/
 
-	/** Gameplay Attribute Data */
+	/** Primary Attributes */
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Strength, Category="Primary Attributes")
+	FGameplayAttributeData Strength;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, Strength);
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Agility, Category="Primary Attributes")
+	FGameplayAttributeData Agility;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, Agility);
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Intelligence, Category="Primary Attributes")
+	FGameplayAttributeData Intelligence;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, Intelligence);
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Endurance, Category="Primary Attributes")
+	FGameplayAttributeData Endurance;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, Endurance);
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Charisma, Category="Primary Attributes")
+	FGameplayAttributeData Charisma;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, Charisma);
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Wisdom, Category="Primary Attributes")
+	FGameplayAttributeData Wisdom;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, Wisdom);
+	
+	
+
+	
+
+	/** Vital Attributes */
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Health, Category="Vital Attributes")
 	FGameplayAttributeData Health;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, Health);
@@ -140,13 +169,24 @@ public:
 	 *	This function should enforce clamping (presuming you wish to clamp the base value along with the final value in PreAttributeChange)
 	 *	This function should NOT invoke gameplay related events or callbacks. Do those in PreAttributeChange() which will be called prior to the
 	 *	final value of the attribute actually changing.
+	 *	PreAttributeBaseChange is called on instant effects or effects with a period since they change the base value (potions, fire, etc.).
+	 *	It is not called on effects with duration/infinite with no period like a buff/debuff
 	 */
 	virtual void PreAttributeBaseChange(const FGameplayAttribute& Attribute, float& NewValue) const override;
+
+	/**
+	 * PreAttributeChange is called in all cases since the final attribute value is changed in each case,
+	 * However the float& NewValue that is passed in parameter is only the final attribute value, not the base value,
+	 * Hence you cannot clamp modifications made to the base value by clamping NewValue here. You can react to it
+	 */
+	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
 
 	/**
 	 *	Called just after a GameplayEffect is executed to modify the base value of an attribute. No more changes can be made.
 	 *	Note this is only called during an 'execute'. E.g., a modification to the 'base value' of an attribute.
 	 *	It is not called during an application of a GameplayEffect, such as a 5 second +10 movement speed buff.
+	 *	PostGameplayEffectExecute is called last and in the same situations as PreAttributeBaseChange.
+	 *	It is not called on effects with duration/infinite with no period like a buff/debuff.
 	 */
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 
@@ -156,10 +196,12 @@ public:
 	 * These functions are declared to handle the changes to Health and Mana.
 	 * They now receive the old value of the attribute as a parameter.
 	 */
-	
+
+	/** Vital Attributes */
 	// Called when the variables are updated on the client side.
 	UFUNCTION()
 	void OnRep_Health(const FGameplayAttributeData& OldHealth) const;
+	
 	// Called when the variables are updated on the client side.
 	UFUNCTION()
 	void OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth) const;
@@ -167,6 +209,7 @@ public:
 	// Called when the variables are updated on the client side.
 	UFUNCTION()
 	void OnRep_Mana(const FGameplayAttributeData& OldMana) const;
+	
 	// Called when the variables are updated on the client side.
 	UFUNCTION()
 	void OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana) const;
@@ -174,9 +217,35 @@ public:
 	// Called when the variables are updated on the client side.
 	UFUNCTION()
 	void OnRep_Stamina(const FGameplayAttributeData& OldStamina) const;
+	
 	// Called when the variables are updated on the client side.
 	UFUNCTION()
 	void OnRep_MaxStamina(const FGameplayAttributeData& OldMaxStamina) const;
+
+	/** Primary Attributes */
+	// Called when the variables are updated on the client side.
+	UFUNCTION()
+	void OnRep_Strength(const FGameplayAttributeData& OldStrength) const;
+	
+	// Called when the variables are updated on the client side.
+	UFUNCTION()
+	void OnRep_Agility(const FGameplayAttributeData& OldAgility) const;
+
+	// Called when the variables are updated on the client side.
+	UFUNCTION()
+	void OnRep_Intelligence(const FGameplayAttributeData& OldIntelligence) const;
+
+	// Called when the variables are updated on the client side.
+	UFUNCTION()
+	void OnRep_Endurance(const FGameplayAttributeData& OldEndurance) const;
+
+	// Called when the variables are updated on the client side.
+	UFUNCTION()
+	void OnRep_Charisma(const FGameplayAttributeData& OldCharisma) const;
+	
+	// Called when the variables are updated on the client side.
+	UFUNCTION()
+	void OnRep_Wisdom(const FGameplayAttributeData& OldWisdom) const;
 
 private:
 
