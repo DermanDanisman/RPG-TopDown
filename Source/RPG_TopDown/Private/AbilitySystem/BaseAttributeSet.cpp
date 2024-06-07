@@ -47,20 +47,65 @@ void UBaseAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	// Setup replication for Strength attribute
 	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, Strength, COND_None, REPNOTIFY_Always);
 	
-	// Setup replication for Agility attribute
-	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, Agility, COND_None, REPNOTIFY_Always);
+	// Setup replication for Dexterity attribute
+	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, Dexterity, COND_None, REPNOTIFY_Always);
 
 	// Setup replication for Intelligence attribute
 	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, Intelligence, COND_None, REPNOTIFY_Always);
 
-	// Setup replication for Endurance attribute
-	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, Endurance, COND_None, REPNOTIFY_Always);
+	// Setup replication for Resilience attribute
+	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, Resilience, COND_None, REPNOTIFY_Always);
+	
+	// Setup replication for Vigor attribute
+	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, Vigor, COND_None, REPNOTIFY_Always);
 
-	// Setup replication for Charisma attribute
-	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, Charisma, COND_None, REPNOTIFY_Always);
+	/*
+	 * Secondary Attributes
+	 */
+	// Setup replication for AttackPower attribute
+	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, AttackPower, COND_None, REPNOTIFY_Always);
 
-	// Setup replication for Charisma attribute
-	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, Wisdom, COND_None, REPNOTIFY_Always);
+	// Setup replication for SpellPower attribute
+	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, SpellPower, COND_None, REPNOTIFY_Always);
+
+	// Setup replication for Armor attribute
+	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, Armor, COND_None, REPNOTIFY_Always);
+
+	// Setup replication for MagicResistance attribute
+	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, MagicResistance, COND_None, REPNOTIFY_Always);
+
+	// Setup replication for ArmorPenetration attribute
+	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, ArmorPenetration, COND_None, REPNOTIFY_Always);
+
+	// Setup replication for CriticalHitChance attribute
+	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, CriticalHitChance, COND_None, REPNOTIFY_Always);
+
+	// Setup replication for CriticalHitDamage attribute
+	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, CriticalHitDamage, COND_None, REPNOTIFY_Always);
+
+	// Setup replication for CriticalHitResistance attribute
+	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, CriticalHitResistance, COND_None, REPNOTIFY_Always);
+
+	// Setup replication for Evasion attribute
+	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, Evasion, COND_None, REPNOTIFY_Always);
+
+	// Setup replication for HealthRegeneration attribute
+	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, HealthRegeneration, COND_None, REPNOTIFY_Always);
+
+	// Setup replication for ManaRegeneration attribute
+	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, ManaRegeneration, COND_None, REPNOTIFY_Always);
+
+	// Setup replication for StaminaRegeneration attribute
+	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, StaminaRegeneration, COND_None, REPNOTIFY_Always);
+
+	// Setup replication for MaxHealth attribute
+	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, MaxHealth, COND_None, REPNOTIFY_Always);
+
+	// Setup replication for MaxMana attribute
+	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, MaxMana, COND_None, REPNOTIFY_Always);
+	
+	// Setup replication for MaxStamina attribute
+	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, MaxStamina, COND_None, REPNOTIFY_Always);
 	
 	/*
 	 * Vital Attributes
@@ -68,20 +113,11 @@ void UBaseAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
     // Setup replication for Health attribute
     DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, Health, COND_None, REPNOTIFY_Always);
     
-    // Setup replication for MaxHealth attribute
-    DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, MaxHealth, COND_None, REPNOTIFY_Always);
-    
     // Setup replication for Mana attribute
     DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, Mana, COND_None, REPNOTIFY_Always);
-    
-    // Setup replication for MaxMana attribute
-    DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, MaxMana, COND_None, REPNOTIFY_Always);
-
+	
 	// Setup replication for Stamina attribute
 	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, Stamina, COND_None, REPNOTIFY_Always);
-    
-	// Setup replication for MaxStamina attribute
-	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, MaxStamina, COND_None, REPNOTIFY_Always);
 }
 
 /*
@@ -198,20 +234,6 @@ void UBaseAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 void UBaseAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth) const
 {
     GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, Health, OldHealth);
-    //GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green,
-       // FString::Printf(TEXT("Health has been updated from %f to %f!"), OldHealth.GetCurrentValue(), Health.GetCurrentValue()));
-}
-
-/*
- * The OnRep_MaxHealth function is called on the client when the MaxHealth attribute is updated on the server.
- * The GAMEPLAYATTRIBUTE_REPNOTIFY macro ensures the attribute is correctly replicated.
- * This function also adds a debug message to display the old and new MaxHealth values.
- */
-void UBaseAttributeSet::OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth) const
-{
-    GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, MaxHealth, OldMaxHealth);
-    //GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green,
-     //   FString::Printf(TEXT("MaxHealth has been updated from %f to %f!"), OldMaxHealth.GetCurrentValue(), MaxHealth.GetCurrentValue()));
 }
 
 /*
@@ -222,20 +244,6 @@ void UBaseAttributeSet::OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHeal
 void UBaseAttributeSet::OnRep_Mana(const FGameplayAttributeData& OldMana) const
 {
     GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, Mana, OldMana);
-   // GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue,
-     //   FString::Printf(TEXT("Mana has been updated from %f to %f!"), OldMana.GetCurrentValue(), Mana.GetCurrentValue()));
-}
-
-/*
- * The OnRep_MaxMana function is called on the client when the MaxMana attribute is updated on the server.
- * The GAMEPLAYATTRIBUTE_REPNOTIFY macro ensures the attribute is correctly replicated.
- * This function also adds a debug message to display the old and new MaxMana values.
- */
-void UBaseAttributeSet::OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana) const
-{
-    GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, MaxMana, OldMaxMana);
-    //GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue,
-     //   FString::Printf(TEXT("MaxMana has been updated from %f to %f!"), OldMaxMana.GetCurrentValue(), MaxMana.GetCurrentValue()));
 }
 
 /*
@@ -246,8 +254,118 @@ void UBaseAttributeSet::OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana) 
 void UBaseAttributeSet::OnRep_Stamina(const FGameplayAttributeData& OldStamina) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, Stamina, OldStamina);
-	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue,
-	//	FString::Printf(TEXT("MaxMana has been updated from %f to %f!"), OldStamina.GetCurrentValue(), Stamina.GetCurrentValue()));
+}
+
+/*
+ * Primary Attributes
+ */
+void UBaseAttributeSet::OnRep_Strength(const FGameplayAttributeData& OldStrength) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, Strength, OldStrength);
+}
+
+void UBaseAttributeSet::OnRep_Dexterity(const FGameplayAttributeData& OldDexterity) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, Dexterity, OldDexterity);
+}
+
+void UBaseAttributeSet::OnRep_Intelligence(const FGameplayAttributeData& OldIntelligence) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, Intelligence, OldIntelligence);
+}
+
+void UBaseAttributeSet::OnRep_Resilience(const FGameplayAttributeData& OldResilience) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, Resilience, OldResilience);
+}
+
+void UBaseAttributeSet::OnRep_Vigor(const FGameplayAttributeData& OldVigor) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, Vigor, OldVigor);
+}
+
+/*
+ * Secondary Attributes
+ */
+
+void UBaseAttributeSet::OnRep_AttackPower(const FGameplayAttributeData& OldAttackPower) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, AttackPower, OldAttackPower);
+}
+
+void UBaseAttributeSet::OnRep_SpellPower(const FGameplayAttributeData& OldSpellPower) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, SpellPower, OldSpellPower);
+}
+
+void UBaseAttributeSet::OnRep_Armor(const FGameplayAttributeData& OldArmor) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, Armor, OldArmor);
+}
+
+void UBaseAttributeSet::OnRep_MagicResistance(const FGameplayAttributeData& OldMagicResistance) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, MagicResistance, OldMagicResistance);
+}
+
+void UBaseAttributeSet::OnRep_ArmorPenetration(const FGameplayAttributeData& OldArmorPenetration) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, ArmorPenetration, OldArmorPenetration);
+}
+
+void UBaseAttributeSet::OnRep_CriticalHitChance(const FGameplayAttributeData& OldCriticalHitChance) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, CriticalHitChance, OldCriticalHitChance);
+}
+
+void UBaseAttributeSet::OnRep_CriticalHitDamage(const FGameplayAttributeData& OldCriticalHitDamage) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, CriticalHitDamage, OldCriticalHitDamage);
+}
+
+void UBaseAttributeSet::OnRep_CriticalHitResistance(const FGameplayAttributeData& OldCriticalHitResistance) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, CriticalHitResistance, OldCriticalHitResistance);
+}
+
+void UBaseAttributeSet::OnRep_Evasion(const FGameplayAttributeData& OldEvasion) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, Evasion, OldEvasion);
+}
+
+void UBaseAttributeSet::OnRep_HealthRegeneration(const FGameplayAttributeData& OldHealthRegeneration) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, HealthRegeneration, OldHealthRegeneration);
+}
+
+void UBaseAttributeSet::OnRep_ManaRegeneration(const FGameplayAttributeData& OldManaRegeneration) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, ManaRegeneration, OldManaRegeneration);
+}
+
+void UBaseAttributeSet::OnRep_StaminaRegeneration(const FGameplayAttributeData& OldStaminaRegeneration) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, StaminaRegeneration, OldStaminaRegeneration);
+}
+
+/*
+ * The OnRep_MaxHealth function is called on the client when the MaxHealth attribute is updated on the server.
+ * The GAMEPLAYATTRIBUTE_REPNOTIFY macro ensures the attribute is correctly replicated.
+ * This function also adds a debug message to display the old and new MaxHealth values.
+ */
+void UBaseAttributeSet::OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, MaxHealth, OldMaxHealth);
+}
+
+/*
+ * The OnRep_MaxMana function is called on the client when the MaxMana attribute is updated on the server.
+ * The GAMEPLAYATTRIBUTE_REPNOTIFY macro ensures the attribute is correctly replicated.
+ * This function also adds a debug message to display the old and new MaxMana values.
+ */
+void UBaseAttributeSet::OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, MaxMana, OldMaxMana);
 }
 
 /*
@@ -258,40 +376,5 @@ void UBaseAttributeSet::OnRep_Stamina(const FGameplayAttributeData& OldStamina) 
 void UBaseAttributeSet::OnRep_MaxStamina(const FGameplayAttributeData& OldMaxStamina) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, MaxStamina, OldMaxStamina);
-	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue,
-	//	FString::Printf(TEXT("MaxMana has been updated from %f to %f!"), OldMaxStamina.GetCurrentValue(), MaxStamina.GetCurrentValue()));
 }
 
-
-/*
- * Primary Attributes
- */
-void UBaseAttributeSet::OnRep_Strength(const FGameplayAttributeData& OldStrength) const
-{
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, Strength, OldStrength);
-}
-
-void UBaseAttributeSet::OnRep_Agility(const FGameplayAttributeData& OldAgility) const
-{
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, Agility, OldAgility);
-}
-
-void UBaseAttributeSet::OnRep_Intelligence(const FGameplayAttributeData& OldIntelligence) const
-{
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, Intelligence, OldIntelligence);
-}
-
-void UBaseAttributeSet::OnRep_Endurance(const FGameplayAttributeData& OldEndurance) const
-{
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, Endurance, OldEndurance);
-}
-
-void UBaseAttributeSet::OnRep_Charisma(const FGameplayAttributeData& OldCharisma) const
-{
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, Charisma, OldCharisma);
-}
-
-void UBaseAttributeSet::OnRep_Wisdom(const FGameplayAttributeData& OldWisdom) const
-{
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, Wisdom, OldWisdom);
-}

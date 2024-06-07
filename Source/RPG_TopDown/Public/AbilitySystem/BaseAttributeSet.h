@@ -109,61 +109,132 @@ public:
 	* changes that should occur when the variable's value is updated on the client.
 	*/
 
-	/** Primary Attributes */
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Strength, Category="Primary Attributes")
-	FGameplayAttributeData Strength;
-	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, Strength);
-
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Agility, Category="Primary Attributes")
-	FGameplayAttributeData Agility;
-	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, Agility);
-
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Intelligence, Category="Primary Attributes")
-	FGameplayAttributeData Intelligence;
-	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, Intelligence);
-
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Endurance, Category="Primary Attributes")
-	FGameplayAttributeData Endurance;
-	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, Endurance);
-
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Charisma, Category="Primary Attributes")
-	FGameplayAttributeData Charisma;
-	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, Charisma);
-
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Wisdom, Category="Primary Attributes")
-	FGameplayAttributeData Wisdom;
-	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, Wisdom);
-	
-	
-
-	
-
-	/** Vital Attributes */
+	/*
+	 * Vital Attributes
+	 */
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Health, Category="Vital Attributes")
 	FGameplayAttributeData Health;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, Health);
 	
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_MaxHealth, Category="Vital Attributes")
-	FGameplayAttributeData MaxHealth;
-	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, MaxHealth);
-	
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Mana, Category="Vital Attributes")
 	FGameplayAttributeData Mana;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, Mana);
-	
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_MaxMana, Category="Vital Attributes")
-	FGameplayAttributeData MaxMana;
-	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, MaxMana);
 
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Stamina, Category="Vital Attributes")
 	FGameplayAttributeData Stamina;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, Stamina);
+
+	/*
+	 * Primary Attributes
+	 */
 	
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_MaxStamina, Category="Vital Attributes")
+	// Strength increases Attack Power
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Strength, Category="Primary Attributes")
+	FGameplayAttributeData Strength;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, Strength);
+
+	// Dexterity increases Critical Hit Chance, Critical Hit Damage, and Evasion
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Dexterity, Category="Primary Attributes")
+	FGameplayAttributeData Dexterity;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, Dexterity);
+
+	// Intelligence increases Spell Power, Spell Critical Hit Damage, Mana Pool, Mana Regeneration, and Magic Resistance
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Intelligence, Category="Primary Attributes")
+	FGameplayAttributeData Intelligence;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, Intelligence);
+
+	// Resilience increases Armor, Armor Penetration, Magic Resistance, CriticalHitChance and Evasion
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Resilience , Category="Primary Attributes")
+	FGameplayAttributeData Resilience ;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, Resilience );
+
+	// Vigor increases Health Pool, Health Regeneration, Stamina and Stamina Regeneration
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Vigor, Category="Primary Attributes")
+	FGameplayAttributeData Vigor;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, Vigor);
+	
+
+	/*
+	 * Secondary Attributes
+	 */
+	// Dependent on Strength and Weapon Damage -- Attack Power = Strength * 2 + Weapon Damage
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_AttackPower, Category="Secondary Attributes")
+	FGameplayAttributeData AttackPower;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, AttackPower);
+
+	// Dependent on Intelligence -- Spell Power = Intelligence * 2
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_SpellPower, Category="Secondary Attributes")
+	FGameplayAttributeData SpellPower;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, SpellPower);
+
+	// Dependent on Resilience -- Armor = Resilience * 1.5
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Armor, Category="Secondary Attributes")
+	FGameplayAttributeData Armor;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, Armor);
+
+	// Dependent on Resilience and Intelligence -- Magic Resistance = Resilience * 1.5 + Intelligence * 0.5
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_MagicResistance, Category="Secondary Attributes")
+	FGameplayAttributeData MagicResistance;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, MagicResistance);
+
+	// Dependent on Resilience -- Armor Penetration = Resilience * 1.2
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_ArmorPenetration, Category="Secondary Attributes")
+	FGameplayAttributeData ArmorPenetration;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, ArmorPenetration);
+
+	// Dependent on Dexterity and Armor Penetration -- Critical Hit Chance = Dexterity * 0.5 + Armor Penetration * 0.2
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_CriticalHitChance, Category="Secondary Attributes")
+	FGameplayAttributeData CriticalHitChance;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, CriticalHitChance);
+
+	// Dependent on Dexterity (Physical Damage) or Intelligence (Magic Damage) -- Critical Hit Damage = Dexterity * 0.3 or Intelligence * 0.4
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_CriticalHitDamage, Category="Secondary Attributes")
+	FGameplayAttributeData CriticalHitDamage;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, CriticalHitDamage);
+
+	// Dependent on Armor -- Critical Hit Resistance = Armor * 0.3
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_CriticalHitResistance, Category="Secondary Attributes")
+	FGameplayAttributeData CriticalHitResistance;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, CriticalHitResistance);
+
+	// Dependent on Dexterity and Resilience -- Evasion = Dexterity * 0.3 + Resilience * 0.2
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Evasion, Category="Secondary Attributes")
+	FGameplayAttributeData Evasion;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, Evasion);
+
+	// Dependent on Vigor -- Health Regeneration = Vigor * 0.5
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_HealthRegeneration, Category="Secondary Attributes")
+	FGameplayAttributeData HealthRegeneration;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, HealthRegeneration);
+
+	// Dependent on Intelligence -- Mana Regeneration = Intelligence * 0.5
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_ManaRegeneration, Category="Secondary Attributes")
+	FGameplayAttributeData ManaRegeneration;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, ManaRegeneration);
+
+	// Dependent on Vigor -- Stamina Regeneration = Vigor * 0.5
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_StaminaRegeneration, Category="Secondary Attributes")
+	FGameplayAttributeData StaminaRegeneration;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, StaminaRegeneration);
+	
+	// Dependent on Vigor -- Max Health = Vigor * 10
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_MaxHealth, Category="Secondary Attributes")
+	FGameplayAttributeData MaxHealth;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, MaxHealth);
+
+	// Dependent on Intelligence -- Max Mana = Intelligence * 10
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_MaxMana, Category="Secondary Attributes")
+	FGameplayAttributeData MaxMana;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, MaxMana);
+
+	// Dependent on Vigor -- Max Stamina = Vigor * 10
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_MaxStamina, Category="Secondary Attributes")
 	FGameplayAttributeData MaxStamina;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, MaxStamina);
 
-	/** Attribute Set Virtual Functions */
+	/*
+	 * Attribute Virtual Functions
+	 */
 	/**
 	 *	This is called just before any modification happens to an attribute's base value when an attribute aggregator exists.
 	 *	This function should enforce clamping (presuming you wish to clamp the base value along with the final value in PreAttributeChange)
@@ -191,20 +262,21 @@ public:
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 
 
-	/** OnRep Attribute Functions */
+	/*
+	 * OnRep Attribute Functions
+	 */
+	
 	/*
 	 * These functions are declared to handle the changes to Health and Mana.
 	 * They now receive the old value of the attribute as a parameter.
 	 */
 
-	/** Vital Attributes */
+	/*
+	 * Vital Attributes
+	 */
 	// Called when the variables are updated on the client side.
 	UFUNCTION()
 	void OnRep_Health(const FGameplayAttributeData& OldHealth) const;
-	
-	// Called when the variables are updated on the client side.
-	UFUNCTION()
-	void OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth) const;
 	
 	// Called when the variables are updated on the client side.
 	UFUNCTION()
@@ -212,24 +284,18 @@ public:
 	
 	// Called when the variables are updated on the client side.
 	UFUNCTION()
-	void OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana) const;
-	
-	// Called when the variables are updated on the client side.
-	UFUNCTION()
 	void OnRep_Stamina(const FGameplayAttributeData& OldStamina) const;
-	
-	// Called when the variables are updated on the client side.
-	UFUNCTION()
-	void OnRep_MaxStamina(const FGameplayAttributeData& OldMaxStamina) const;
 
-	/** Primary Attributes */
+	/*
+	 * Primary Attributes
+	 */
 	// Called when the variables are updated on the client side.
 	UFUNCTION()
 	void OnRep_Strength(const FGameplayAttributeData& OldStrength) const;
 	
 	// Called when the variables are updated on the client side.
 	UFUNCTION()
-	void OnRep_Agility(const FGameplayAttributeData& OldAgility) const;
+	void OnRep_Dexterity(const FGameplayAttributeData& OldDexterity) const;
 
 	// Called when the variables are updated on the client side.
 	UFUNCTION()
@@ -237,15 +303,59 @@ public:
 
 	// Called when the variables are updated on the client side.
 	UFUNCTION()
-	void OnRep_Endurance(const FGameplayAttributeData& OldEndurance) const;
+	void OnRep_Resilience (const FGameplayAttributeData& OldResilience ) const;
 
 	// Called when the variables are updated on the client side.
 	UFUNCTION()
-	void OnRep_Charisma(const FGameplayAttributeData& OldCharisma) const;
-	
-	// Called when the variables are updated on the client side.
+	void OnRep_Vigor(const FGameplayAttributeData& OldVigor) const;
+
+	/*
+	 * Secondary Attributes
+	 */
 	UFUNCTION()
-	void OnRep_Wisdom(const FGameplayAttributeData& OldWisdom) const;
+	void OnRep_AttackPower(const FGameplayAttributeData& OldAttackPower) const;
+
+	UFUNCTION()
+	void OnRep_SpellPower(const FGameplayAttributeData& OldSpellPower) const;
+
+	UFUNCTION()
+	void OnRep_Armor(const FGameplayAttributeData& OldArmor) const;
+
+	UFUNCTION()
+	void OnRep_MagicResistance(const FGameplayAttributeData& OldMagicResistance) const;
+
+	UFUNCTION()
+	void OnRep_ArmorPenetration(const FGameplayAttributeData& OldArmorPenetration) const;
+
+	UFUNCTION()
+	void OnRep_CriticalHitChance(const FGameplayAttributeData& OldCriticalHitChance) const;
+
+	UFUNCTION()
+	void OnRep_CriticalHitDamage(const FGameplayAttributeData& OldCriticalHitDamage) const;
+
+	UFUNCTION()
+	void OnRep_CriticalHitResistance(const FGameplayAttributeData& OldCriticalHitResistance) const;
+
+	UFUNCTION()
+	void OnRep_Evasion(const FGameplayAttributeData& OldEvasion) const;
+
+	UFUNCTION()
+	void OnRep_HealthRegeneration(const FGameplayAttributeData& OldHealthRegeneration) const;
+
+	UFUNCTION()
+	void OnRep_ManaRegeneration(const FGameplayAttributeData& OldManaRegeneration) const;
+
+	UFUNCTION()
+	void OnRep_StaminaRegeneration(const FGameplayAttributeData& OldStaminaRegeneration) const;
+
+	UFUNCTION()
+	void OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth) const;
+
+	UFUNCTION()
+	void OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana) const;
+	
+	UFUNCTION()
+	void OnRep_MaxStamina(const FGameplayAttributeData& OldMaxStamina) const;
 
 private:
 
