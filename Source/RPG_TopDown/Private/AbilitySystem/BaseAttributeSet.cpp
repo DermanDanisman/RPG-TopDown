@@ -119,8 +119,6 @@ void UBaseAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
  */
 void UBaseAttributeSet::PreAttributeBaseChange(const FGameplayAttribute& Attribute, float& NewValue) const
 {
-	Super::PreAttributeBaseChange(Attribute, NewValue);
-
 	// Clamping Vital Attributes
 	if (Attribute == GetHealthAttribute())
 	{
@@ -143,7 +141,7 @@ void UBaseAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, 
 {
 	Super::PreAttributeChange(Attribute, NewValue);
 
-	if (Attribute == GetMaxHealthAttribute())
+	/*if (Attribute == GetMaxHealthAttribute())
 	{
 		SetHealth(FMath::Clamp(GetHealth(), 0.f, NewValue));
 	}	
@@ -154,7 +152,7 @@ void UBaseAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, 
 	if (Attribute == GetMaxStaminaAttribute())
 	{
 		SetMana(FMath::Clamp(GetStamina(), 0.f, NewValue));
-	}
+	}*/
 }
 
 /*

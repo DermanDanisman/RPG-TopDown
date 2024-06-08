@@ -54,7 +54,12 @@ void ABaseCharacter::ApplyEffectToSelf(const TSubclassOf<UGameplayEffect>& Gamep
     
 	// Create a context handle for the gameplay effect
 	// Context Handle: Contains contextual information about the gameplay effect, such as its source and target.
-	const FGameplayEffectContextHandle GameplayEffectContextHandle = GetAbilitySystemComponent()->MakeEffectContext();
+	FGameplayEffectContextHandle GameplayEffectContextHandle = GetAbilitySystemComponent()->MakeEffectContext();
+	
+	// Because the object itself, which will be our character in this case, or in the case of the enemy,
+	// the source object is the class that has the implemented interface function get player level from our combat interface.
+	// So that's why we need to use the character itself.
+	GameplayEffectContextHandle.AddSourceObject(this);
     
 	// Create a specification handle for the gameplay effect
 	// Spec Handle: Specifies the details of the gameplay effect, such as its magnitude, duration, and context.
