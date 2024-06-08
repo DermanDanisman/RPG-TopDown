@@ -19,17 +19,7 @@
 
 UBaseAttributeSet::UBaseAttributeSet()
 {
-	/*
-	 * Even though I didn't create an init health function,
-	 * I used my attribute accessors macro in header file which calls these four macros,
-	 * one of which creates the INITTER and by default that's called init health.
-	 */
-	InitHealth(50.f);
-	InitMaxHealth(100.f);
-	InitMana(25.f);
-	InitMaxMana(50.f);
-	InitStamina(50.f);
-	InitMaxStamina(100.f);
+
 }
 
 /*
@@ -89,6 +79,9 @@ void UBaseAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	// Setup replication for Evasion attribute
 	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, Evasion, COND_None, REPNOTIFY_Always);
 
+	// Setup replication for MovementSpeed attribute
+	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, MovementSpeed, COND_None, REPNOTIFY_Always);
+
 	// Setup replication for HealthRegeneration attribute
 	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, HealthRegeneration, COND_None, REPNOTIFY_Always);
 
@@ -128,6 +121,7 @@ void UBaseAttributeSet::PreAttributeBaseChange(const FGameplayAttribute& Attribu
 {
 	Super::PreAttributeBaseChange(Attribute, NewValue);
 
+	// Clamping Vital Attributes
 	if (Attribute == GetHealthAttribute())
 	{
 		NewValue = FMath::Clamp(NewValue, 0.f, GetMaxHealth());
@@ -156,6 +150,10 @@ void UBaseAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, 
 	if (Attribute == GetMaxManaAttribute())
 	{
 		SetMana(FMath::Clamp(GetMana(), 0.f, NewValue));
+	}
+	if (Attribute == GetMaxStaminaAttribute())
+	{
+		SetMana(FMath::Clamp(GetStamina(), 0.f, NewValue));
 	}
 }
 
@@ -210,6 +208,20 @@ void UBaseAttributeSet::InitializeEffectExecutionContext(const FGameplayEffectMo
 void UBaseAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
 {
 	Super::PostGameplayEffectExecute(Data);
+
+	// Clamping Vital Attributes
+	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
+	{
+		SetHealth(FMath::Clamp(GetHealth(), 0.f, GetMaxHealth()));
+	}
+	if (Data.EvaluatedData.Attribute == GetManaAttribute())
+	{
+		SetMana(FMath::Clamp(GetMana(), 0.f, GetMaxMana()));
+	}
+	if (Data.EvaluatedData.Attribute == GetStaminaAttribute())
+	{
+		SetStamina(FMath::Clamp(GetStamina(), 0.f, GetMaxStamina()));
+	}
 
 	// The function is responsible for setting up and populating the FGameplayEffectExecutionContext struct.
 	FGameplayEffectContextDetails GameplayEffectContextDetails;
@@ -331,6 +343,11 @@ void UBaseAttributeSet::OnRep_CriticalHitResistance(const FGameplayAttributeData
 void UBaseAttributeSet::OnRep_Evasion(const FGameplayAttributeData& OldEvasion) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, Evasion, OldEvasion);
+}
+
+void UBaseAttributeSet::OnRep_MovementSpeed(const FGameplayAttributeData& OldMovementSpeed) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, MovementSpeed, OldMovementSpeed);
 }
 
 void UBaseAttributeSet::OnRep_HealthRegeneration(const FGameplayAttributeData& OldHealthRegeneration) const

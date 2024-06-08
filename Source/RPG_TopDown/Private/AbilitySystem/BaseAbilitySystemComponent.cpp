@@ -44,5 +44,5 @@ void UBaseAbilitySystemComponent::EffectAppliedToSelf(UAbilitySystemComponent* A
 	 */
 	//GameplayEffectSpec.GetAllGrantedTags(GameplayGrantedTagContainer);
 
-	GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, FString::Printf(TEXT("Effect Applied!")));
+	//GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, FString::Printf(TEXT("Effect Applied!")));
 }

@@ -45,13 +45,30 @@ void ABaseCharacter::InitAbilityActorInfo()
 	
 }
 
-void ABaseCharacter::InitializePrimaryAttributes() const
+// This function applies a gameplay effect to the character itself.
+void ABaseCharacter::ApplyEffectToSelf(const TSubclassOf<UGameplayEffect>& GameplayEffectClass, const float Level) const
 {
+	// Ensure that the AbilitySystemComponent and GameplayEffectClass are valid
 	check(IsValid(GetAbilitySystemComponent()))
-	check(DefaultPrimaryAttributes)
-	
+	check(GameplayEffectClass)
+    
+	// Create a context handle for the gameplay effect
+	// Context Handle: Contains contextual information about the gameplay effect, such as its source and target.
 	const FGameplayEffectContextHandle GameplayEffectContextHandle = GetAbilitySystemComponent()->MakeEffectContext();
-	const FGameplayEffectSpecHandle GameplayEffectSpecHandle = GetAbilitySystemComponent()->MakeOutgoingSpec(DefaultPrimaryAttributes, 1.f, GameplayEffectContextHandle);
+    
+	// Create a specification handle for the gameplay effect
+	// Spec Handle: Specifies the details of the gameplay effect, such as its magnitude, duration, and context.
+	const FGameplayEffectSpecHandle GameplayEffectSpecHandle = GetAbilitySystemComponent()->MakeOutgoingSpec(GameplayEffectClass, Level, GameplayEffectContextHandle);
+    
+	// Apply the gameplay effect to the target, which in this case is the character itself
 	GetAbilitySystemComponent()->ApplyGameplayEffectSpecToTarget(*GameplayEffectSpecHandle.Data.Get(), GetAbilitySystemComponent());
+}
+
+// This function initializes the character's default attributes by applying primary and secondary attribute effects to the character.
+void ABaseCharacter::InitializeDefaultAttributes() const
+{
+	ApplyEffectToSelf(DefaultPrimaryAttributes, 1.f);
+	ApplyEffectToSelf(DefaultSecondaryAttributes, 1.f);
+	ApplyEffectToSelf(DefaultVitalAttributes, 1.f);
 }
 

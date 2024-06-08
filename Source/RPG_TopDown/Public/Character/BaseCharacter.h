@@ -47,8 +47,22 @@ protected:
 	virtual void InitAbilityActorInfo();
 
 	/** Gameplay Effect Attributes */
+
+	// This function applies a gameplay effect to the character itself.
+	void ApplyEffectToSelf(const TSubclassOf<UGameplayEffect>& GameplayEffectClass, float Level) const;
+
+	// This function initializes the character's default attributes by applying primary and secondary attribute effects to the character.
+	void InitializeDefaultAttributes() const;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attributes")
 	TSubclassOf<UGameplayEffect> DefaultPrimaryAttributes;
 
-	void InitializePrimaryAttributes() const;
+	// Initialize Secondary Attributes after the Primary Attributes become Secondary Attributes are dependent on Primary Attributes
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attributes")
+	TSubclassOf<UGameplayEffect> DefaultSecondaryAttributes;
+
+	// Initialize Secondary Attributes after the Primary Attributes become Secondary Attributes are dependent on Primary Attributes
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attributes")
+	TSubclassOf<UGameplayEffect> DefaultVitalAttributes;
+
 };

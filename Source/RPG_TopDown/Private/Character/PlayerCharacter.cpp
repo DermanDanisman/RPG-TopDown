@@ -118,7 +118,8 @@ void APlayerCharacter::InitAbilityActorInfo()
 			}
 		}
 
-		InitializePrimaryAttributes();
+		// This function initializes the character's default attributes by applying primary and secondary attribute effects to the character.
+		InitializeDefaultAttributes();
 	}
 }
 
