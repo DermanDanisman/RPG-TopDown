@@ -6,11 +6,12 @@
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
 #include "AbilitySystem/BaseAttributeSet.h"
+#include "Net/UnrealNetwork.h"
 
 ATopDownPlayerState::ATopDownPlayerState()
 {
     // Sets the frequency at which this actor's network updates are sent to the clients.
-    /** This sets the frequency at which this actor's network updates are sent to the clients.
+    /* This sets the frequency at which this actor's network updates are sent to the clients.
      * Higher values mean more frequent updates, which can improve the accuracy of the data at the cost of increased network traffic.
      * A value of 100 is quite high, which means updates are sent frequently.
      */
@@ -22,7 +23,7 @@ ATopDownPlayerState::ATopDownPlayerState()
     AbilitySystemComponent->SetIsReplicated(true);
     // Set the replication mode to Mixed
     AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
-	/** ### `SetReplicationMode` and `EGameplayEffectReplicationMode`
+	/* ### `SetReplicationMode` and `EGameplayEffectReplicationMode`
 
     In Unreal Engine, the `SetReplicationMode` function and `EGameplayEffectReplicationMode` enumeration are used within the Gameplay Ability System (GAS)
     to control how gameplay effects are replicated over the network. This can have significant impacts on network performance and gameplay accuracy.
@@ -124,6 +125,17 @@ ATopDownPlayerState::ATopDownPlayerState()
     AttributeSet = CreateDefaultSubobject<UBaseAttributeSet>("AttributeSet");
 }
 
+void ATopDownPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+    DOREPLIFETIME(ATopDownPlayerState, Level);
+}
+
+void ATopDownPlayerState::OnRep_Level(int32 OldLevel)
+{
+    
+}
 
 // Get the Ability System Component associated with this player state
 //@return Pointer to the UAbilitySystemComponent
@@ -138,3 +150,4 @@ UAttributeSet* ATopDownPlayerState::GetAttributeSet() const
 {
     return AttributeSet;
 }
+

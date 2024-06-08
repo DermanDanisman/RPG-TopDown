@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h"
+#include "Interface/Interaction/CombatInterface.h"
 #include "BaseCharacter.generated.h"
 
 
@@ -15,7 +16,7 @@ class UGameplayEffect;
 
 
 UCLASS()
-class RPG_TOPDOWN_API ABaseCharacter : public ACharacter, public IAbilitySystemInterface // Ability System Specific Interface
+class RPG_TOPDOWN_API ABaseCharacter : public ACharacter, public IAbilitySystemInterface, public ICombatInterface
 {
 	GENERATED_BODY()
 

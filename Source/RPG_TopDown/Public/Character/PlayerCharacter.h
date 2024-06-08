@@ -34,6 +34,9 @@ public:
 	virtual void HighlightActor() override;
 	virtual void UnHighlightActor() override;
 
+	/** Combat Interface */
+	virtual int32 GetCharacterLevel() override;
+	
 	/** Camera Movement Interface */
 	virtual void CameraZoom(float ActionInput) override;
 	virtual void RotateCamera(float ActionInput) override;

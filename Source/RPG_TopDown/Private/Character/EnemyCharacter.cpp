@@ -83,3 +83,9 @@ void AEnemyCharacter::UnHighlightActor()
 	// Disable custom depth rendering for the weapon mesh
 	WeaponMesh->SetRenderCustomDepth(false);
 }
+
+// Getting Enemy Character Level
+int32 AEnemyCharacter::GetCharacterLevel()
+{
+	return Level;
+}

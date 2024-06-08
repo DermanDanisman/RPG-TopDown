@@ -146,6 +146,13 @@ void APlayerCharacter::UnHighlightActor()
 	WeaponMesh->SetRenderCustomDepth(false);
 }
 
+// Getting current Player Level
+int32 APlayerCharacter::GetCharacterLevel()
+{
+	check(PlayerPS);
+	return PlayerPS->GetPlayerLevel();
+}
+
 // Camera zoom
 void APlayerCharacter::CameraZoom(float ActionInput)
 {

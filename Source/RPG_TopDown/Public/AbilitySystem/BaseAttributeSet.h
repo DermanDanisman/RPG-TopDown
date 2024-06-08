@@ -112,15 +112,18 @@ public:
 	/*
 	 * Vital Attributes
 	 */
-	
+
+	// The current amount of health the character has. 
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Health, Category="Vital Attributes")
 	FGameplayAttributeData Health;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, Health);
-	
+
+	// The current amount of mana the character has. 
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Mana, Category="Vital Attributes")
 	FGameplayAttributeData Mana;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, Mana);
 
+	// The current amount of stamina the character has.
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Stamina, Category="Vital Attributes")
 	FGameplayAttributeData Stamina;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, Stamina);
