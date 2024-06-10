@@ -16,6 +16,8 @@ struct FTopDownGameplayTags
 public:
  static const FTopDownGameplayTags& Get() { return GameplayTags; }
  static void InitializeNativeGameplayTags();
+
+ FGameplayTag Attributes_Secondary_Armor;
 protected:
 
 private:

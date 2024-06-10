@@ -8,6 +8,8 @@ FTopDownGameplayTags FTopDownGameplayTags::GameplayTags;
 
 void FTopDownGameplayTags::InitializeNativeGameplayTags()
 {
-	UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.Armor"),
+	GameplayTags.Attributes_Secondary_Armor = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.Armor"),
 		FString("Provides physical damage mitigation, reducing the damage taken from physical attacks. "));
+
+	
 }
