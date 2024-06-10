@@ -5,12 +5,35 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 
+/*
+ * What is the Singleton Pattern?
+ * The singleton pattern is a design pattern that restricts the instantiation of a class to one "single" instance.
+ * This is useful when exactly one object is needed to coordinate actions across the system.
+ */
+
 /**
  * TopDownGameplayTags
  * Singleton containing native GameplayTags
  * We're going to design this in a specific way with a singleton.
  * What you do is you create a static getter function, so you don't need an instance of the class to exist
  */
+
+/**
+ * Purpose:
+ * The TopDownGameplayTags class is designed to centralize the management of gameplay tags within our project.
+ * It ensures that all tags are consistent and easily accessible throughout our codebase.
+ *
+ * Implementation:
+ * Singleton Pattern: This class uses the singleton pattern to ensure that only one instance of TopDownGameplayTags exists at any given time.
+ * This is crucial for maintaining a single source of truth for your gameplay tags.
+ *
+ * Initialization: The class provides a method to initialize and request gameplay tags.
+ * It ensures that all necessary tags are loaded and available for use when the game starts.
+ *
+ * Gameplay Tags: The class defines and requests various gameplay tags that are used throughout the game.
+ * This approach avoids hardcoding tag strings in multiple places, reducing the risk of typos and making the code easier to maintain.
+ */
+
 struct FTopDownGameplayTags
 {
 public:
