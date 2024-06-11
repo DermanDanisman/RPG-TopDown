@@ -9,7 +9,7 @@
 #include "PlayerCharacter.generated.h"
 
 
-/* Forward Declaring Classes */
+/* Forward Declaration */
 class UCameraComponent;
 class USpringArmComponent;
 class ATopDownPlayerState;

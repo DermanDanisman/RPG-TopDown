@@ -7,7 +7,7 @@
 #include "UObject/NoExportTypes.h"
 #include "BaseWidgetController.generated.h"
 
-/* Forward Declaring Classes */
+/* Forward Declaration */
 class UAttributeSet;
 class UAbilitySystemComponent;
 

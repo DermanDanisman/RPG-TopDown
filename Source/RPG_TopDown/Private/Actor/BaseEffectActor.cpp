@@ -96,7 +96,7 @@ void ABaseEffectActor::ApplyGameplayEffectToTarget(AActor* Target, const FApplie
 	 */
 	const int EffectCount = TargetAbilitySystemComponent->GetGameplayEffectCount(AppliedGameplayEffectProperties.GameplayEffectClass, TargetAbilitySystemComponent);
 	const FString ClassName = AppliedGameplayEffectProperties.GameplayEffectClass->GetName();
-	GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Green, FString::Printf(TEXT("Active Effect Name and Count: %s and %d"), *ClassName, EffectCount));
+	//GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Green, FString::Printf(TEXT("Active Effect Name and Count: %s and %d"), *ClassName, EffectCount));
 }
 
 void ABaseEffectActor::RemoveGameplayEffectFromTarget(AActor* TargetActor, const FAppliedGameplayEffectProperties& AppliedGameplayEffectProperties)
@@ -115,7 +115,7 @@ void ABaseEffectActor::RemoveGameplayEffectFromTarget(AActor* TargetActor, const
 	 */
 	const int EffectCount = TargetAbilitySystemComponent->GetGameplayEffectCount(AppliedGameplayEffectProperties.GameplayEffectClass, TargetAbilitySystemComponent);
 	const FString ClassName = AppliedGameplayEffectProperties.GameplayEffectClass->GetName();
-	GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, FString::Printf(TEXT("Active Effect Name and Count: %s and %d"), *ClassName, EffectCount));
+	//GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, FString::Printf(TEXT("Active Effect Name and Count: %s and %d"), *ClassName, EffectCount));
 }
 
 void ABaseEffectActor::ApplyAllGameplayEffects(AActor* TargetActor, const EEffectApplicationPolicy& EffectApplicationPolicy)

@@ -27,7 +27,7 @@
  * ApplyGameplayEffectSpecToSelf: Applies the healing effect to the player character.
  */
 
-/** Forward Declaring Classes */
+/* Forward Declaration */
 class USphereComponent;
 class UGameplayEffect;
 class UAbilitySystemComponent;

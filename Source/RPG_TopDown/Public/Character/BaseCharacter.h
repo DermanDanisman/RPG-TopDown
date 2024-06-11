@@ -9,7 +9,7 @@
 #include "BaseCharacter.generated.h"
 
 
-/** Forward Declaring Classes */
+/* Forward Declaration */
 class UAttributeSet;
 class UAbilitySystemComponent;
 class UGameplayEffect;

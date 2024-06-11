@@ -7,12 +7,12 @@
 #include "GameFramework/PlayerController.h"
 #include "PlayerCharacterController.generated.h"
 
-class ICameraMovementInterface;
-/** Forward Declaring Classes */
+
+/* Forward Declaration */
 class UInputMappingContext;
 class UInputAction;
 class IHighlightActorInterface;
-/** Forward Declaring Structs */
+class ICameraMovementInterface;
 struct FInputActionValue;
 
 /**

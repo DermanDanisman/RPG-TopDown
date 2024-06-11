@@ -3,9 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AttributeSet.h"
 #include "GameplayTagContainer.h"
 #include "Engine/DataAsset.h"
 #include "AttributeInfoDataAsset.generated.h"
+
 
 USTRUCT(BlueprintType)
 struct FTopDownAttributeInfo
@@ -20,10 +22,13 @@ struct FTopDownAttributeInfo
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FText AttributeDescription = FText();
-	
+
+	// Set from C++ only
 	UPROPERTY(BlueprintReadOnly)
 	float AttributeValue = 0.f;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FGameplayAttribute AttributeGetter;
 	
 };
 
@@ -42,6 +47,6 @@ public:
 	// We have a function we can call, and it's a public function that we can simply pass in a tag to and receive the attribute info.
 	FTopDownAttributeInfo FindAttributeInfoForTag(const FGameplayTag& AttributeTag, bool bLogNotFound = false) const;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(TitleProperty="{AttributeName}"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(TitleProperty="AttributeName"))
 	TArray<FTopDownAttributeInfo> AttributeInformation;
 };

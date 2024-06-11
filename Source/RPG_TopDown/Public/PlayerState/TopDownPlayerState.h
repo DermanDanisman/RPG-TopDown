@@ -7,7 +7,7 @@
 #include "GameFramework/PlayerState.h"
 #include "TopDownPlayerState.generated.h"
 
-/** Forward Declaring Classes */
+/* Forward Declaration */
 class UAttributeSet;
 class UAbilitySystemComponent;
 

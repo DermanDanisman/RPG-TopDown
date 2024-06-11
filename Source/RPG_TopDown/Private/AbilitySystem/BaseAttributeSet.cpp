@@ -7,6 +7,7 @@
 #include "GameplayEffectExtension.h"
 #include "GameFramework/Character.h"
 #include "Net/UnrealNetwork.h"
+#include "TopDownGameplayTags.h"
 
 	/*
 	 * GAMEPLAYATTRIBUTE_REPNOTIFY macro handles the boilerplate code for notifying clients of attribute changes.
@@ -19,7 +20,6 @@
 
 UBaseAttributeSet::UBaseAttributeSet()
 {
-
 }
 
 /*
@@ -224,12 +224,6 @@ void UBaseAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	// The function is responsible for setting up and populating the FGameplayEffectExecutionContext struct.
 	FGameplayEffectContextDetails GameplayEffectContextDetails;
 	InitializeEffectExecutionContext(Data, GameplayEffectContextDetails);
-
-	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green,
-			FString::Printf(TEXT("Health: %f!"), GetHealth()));
-	}
 }
 
 /*

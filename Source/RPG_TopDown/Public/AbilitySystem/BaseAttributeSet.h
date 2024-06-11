@@ -85,6 +85,43 @@ public:
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+	/*
+	 * Attribute Virtual Functions
+	 */
+	/**
+	 *	This is called just before any modification happens to an attribute's base value when an attribute aggregator exists.
+	 *	This function should enforce clamping (presuming you wish to clamp the base value along with the final value in PreAttributeChange)
+	 *	This function should NOT invoke gameplay related events or callbacks. Do those in PreAttributeChange() which will be called prior to the
+	 *	final value of the attribute actually changing.
+	 *	PreAttributeBaseChange is called on instant effects or effects with a period since they change the base value (potions, fire, etc.).
+	 *	It is not called on effects with duration/infinite with no period like a buff/debuff
+	 */
+	virtual void PreAttributeBaseChange(const FGameplayAttribute& Attribute, float& NewValue) const override;
+
+	/**
+	 * PreAttributeChange is called in all cases since the final attribute value is changed in each case,
+	 * However the float& NewValue that is passed in parameter is only the final attribute value, not the base value,
+	 * Hence you cannot clamp modifications made to the base value by clamping NewValue here. You can react to it
+	 */
+	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
+
+	/**
+	 *	Called just after a GameplayEffect is executed to modify the base value of an attribute. No more changes can be made.
+	 *	Note this is only called during an 'execute'. E.g., a modification to the 'base value' of an attribute.
+	 *	It is not called during an application of a GameplayEffect, such as a 5 second +10 movement speed buff.
+	 *	PostGameplayEffectExecute is called last and in the same situations as PreAttributeBaseChange.
+	 *	It is not called on effects with duration/infinite with no period like a buff/debuff.
+	 */
+	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
+	
+
+#pragma region Attributes
+	
+#pragma region Primary Attributes	
+	/*
+	 * Primary Attributes
+	 */
+
 	/**
 	 * Most of our attributes are going to be replicated.
 	 * There will be a couple of exceptions, and we'll get to those, but we want our variable to be replicated to all clients.
@@ -108,10 +145,6 @@ public:
 	* Handling: This function, known as the "RepNotify" function, is used to handle any necessary updates or
 	* changes that should occur when the variable's value is updated on the client.
 	*/
-
-	/*
-	 * Primary Attributes
-	 */
 
 	// Strength: Increases physical attack power.
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Strength, Category="Primary Attributes")
@@ -137,8 +170,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Vigor, Category="Primary Attributes")
 	FGameplayAttributeData Vigor;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, Vigor);
+#pragma endregion
 
-
+#pragma region Secondary Attributes
 	/*
 	 * Secondary Attributes
 	 */
@@ -238,7 +272,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_MaxStamina, Category="Secondary Attributes")
 	FGameplayAttributeData MaxStamina;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, MaxStamina);
+#pragma endregion	
 
+#pragma region Vital Attributes
 	/*
 	 * Vital Attributes
 	 */
@@ -257,37 +293,10 @@ public:
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Stamina, Category="Vital Attributes")
 	FGameplayAttributeData Stamina;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, Stamina);
+#pragma endregion 
+#pragma endregion
 
-	/*
-	 * Attribute Virtual Functions
-	 */
-	/**
-	 *	This is called just before any modification happens to an attribute's base value when an attribute aggregator exists.
-	 *	This function should enforce clamping (presuming you wish to clamp the base value along with the final value in PreAttributeChange)
-	 *	This function should NOT invoke gameplay related events or callbacks. Do those in PreAttributeChange() which will be called prior to the
-	 *	final value of the attribute actually changing.
-	 *	PreAttributeBaseChange is called on instant effects or effects with a period since they change the base value (potions, fire, etc.).
-	 *	It is not called on effects with duration/infinite with no period like a buff/debuff
-	 */
-	virtual void PreAttributeBaseChange(const FGameplayAttribute& Attribute, float& NewValue) const override;
-
-	/**
-	 * PreAttributeChange is called in all cases since the final attribute value is changed in each case,
-	 * However the float& NewValue that is passed in parameter is only the final attribute value, not the base value,
-	 * Hence you cannot clamp modifications made to the base value by clamping NewValue here. You can react to it
-	 */
-	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
-
-	/**
-	 *	Called just after a GameplayEffect is executed to modify the base value of an attribute. No more changes can be made.
-	 *	Note this is only called during an 'execute'. E.g., a modification to the 'base value' of an attribute.
-	 *	It is not called during an application of a GameplayEffect, such as a 5 second +10 movement speed buff.
-	 *	PostGameplayEffectExecute is called last and in the same situations as PreAttributeBaseChange.
-	 *	It is not called on effects with duration/infinite with no period like a buff/debuff.
-	 */
-	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
-
-
+#pragma region Attribute OnRep Functions	
 	/*
 	 * OnRep Attribute Functions
 	 */
@@ -298,8 +307,9 @@ public:
 	 * Called when the variables are updated on the client side.
 	 */
 
+#pragma region Vital Attributes OnRep Functions
 	/*
-	 * Vital Attributes
+	 * Vital Attributes OnRep Functions
 	 */
 	UFUNCTION()
 	void OnRep_Health(const FGameplayAttributeData& OldHealth) const;
@@ -309,9 +319,11 @@ public:
 	
 	UFUNCTION()
 	void OnRep_Stamina(const FGameplayAttributeData& OldStamina) const;
+#pragma endregion
 
+#pragma region Primary Attributes OnRep Functions
 	/*
-	 * Primary Attributes
+	 * Primary Attributes OnRep Functions
 	 */
 	
 	UFUNCTION()
@@ -329,8 +341,11 @@ public:
 	UFUNCTION()
 	void OnRep_Vigor(const FGameplayAttributeData& OldVigor) const;
 
+#pragma endregion 	
+	
+#pragma region Secondary Attributes OnRep Functions
 	/*
-	 * Secondary Attributes
+	 * Secondary Attributes OnRep Functions
 	 */
 	
 	UFUNCTION()
@@ -380,7 +395,9 @@ public:
 	
 	UFUNCTION()
 	void OnRep_MaxStamina(const FGameplayAttributeData& OldMaxStamina) const;
-
+#pragma endregion
+#pragma endregion
+	
 private:
 
 	/**

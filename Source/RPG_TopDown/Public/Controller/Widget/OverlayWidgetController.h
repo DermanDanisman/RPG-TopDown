@@ -17,7 +17,7 @@
  * MessageInfo: Conveys that this struct holds message information related to those tags.
  */
 
-/* Forward Declaring */
+/* Forward Declaration */
 class UBaseUserWidget;
 struct FOnAttributeChangeData;
 

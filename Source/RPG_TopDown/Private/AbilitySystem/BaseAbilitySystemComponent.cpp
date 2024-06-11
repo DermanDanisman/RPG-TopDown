@@ -9,8 +9,8 @@ void UBaseAbilitySystemComponent::BindOnGameplayEffectAppliedDelegateToSelf()
 {
 	OnGameplayEffectAppliedDelegateToSelf.AddUObject(this, &UBaseAbilitySystemComponent::EffectAppliedToSelf);
 
-	const FTopDownGameplayTags GameplayTags = FTopDownGameplayTags::Get();
-	GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, FString::Printf(TEXT("Tag: %s"), *GameplayTags.Attributes_Secondary_Armor.ToString()));
+	//const FTopDownGameplayTags GameplayTags = FTopDownGameplayTags::Get();
+	//GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, FString::Printf(TEXT("Tag: %s"), *GameplayTags.Attributes_Primary_Strength.ToString()));
 }
 
 void UBaseAbilitySystemComponent::EffectAppliedToSelf(UAbilitySystemComponent* AbilitySystemComponent,

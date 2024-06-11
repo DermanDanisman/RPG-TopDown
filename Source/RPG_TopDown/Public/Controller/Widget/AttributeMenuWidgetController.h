@@ -6,80 +6,43 @@
 #include "Controller/Widget/BaseWidgetController.h"
 #include "AttributeMenuWidgetController.generated.h"
 
+
+/* Forward Declaration */
 class UBaseAttributeSet;
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeInfoChangedSignature, float, NewValue);
+struct FTopDownAttributeInfo;
+class UAttributeInfoDataAsset;
+
+// Dynamic multicast delegates for broadcasting attribute changes.
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAttributeInfoSignature, const FTopDownAttributeInfo&, Info);
 
 /**
- * 
+ * The UAttributeMenuWidgetController class is responsible for managing and updating the UI elements related to character attributes in the game.
+ * It uses dynamic multicast delegates to broadcast changes in attribute values, ensuring the UI reflects the most current state of the character's attributes.
  */
-UCLASS()
+UCLASS(BlueprintType, Blueprintable)
 class RPG_TOPDOWN_API UAttributeMenuWidgetController : public UBaseWidgetController
 {
 	GENERATED_BODY()
 
 public:
 
+	// Function to bind attribute change callbacks to dependencies.
 	virtual void BindCallbacksToDependencies() override;
 
+	// Function to broadcast initial attribute values.
+	UFUNCTION(BlueprintCallable)
 	virtual void BroadcastInitialValues() override;
 
-	// Dynamic multicast delegates for broadcasting attribute changes.
-
-	/*
-	 * Primary Attributes
-	 */
-	// Strength
-	FOnAttributeInfoChangedSignature OnStrengthChanged;
-	// Dexterity
-	FOnAttributeInfoChangedSignature OnDexterityChanged;
-	// Intelligence
-	FOnAttributeInfoChangedSignature OnIntelligenceChanged;
-	// Resilience
-	FOnAttributeInfoChangedSignature OnResilienceChanged;
-	// Vigor
-	FOnAttributeInfoChangedSignature OnVigorChanged;
-
-	/*
-	 * Secondary Attributes
-	 */
-	// Attack Power
-	FOnAttributeInfoChangedSignature OnAttackPowerChanged;
-	// Spell Power
-	FOnAttributeInfoChangedSignature OnSpellPowerChanged;
-	// Armor
-	FOnAttributeInfoChangedSignature OnArmorChanged;
-	// Magic Resistance
-	FOnAttributeInfoChangedSignature OnMagicResistanceChanged;
-	// Armor Penetration
-	FOnAttributeInfoChangedSignature OnArmorPenetrationChanged;
-	// Critical Hit Chance
-	FOnAttributeInfoChangedSignature OnCriticalHitChanceChanged;
-	// Critical Hit Damage
-	FOnAttributeInfoChangedSignature OnCriticalHitDamageChanged;
-	// Critical Hit Resistance
-	FOnAttributeInfoChangedSignature OnCriticalHitResistanceChanged;
-	// Evasion
-	FOnAttributeInfoChangedSignature OnEvasionChanged;
-	// Movement Speed
-	FOnAttributeInfoChangedSignature OnMovementSpeedChanged;
-	// Health Regeneration
-	FOnAttributeInfoChangedSignature OnHealthRegenerationChanged;
-	// Mana Regeneration
-	FOnAttributeInfoChangedSignature OnManaRegenerationChanged;
-	// Stamina Regeneration
-	FOnAttributeInfoChangedSignature OnStaminaRegenerationChanged;
-	// Max Health
-	FOnAttributeInfoChangedSignature OnMaxHealthChanged;
-	// Max Mana
-	FOnAttributeInfoChangedSignature OnMaxManaChanged;
-	// Max Stamina
-	FOnAttributeInfoChangedSignature OnMaxStaminaChanged;
+	// Dynamic multicast delegates for broadcasting attribute changes. Assigned this in Blueprint.
+	UPROPERTY(BlueprintAssignable, Category="GAS|Attributes")
+	FAttributeInfoSignature AttributeInfoDelegate;
 
 
-private:
+protected:
 
-	void BindPrimaryAttributeChangeCallbacks(const UBaseAttributeSet* BaseAttributeSet);
+	// Data asset that contains attribute info. Such as Name, Description, Value, etc.
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<UAttributeInfoDataAsset> AttributeInfoDataAsset;
 
-	void BindSecondaryAttributeChangeCallbacks(const UBaseAttributeSet* BaseAttributeSet);
 };
 

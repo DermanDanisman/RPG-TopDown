@@ -167,8 +167,8 @@ void UOverlayWidgetController::BindGameplayEffectTagMessages()
 					{
 						GameplayTagMessageInfoRowDelegate.Broadcast(*MessageInfoRow);
 					}
-					const FString Msg = FString::Printf(TEXT("GE Tag: %s"), *Tag.ToString());
-					GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Blue, Msg);
+					//const FString Msg = FString::Printf(TEXT("GE Tag: %s"), *Tag.ToString());
+					//GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Blue, Msg);
 				}
 			}
 		}
