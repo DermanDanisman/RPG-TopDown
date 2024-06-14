@@ -46,7 +46,8 @@ public:
 	
 	// We have a function we can call, and it's a public function that we can simply pass in a tag to and receive the attribute info.
 	FTopDownAttributeInfo FindAttributeInfoForTag(const FGameplayTag& AttributeTag, bool bLogNotFound = false) const;
-	
+
+	// Attribute array list in Data Asset
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(TitleProperty="AttributeName"))
 	TArray<FTopDownAttributeInfo> AttributeInformation;
 };

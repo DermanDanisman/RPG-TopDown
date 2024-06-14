@@ -50,18 +50,7 @@ protected:
 	
 private:
 
-	/** Camera */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = true), Category="Camera")
-	TObjectPtr<USpringArmComponent> CameraSpringArm;
-	UPROPERTY(EditAnywhere, Category="Camera")
-	float TargetArmLength = 1000.f;
-	UPROPERTY(EditAnywhere, Category="Camera")
-	float TargetArmLengthMin = 250.f;
-	// Camera rotation speed
-	UPROPERTY(EditAnywhere, Category="Camera")
-	float CameraRotationSpeed = 100.f;
-	// Current yaw rotation of the spring arm
-	float CurrentYaw;
+	
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = true), Category="Camera")
 	TObjectPtr<UCameraComponent> Camera;
@@ -73,4 +62,20 @@ private:
 	TObjectPtr<ATopDownPlayerState> PlayerPS;
 	UPROPERTY(EditAnywhere, Category="Game Ability System")
 	TObjectPtr<APlayerCharacterController> PlayerPC;
+
+
+public:
+
+	/** Camera */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = true), Category="Camera")
+	TObjectPtr<USpringArmComponent> CameraSpringArm;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = true) ,Category="Camera")
+	float TargetArmLength = 1000.f;
+	UPROPERTY(EditAnywhere, Category="Camera")
+	float TargetArmLengthMin = 250.f;
+	// Camera rotation speed
+	UPROPERTY(EditAnywhere, Category="Camera")
+	float CameraRotationSpeed = 100.f;
+	// Current yaw rotation of the spring arm
+	float CurrentYaw;
 };

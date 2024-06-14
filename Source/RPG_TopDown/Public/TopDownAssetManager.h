@@ -31,9 +31,11 @@ class RPG_TOPDOWN_API UTopDownAssetManager : public UAssetManager
 
 public:
 
+	// Static method to get the single instance of the class
 	static UTopDownAssetManager& Get();
 
 protected:
 
+	// Override to perform initial loading tasks
 	virtual void StartInitialLoading() override;
 };

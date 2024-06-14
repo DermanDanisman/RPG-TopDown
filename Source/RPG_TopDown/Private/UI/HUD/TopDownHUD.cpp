@@ -96,11 +96,11 @@ void ATopDownHUD::InitializeAttributeMenuWidget(APlayerController* PC, APlayerSt
 	// Initialize FWidgetControllerVariables with provided parameters
 	const FWidgetControllerVariables WidgetControllerVariables(PC, PS, ASC, AS);
 	// Get the AttributeMenuWidgetController using the initialized variables
-	UAttributeMenuWidgetController* AttributeMenuWC = Cast<UAttributeMenuWidgetController>(Widget);
+	UAttributeMenuWidgetController* AttributeMenuWC = GetAttributeMenuWidgetController(WidgetControllerVariables);
 
 	// Set the widget controller for the AttributeMenuWidget
 	AttributeMenuWidget->SetWidgetController(AttributeMenuWC);
-	AttributeMenuWidgetController->BroadcastInitialValues();
-	AttributeMenuWidgetController->BindCallbacksToDependencies();
+	//AttributeMenuWidgetController->BroadcastInitialValues();
+	//AttributeMenuWidgetController->BindCallbacksToDependencies();
 }
 

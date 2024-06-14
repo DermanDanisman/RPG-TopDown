@@ -16,5 +16,6 @@ void UTopDownAssetManager::StartInitialLoading()
 {
 	Super::StartInitialLoading();
 
+	// Initialize native gameplay tags
 	FTopDownGameplayTags::InitializeNativeGameplayTags();
 }

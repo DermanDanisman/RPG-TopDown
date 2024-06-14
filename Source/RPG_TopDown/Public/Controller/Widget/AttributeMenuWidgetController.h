@@ -9,10 +9,11 @@
 
 /* Forward Declaration */
 class UBaseAttributeSet;
-struct FTopDownAttributeInfo;
 class UAttributeInfoDataAsset;
+struct FTopDownAttributeInfo;
 
 // Dynamic multicast delegates for broadcasting attribute changes.
+// This delegate is used to notify UI elements of changes in attributes.
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAttributeInfoSignature, const FTopDownAttributeInfo&, Info);
 
 /**
@@ -27,13 +28,14 @@ class RPG_TOPDOWN_API UAttributeMenuWidgetController : public UBaseWidgetControl
 public:
 
 	// Function to bind attribute change callbacks to dependencies.
+	UFUNCTION(BlueprintCallable)
 	virtual void BindCallbacksToDependencies() override;
 
 	// Function to broadcast initial attribute values.
 	UFUNCTION(BlueprintCallable)
 	virtual void BroadcastInitialValues() override;
 
-	// Dynamic multicast delegates for broadcasting attribute changes. Assigned this in Blueprint.
+	// Dynamic multicast delegates for broadcasting attribute changes. This can be assigned in Blueprints.
 	UPROPERTY(BlueprintAssignable, Category="GAS|Attributes")
 	FAttributeInfoSignature AttributeInfoDelegate;
 
@@ -44,5 +46,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UAttributeInfoDataAsset> AttributeInfoDataAsset;
 
+private:
+
+	// Helper function to broadcast attribute info to UI elements.
+	void BroadcastAttributeInfo(const UAttributeSet* AS, const FTopDownAttributeInfo& Tag) const;
 };
 

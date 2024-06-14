@@ -37,7 +37,9 @@
 struct FTopDownGameplayTags
 {
 public:
+ // Static function to get the single instance of the class
  static const FTopDownGameplayTags& Get() { return GameplayTags; }
+ // Static function to initialize native gameplay tags
  static void InitializeNativeGameplayTags();
 
  /*
@@ -73,6 +75,7 @@ public:
 protected:
 
 private:
+ // Static variable to hold the single instance of the class
  // Now, for a static variable like this, we need to go into the CPP file and explicitly declare the type there.
  static FTopDownGameplayTags GameplayTags;
 };

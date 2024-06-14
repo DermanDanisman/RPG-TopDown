@@ -4,8 +4,10 @@
 #include "TopDownGameplayTags.h"
 #include "GameplayTagsManager.h"
 
+// Definition of the static instance
 FTopDownGameplayTags FTopDownGameplayTags::GameplayTags;
 
+// Static function to initialize native gameplay tag
 void FTopDownGameplayTags::InitializeNativeGameplayTags()
 {
 	// Initialize native gameplay tags here
