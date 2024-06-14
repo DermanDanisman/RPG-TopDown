@@ -7,6 +7,10 @@
 #include "TopDownAssetManager.generated.h"
 
 /*
+ * In Editor Project Settings = Under Engine - General > Default Classes > Advanced > Asset Manager Class
+ */
+
+/*
  * What is the Singleton Pattern?
  * The singleton pattern is a design pattern that restricts the instantiation of a class to one "single" instance.
  * This is useful when exactly one object is needed to coordinate actions across the system.
@@ -24,6 +28,7 @@
  *
  * Asset Management: The class can be extended to manage other assets required by the game, ensuring a centralized and efficient asset management system.
  */
+
 UCLASS()
 class RPG_TOPDOWN_API UTopDownAssetManager : public UAssetManager
 {

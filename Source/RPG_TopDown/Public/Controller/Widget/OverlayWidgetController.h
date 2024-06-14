@@ -60,13 +60,19 @@ class RPG_TOPDOWN_API UOverlayWidgetController : public UBaseWidgetController
 	GENERATED_BODY()
 
 public:
-	
+
+	/**
+	 * Overriden Functions
+	 */
 	// Broadcasts the initial values of the attributes when the widget is first initialized.
 	virtual void BroadcastInitialValues() override;
 
 	// Binds the callbacks to the attribute change delegates.
 	virtual void BindCallbacksToDependencies() override;
 
+	/**
+	 * Delegates
+	 */
 	// Dynamic multicast delegates for broadcasting attribute changes.
 	// These properties can be assigned and bound to events in Blueprints.
 	UPROPERTY(BlueprintAssignable, Category="GAS|Attributes")
@@ -87,13 +93,14 @@ public:
 	UPROPERTY(BlueprintAssignable, Category="GAS|Attributes")
 	FOnAttributeChangedSignature OnMaxStaminaChanged;
 
+	// Bind in WBP_Overlay 
 	UPROPERTY(BlueprintAssignable, Category="GAS|Messages")
 	FGameplayTagMessageInfoRowSignature GameplayTagMessageInfoRowDelegate;
 
 protected:
 
 	/** GameplayTags Message Tags */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Widget Data")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Data Table|Message")
 	TObjectPtr<UDataTable> GameplayTagToUIMessageDataTable;
 	// A versatile template function that gets rows from any type of data table.
 	template<typename T>

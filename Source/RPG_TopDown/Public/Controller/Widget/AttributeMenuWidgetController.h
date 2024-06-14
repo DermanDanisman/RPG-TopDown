@@ -27,6 +27,9 @@ class RPG_TOPDOWN_API UAttributeMenuWidgetController : public UBaseWidgetControl
 
 public:
 
+	/**
+	 * Overriden Functions
+	 */
 	// Function to bind attribute change callbacks to dependencies.
 	UFUNCTION(BlueprintCallable)
 	virtual void BindCallbacksToDependencies() override;
@@ -35,6 +38,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void BroadcastInitialValues() override;
 
+	/**
+	 * Delegates
+	 */
 	// Dynamic multicast delegates for broadcasting attribute changes. This can be assigned in Blueprints.
 	UPROPERTY(BlueprintAssignable, Category="GAS|Attributes")
 	FAttributeInfoSignature AttributeInfoDelegate;
@@ -43,7 +49,7 @@ public:
 protected:
 
 	// Data asset that contains attribute info. Such as Name, Description, Value, etc.
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category="GAS|Data Asset")
 	TObjectPtr<UAttributeInfoDataAsset> AttributeInfoDataAsset;
 
 private:

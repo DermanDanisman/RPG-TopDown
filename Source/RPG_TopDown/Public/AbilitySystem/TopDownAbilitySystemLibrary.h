@@ -40,9 +40,12 @@ public:
 	 * It needs a reference that it can use to trace its way up somehow, some way to something in the world that we want to affect.
 	 * So our get overlay widget controller class needs a world context object, some kind of object that we can use to have context for the world that we're in.
 	 */
-	UFUNCTION(BlueprintPure, Category="TopDownAbilitySystemLibrary|WidgetController")
+
+	// Gets Overlay Widget Controller
+	UFUNCTION(BlueprintPure, Category="TopDownAbilitySystemLibrary|Widget Controller")
 	static UOverlayWidgetController* GetOverlayWidgetController(const UObject* WorldContextObject);
 
-	UFUNCTION(BlueprintPure, Category="TopDownAbilitySystemLibrary|WidgetController")
+	// Gets Attribute Menu Widget Controller
+	UFUNCTION(BlueprintPure, Category="TopDownAbilitySystemLibrary|Widget Controller")
 	static UAttributeMenuWidgetController* GetAttributeMenuWidgetController(const UObject* WorldContextObject);
 };

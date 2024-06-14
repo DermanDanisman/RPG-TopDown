@@ -5,7 +5,6 @@
 
 #include "Controller/Widget/AttributeMenuWidgetController.h"
 #include "Controller/Widget/BaseWidgetController.h"
-#include "Kismet/GameplayStatics.h"
 #include "PlayerState/TopDownPlayerState.h"
 #include "UI/HUD/TopDownHUD.h"
 
@@ -15,7 +14,8 @@ UOverlayWidgetController* UTopDownAbilitySystemLibrary::GetOverlayWidgetControll
 
 	if (PC)
 	{
-		if (ATopDownHUD* TopDownHUD = PC->GetHUD<ATopDownHUD>())
+		ATopDownHUD* TopDownHUD = PC->GetHUD<ATopDownHUD>();
+		if (TopDownHUD)
 		{
 			ATopDownPlayerState* PS = PC->GetPlayerState<ATopDownPlayerState>();
 			UAbilitySystemComponent* ASC = PS->GetAbilitySystemComponent();
@@ -28,13 +28,15 @@ UOverlayWidgetController* UTopDownAbilitySystemLibrary::GetOverlayWidgetControll
 	return nullptr;
 }
 
+// We call this in WBP_AttributeMenu
 UAttributeMenuWidgetController* UTopDownAbilitySystemLibrary::GetAttributeMenuWidgetController(const UObject* WorldContextObject)
 {
-	APlayerController* PC = UGameplayStatics::GetPlayerController(WorldContextObject, 0);
+	APlayerController* PC = WorldContextObject->GetWorld()->GetFirstPlayerController();
 
 	if (PC)
 	{
-		if (ATopDownHUD* TopDownHUD = PC->GetHUD<ATopDownHUD>())
+		ATopDownHUD* TopDownHUD = PC->GetHUD<ATopDownHUD>();
+		if (TopDownHUD)
 		{
 			ATopDownPlayerState* PS = PC->GetPlayerState<ATopDownPlayerState>();
 			UAbilitySystemComponent* ASC = PS->GetAbilitySystemComponent();

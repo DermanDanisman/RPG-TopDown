@@ -79,28 +79,3 @@ void ATopDownHUD::InitializeOverlayWidget(APlayerController* PC, APlayerState* P
 	Widget->AddToViewport();
 }
 
-// Initialize the Attribute Menu Widget
-void ATopDownHUD::InitializeAttributeMenuWidget(APlayerController* PC, APlayerState* PS,
-	UAbilitySystemComponent* ASC, UAttributeSet* AS)
-{
-	// Ensure that AttributeMenuWidgetClass is not null, otherwise, display an error
-	checkf(AttributeMenuWidgetClass, TEXT("Attribute Widget Class uninitialized, please fill out BP_TopDownHUD"));
-	// Ensure that AttributeMenuWidgetControllerClass is not null, otherwise, display an error
-	checkf(AttributeMenuWidgetControllerClass, TEXT("Attribute Widget Controller Class uninitialized, please fill out BP_TopDownHUD"));
-
-	// Create the widget using the specified AttributeMenuWidgetClass
-	UUserWidget* Widget = CreateWidget<UUserWidget>(GetWorld(), AttributeMenuWidgetClass);
-	// Cast the created widget to UBaseUserWidget and store it in AttributeMenuWidget
-	AttributeMenuWidget = Cast<UBaseUserWidget>(Widget);
-
-	// Initialize FWidgetControllerVariables with provided parameters
-	const FWidgetControllerVariables WidgetControllerVariables(PC, PS, ASC, AS);
-	// Get the AttributeMenuWidgetController using the initialized variables
-	UAttributeMenuWidgetController* AttributeMenuWC = GetAttributeMenuWidgetController(WidgetControllerVariables);
-
-	// Set the widget controller for the AttributeMenuWidget
-	AttributeMenuWidget->SetWidgetController(AttributeMenuWC);
-	//AttributeMenuWidgetController->BroadcastInitialValues();
-	//AttributeMenuWidgetController->BindCallbacksToDependencies();
-}
-

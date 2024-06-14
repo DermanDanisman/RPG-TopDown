@@ -47,22 +47,22 @@ private:
 	TObjectPtr<USpringArmComponent> CameraSpringArm;
 
 	// Configurable properties for camera movement
-	UPROPERTY(EditAnywhere, Category="Camera Movement")
+	UPROPERTY(EditAnywhere, Category="Camera|Movement")
 	float ScreenEdgeHigh = 0.98;
-	UPROPERTY(EditAnywhere, Category="Camera Movement")
+	UPROPERTY(EditAnywhere, Category="Camera|Movement")
 	float ScreenEdgeLow = 0.02;
-	UPROPERTY(EditAnywhere, Category="Camera Movement")
+	UPROPERTY(EditAnywhere, Category="Camera|Movement")
 	float ViewDistance = 1500.f;
-	UPROPERTY(EditAnywhere, Category="Camera Movement")
+	UPROPERTY(EditAnywhere, Category="Camera|Movement")
 	float PanSpeed = 1000.f;
-	UPROPERTY(EditAnywhere, Category="Camera Movement")
+	UPROPERTY(EditAnywhere, Category="Camera|Movement")
 	float CameraResetInterpSpeed = 3.f;
 
 	// Configurable properties for camera zoom
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = true), Category="Camera Properties")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = true), Category="Camera|Zoom")
 	float TargetArmLength = 1500.f;
-	UPROPERTY(EditAnywhere, Category="Camera Properties")
+	UPROPERTY(EditAnywhere, Category="Camera|Zoom")
 	float TargetArmLengthMin = 250.f;
-	UPROPERTY(EditAnywhere, Category="Camera Properties")
+	UPROPERTY(EditAnywhere, Category="Camera|Zoom")
 	float CameraZoomSpeed = 1000.f;
 };

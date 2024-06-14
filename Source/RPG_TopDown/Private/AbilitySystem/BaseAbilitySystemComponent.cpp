@@ -48,6 +48,4 @@ void UBaseAbilitySystemComponent::EffectAppliedToSelf(UAbilitySystemComponent* A
 	 * A buff effect might grant the tag State.Buffed, enabling the player to benefit from certain abilities or resistances.
 	 */
 	//GameplayEffectSpec.GetAllGrantedTags(GameplayGrantedTagContainer);
-
-	//GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, FString::Printf(TEXT("Effect Applied!")));
 }

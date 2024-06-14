@@ -32,9 +32,8 @@ public:
 
 	void InitializeOverlayWidget(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC, UAttributeSet* AS);
 
-	void InitializeAttributeMenuWidget(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC, UAttributeSet* AS);
-
 private:
+	
 	/*
 	 * Overlay Widget
 	 */
@@ -42,32 +41,32 @@ private:
 	/*
 	 * The overlay is the overall widget we'll see on the screen, and it's going to contain a bunch of little widgets inside of it.
 	 */
-	UPROPERTY(VisibleAnywhere, Category="Overlay Widget")
+	UPROPERTY(VisibleAnywhere, Category="Widget|Overlay")
 	TObjectPtr<UBaseUserWidget> OverlayWidget;
 	
-	UPROPERTY(EditAnywhere, Category="Overlay Widget")
+	UPROPERTY(EditAnywhere, Category="Widget|Overlay")
 	TSubclassOf<UUserWidget> OverlayWidgetClass;
 
-	UPROPERTY(EditAnywhere, Category="Overlay Widget")
+	UPROPERTY(EditAnywhere, Category="Widget|Overlay")
 	TSubclassOf<UOverlayWidgetController> OverlayWidgetControllerClass;
 	
-	UPROPERTY(VisibleAnywhere, Category="Overlay Widget")
+	UPROPERTY(VisibleAnywhere, Category="Widget|Overlay")
 	TObjectPtr<UOverlayWidgetController> OverlayWidgetController;
 
 	/*
 	 * Attribute Menu Widget
 	 */
 
-	UPROPERTY(VisibleAnywhere, Category="Attribute Menu Widget")
+	UPROPERTY(VisibleAnywhere, Category="Widget|Attribute Menu")
 	TObjectPtr<UBaseUserWidget> AttributeMenuWidget;
 	
-	UPROPERTY(EditAnywhere, Category="Attribute Menu Widget")
+	UPROPERTY(EditAnywhere, Category="Widget|Attribute Menu")
 	TSubclassOf<UUserWidget> AttributeMenuWidgetClass;
 
-	UPROPERTY(EditAnywhere, Category="Attribute Menu Widget")
+	UPROPERTY(EditAnywhere, Category="Widget|Attribute Menu")
 	TSubclassOf<UAttributeMenuWidgetController> AttributeMenuWidgetControllerClass;
 	
-	UPROPERTY(VisibleAnywhere, Category="Attribute Menu Widget")
+	UPROPERTY(VisibleAnywhere, Category="Widget|Attribute Menu")
 	TObjectPtr<UAttributeMenuWidgetController> AttributeMenuWidgetController;
 
 

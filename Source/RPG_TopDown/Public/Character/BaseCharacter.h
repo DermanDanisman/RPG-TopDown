@@ -33,13 +33,15 @@ protected:
 	virtual void BeginPlay() override;
 	
 	/** Common Variables */
-	UPROPERTY(EditAnywhere, Category="Combat")
+	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USkeletalMeshComponent> WeaponMesh;
 
-	UPROPERTY(EditAnywhere,Category="Socket Names")
+	UPROPERTY(EditAnywhere,Category="Combat|Socket Names")
 	FName WeaponAttachmentSocketName = FName("WeaponHandSocket");
 
-	/** Game Ability System */
+	/**
+	 * Game Ability System
+	 */
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 	UPROPERTY()
@@ -47,7 +49,9 @@ protected:
 	
 	virtual void InitAbilityActorInfo();
 
-	/** Gameplay Effect Attributes */
+	/**
+	 * Gameplay Effect Attributes
+	 */
 
 	// This function applies a gameplay effect to the character itself.
 	void ApplyEffectToSelf(const TSubclassOf<UGameplayEffect>& GameplayEffectClass, float Level) const;
@@ -55,15 +59,15 @@ protected:
 	// This function initializes the character's default attributes by applying primary and secondary attribute effects to the character.
 	void InitializeDefaultAttributes() const;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attributes")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attributes|Primary")
 	TSubclassOf<UGameplayEffect> DefaultPrimaryAttributes;
 
 	// Initialize Secondary Attributes after the Primary Attributes become Secondary Attributes are dependent on Primary Attributes
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attributes")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attributes|Secondary")
 	TSubclassOf<UGameplayEffect> DefaultSecondaryAttributes;
 
 	// Initialize Secondary Attributes after the Primary Attributes become Secondary Attributes are dependent on Primary Attributes
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attributes")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attributes|Vital")
 	TSubclassOf<UGameplayEffect> DefaultVitalAttributes;
 
 };
