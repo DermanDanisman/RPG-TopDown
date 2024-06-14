@@ -4,22 +4,21 @@
 
 #include "CoreMinimal.h"
 #include "Character/BaseCharacter.h"
-#include "Interface/Camera/CameraMovementInterface.h"
 #include "Interface/Interaction/HighlightActorInterface.h"
 #include "PlayerCharacter.generated.h"
-
 
 /* Forward Declaration */
 class UCameraComponent;
 class USpringArmComponent;
 class ATopDownPlayerState;
 class APlayerCharacterController;
+class UCameraMovementComponent;
 
 /**
  * 
  */
 UCLASS()
-class RPG_TOPDOWN_API APlayerCharacter : public ABaseCharacter, public IHighlightActorInterface, public ICameraMovementInterface
+class RPG_TOPDOWN_API APlayerCharacter : public ABaseCharacter, public IHighlightActorInterface
 {
 	GENERATED_BODY()
 
@@ -39,10 +38,6 @@ public:
 	/** Combat Interface */
 	virtual int32 GetCharacterLevel() override;
 	
-	/** Camera Movement Interface */
-	virtual void CameraZoom(float ActionInput) override;
-	virtual void CameraEdgeScrolling(float DeltaSeconds, const FVector2D& MousePositionPercent) override;
-
 	/** Getter Functions */
 	FORCEINLINE USpringArmComponent* GetCameraSpringArm() { return CameraSpringArm; }
 
@@ -53,32 +48,15 @@ protected:
 	
 private:
 
+	/** Actor Component */
+	UPROPERTY(VisibleAnywhere)
+    TObjectPtr<UCameraMovementComponent> CameraMovementComponent;
+
 	/** Camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = true))
 	TObjectPtr<USpringArmComponent> CameraSpringArm;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = true))
 	TObjectPtr<UCameraComponent> Camera;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = true) ,Category="Camera Properties")
-	float TargetArmLength = 1000.f;
-	UPROPERTY(EditAnywhere, Category="Camera Properties")
-	float TargetArmLengthMin = 250.f;
-	UPROPERTY(EditAnywhere, Category="Camera Properties")
-	float CameraZoomSpeed = 750.f;
-	
-	/** Camera Movement */
-	FVector2D GetMousePositionPercent() const;
-	void ResetCamera() const;
-	UPROPERTY(EditAnywhere, Category="Camera Movement")
-	float ScreenEdgeHigh = 0.98;
-	UPROPERTY(EditAnywhere, Category="Camera Movement")
-	float ScreenEdgeLow = 0.02;
-	UPROPERTY(EditAnywhere, Category="Camera Movement")
-	float ViewDistance = 1500.f;
-	UPROPERTY(EditAnywhere, Category="Camera Movement")
-	float PanSpeed = 1000.f;
-	UPROPERTY(EditAnywhere, Category="Camera Movement")
-	float CameraResetInterpSpeed = 10.f;
-	bool bCameraReset = true;
 
 	/** Game Ability System */
 	UPROPERTY(EditAnywhere, Category="Game Ability System")

@@ -27,5 +27,4 @@ public:
 	// Not need to provide definition for this function
 	// This class is now considered as Abstract class, must be derived from in other classes
 	virtual void CameraZoom(float ActionInput) = 0;
-	virtual void CameraEdgeScrolling(float DeltaSeconds, const FVector2D& MousePositionPercent) = 0;
 };

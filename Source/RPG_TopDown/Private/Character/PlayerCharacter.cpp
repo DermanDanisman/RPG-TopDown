@@ -5,13 +5,12 @@
 
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
+#include "ActorComponent/CameraMovementComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Controller/Player/PlayerCharacterController.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Kismet/GameplayStatics.h"
-#include "Kismet/KismetMathLibrary.h"
 #include "PlayerState/TopDownPlayerState.h"
 #include "RPG_TopDown/RPG_TopDown.h"
 #include "UI/HUD/TopDownHUD.h"
@@ -24,12 +23,14 @@ APlayerCharacter::APlayerCharacter()
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationRoll = false;
 
+	CameraMovementComponent = CreateDefaultSubobject<UCameraMovementComponent>("CameraMovementComponent");
+
 	// Create and configure the Camera Spring Arm
 	CameraSpringArm = CreateDefaultSubobject<USpringArmComponent>("CameraSpringArm");
 	CameraSpringArm->SetupAttachment(GetCapsuleComponent());
 	CameraSpringArm->bDoCollisionTest = false;
 	CameraSpringArm->bInheritYaw = false;
-	CameraSpringArm->TargetArmLength = TargetArmLength;
+	CameraSpringArm->TargetArmLength = CameraMovementComponent->GetTargetArmLength();
 	CameraSpringArm->SetRelativeRotation(FRotator(-45.f, 0.f, 0.f));
 	CameraSpringArm->bEnableCameraLag = true;
 	CameraSpringArm->CameraLagSpeed = 6.f;
@@ -44,22 +45,13 @@ APlayerCharacter::APlayerCharacter()
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 400.f, 0.f);  // Set rotation rate for turning
 	GetCharacterMovement()->bConstrainToPlane = true;  // Constrain movement to a plane
 	GetCharacterMovement()->bSnapToPlaneAtStart = true;  // Snap to the plane at the start
-
+	
+	CameraMovementComponent->SetCameraSpringArm(CameraSpringArm);
 }
 
 void APlayerCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-
-	if (GetCharacterMovement()->Velocity.Size() < 1.f)
-	{
-		const FVector2D MousePosPercent = GetMousePositionPercent();
-		CameraEdgeScrolling(DeltaSeconds, MousePosPercent);
-	}
-	else
-	{
-		ResetCamera();
-	}
 }
 
 // Called when the character is possessed by a new controller (i.e., when the player takes control of this character)
@@ -170,69 +162,8 @@ int32 APlayerCharacter::GetCharacterLevel()
 	return PlayerPS->GetPlayerLevel();
 }
 
-// Camera zoom
-void APlayerCharacter::CameraZoom(const float ActionInput)
-{
-	// Calculate the new arm length based on input and zoom speed
-	const float NewArmLength = CameraSpringArm->TargetArmLength + ActionInput * CameraZoomSpeed * GetWorld()->GetDeltaSeconds();
 
-	// Clamp the arm length to the minimum and maximum zoom values
-	CameraSpringArm->TargetArmLength = FMath::Clamp(NewArmLength, TargetArmLengthMin, TargetArmLength); 
-}
 
-// Camera Pan Movement
-void APlayerCharacter::CameraEdgeScrolling(const float DeltaSeconds, const FVector2D& MousePositionPercent)
-{
-	if (MousePositionPercent.X > ScreenEdgeHigh)
-	{
-		if (CameraSpringArm->TargetOffset.Y < ViewDistance)
-		{
-			CameraSpringArm->TargetOffset.Y += PanSpeed * DeltaSeconds;
-		}
-	}
-	else if (MousePositionPercent.X < ScreenEdgeLow)
-	{
-		if (CameraSpringArm->TargetOffset.Y > -ViewDistance)
-		{
-			CameraSpringArm->TargetOffset.Y -= PanSpeed * DeltaSeconds;
-		}
-	}
-
-	if (MousePositionPercent.Y > ScreenEdgeHigh)
-	{
-		if (CameraSpringArm->TargetOffset.X > -ViewDistance)
-		{
-			CameraSpringArm->TargetOffset.X -= PanSpeed * DeltaSeconds;
-		}
-	}
-	else if (MousePositionPercent.Y < ScreenEdgeLow)
-	{
-		if (CameraSpringArm->TargetOffset.X < ViewDistance)
-		{
-			CameraSpringArm->TargetOffset.X += PanSpeed * DeltaSeconds;
-		}
-	}
-}
-
-// Purpose: Smoothly resets the camera to the default position using linear interpolation.
-void APlayerCharacter::ResetCamera() const
-{
-	CameraSpringArm->TargetOffset =
-		UKismetMathLibrary::VInterpTo(CameraSpringArm->TargetOffset,
-			FVector(0.f, 0.f, 0.f), UGameplayStatics::GetWorldDeltaSeconds(this), CameraResetInterpSpeed);
-}
-
-// Purpose: Retrieves the mouse position as a percentage of the viewport size.
-FVector2D APlayerCharacter::GetMousePositionPercent() const
-{
-	int32 ViewportSizeX, ViewportSizeY;
-	UGameplayStatics::GetPlayerController(this, 0)->GetViewportSize(ViewportSizeX, ViewportSizeY);
-
-	float MousePosX, MousePosY;
-	UGameplayStatics::GetPlayerController(this, 0)->GetMousePosition(MousePosX, MousePosY);
-
-	return FVector2D(MousePosX / ViewportSizeX, MousePosY / ViewportSizeY);
-}
 
 
 

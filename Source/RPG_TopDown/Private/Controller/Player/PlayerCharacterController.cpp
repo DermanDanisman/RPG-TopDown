@@ -6,6 +6,7 @@
 #include "EnhancedInputComponent.h"
 #include "InputAction.h"
 #include "InputActionValue.h"
+#include "ActorComponent/CameraMovementComponent.h"
 #include "Interface/Interaction/HighlightActorInterface.h"
 #include "Interface/Camera/CameraMovementInterface.h"
 
@@ -133,7 +134,7 @@ void APlayerCharacterController::CameraZoomInOut(const FInputActionValue& InputA
 
 	if (APawn* ControlledPawn = GetPawn<APawn>())
 	{
-		CameraMovementInterface = ControlledPawn;
+		CameraMovementInterface = ControlledPawn->GetComponentByClass(UCameraMovementComponent::StaticClass());
 		CameraMovementInterface->CameraZoom(ActionValue);
 	}
 }
@@ -164,9 +165,3 @@ void APlayerCharacterController::CursorTrace()
 		if (ThisActor != nullptr) ThisActor->HighlightActor();
 	}
 }
-
-
-
-
-
-
