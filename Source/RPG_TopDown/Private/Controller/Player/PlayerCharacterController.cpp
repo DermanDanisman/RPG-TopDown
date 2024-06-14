@@ -6,12 +6,9 @@
 #include "EnhancedInputComponent.h"
 #include "InputAction.h"
 #include "InputActionValue.h"
-#include "Character/PlayerCharacter.h"
-#include "GameFramework/SpringArmComponent.h"
 #include "Interface/Interaction/HighlightActorInterface.h"
 #include "Interface/Camera/CameraMovementInterface.h"
-#include "Kismet/GameplayStatics.h"
-#include "Kismet/KismetMathLibrary.h"
+
 
 
 APlayerCharacterController::APlayerCharacterController()
@@ -25,9 +22,6 @@ void APlayerCharacterController::PlayerTick(float DeltaTime)
 	Super::PlayerTick(DeltaTime);
 
 	CursorTrace();
-
-	if (bCameraReset)
-		ResetCamera();
 }
 
 void APlayerCharacterController::BeginPlay()
@@ -64,11 +58,7 @@ void APlayerCharacterController::SetupInputComponent()
 	if (EnhancedInputComponent)
 	{
 		EnhancedInputComponent->BindAction(InputActionMove, ETriggerEvent::Triggered, this, &APlayerCharacterController::Move);
-		EnhancedInputComponent->BindAction(InputActionCameraRotate, ETriggerEvent::Triggered, this, &APlayerCharacterController::RotateCamera);
-		EnhancedInputComponent->BindAction(InputActionCameraRotate, ETriggerEvent::Completed, this, &APlayerCharacterController::StopRotateCamera);
 		EnhancedInputComponent->BindAction(InputActionCameraZoomInOut, ETriggerEvent::Triggered, this, &APlayerCharacterController::CameraZoomInOut);
-		EnhancedInputComponent->BindAction(InputActionCameraPan, ETriggerEvent::Triggered, this, &APlayerCharacterController::CameraPanTriggered);
-		EnhancedInputComponent->BindAction(InputActionCameraPan, ETriggerEvent::Completed, this, &APlayerCharacterController::CameraPanStopped);
 	}
 }
 
@@ -140,52 +130,12 @@ void APlayerCharacterController::Move(const FInputActionValue& InputActionValue)
 void APlayerCharacterController::CameraZoomInOut(const FInputActionValue& InputActionValue)
 {
 	const float ActionValue = InputActionValue.Get<float>();
-	
-	APawn* ControlledPawn = GetPawn<APawn>();
-	if (ControlledPawn)
+
+	if (APawn* ControlledPawn = GetPawn<APawn>())
 	{
 		CameraMovementInterface = ControlledPawn;
 		CameraMovementInterface->CameraZoom(ActionValue);
 	}
-}
-
-void APlayerCharacterController::RotateCamera(const FInputActionValue& InputActionValue)
-{
-	const float ActionValue = InputActionValue.Get<float>();
-	
-	// Retrieves the pawn that the controller is possessing
-	APawn* ControlledPawn = GetPawn<APawn>();
-	if (ControlledPawn)
-	{
-		CameraMovementInterface = ControlledPawn;
-		CameraMovementInterface->RotateCamera(ActionValue);
-	}
-}
-
-void APlayerCharacterController::StopRotateCamera(const FInputActionValue& InputActionValue)
-{
-	const float ActionValue = InputActionValue.Get<float>();
-	
-	// Retrieves the pawn that the controller is possessing
-	APawn* ControlledPawn = GetPawn<APawn>();
-	if (ControlledPawn)
-	{
-		CameraMovementInterface = ControlledPawn;
-		CameraMovementInterface->RotateCamera(ActionValue);
-	}
-}
-
-void APlayerCharacterController::CameraPanTriggered(const FInputActionValue& InputActionValue)
-{
-	bCameraReset = false;
-	PanY();
-	PanX();
-}
-
-void APlayerCharacterController::CameraPanStopped(const FInputActionValue& InputActionValue)
-{
-	bCameraReset = true;
-	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("CameraPanStopped")));
 }
 
 void APlayerCharacterController::CursorTrace()
@@ -219,83 +169,4 @@ void APlayerCharacterController::CursorTrace()
 
 
 
-FVector2D APlayerCharacterController::GetMousePositionPercent()
-{
-	int32 ViewportSizeX;
-	int32 ViewportSizeY;
-	GetViewportSize(ViewportSizeX, ViewportSizeY);
-	
-	float MousePositionOnViewportX;
-	float MousePositionOnViewportY;
-	GetMousePosition(MousePositionOnViewportX, MousePositionOnViewportY);
 
-	float PositionX = MousePositionOnViewportX / ViewportSizeX;
-	float PositionY = MousePositionOnViewportY / ViewportSizeY;
-
-	return FVector2D(PositionX, PositionY);
-}
-
-void APlayerCharacterController::PanY()
-{
-	APlayerCharacter* PlayerCharacter = CastChecked<APlayerCharacter>(GetPawn());
-	if (GetMousePositionPercent().Y > ScreenEdgeHigh)
-	{
-		float TargetOffsetX = PlayerCharacter->CameraSpringArm->TargetOffset.X;
-		bool b = TargetOffsetX < (ViewDistance * -1.f);
-		if (!b)
-		{
-			PlayerCharacter->CameraSpringArm->TargetOffset = FVector(PlayerCharacter->CameraSpringArm->TargetOffset.X + (PanSpeed * UGameplayStatics::GetWorldDeltaSeconds(this) * -1.f),
-				PlayerCharacter->CameraSpringArm->TargetOffset.Y, PlayerCharacter->CameraSpringArm->TargetOffset.Z);
-			GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("Scrren Edge High")));
-		}
-	}
-	else if (GetMousePositionPercent().Y < ScreenEdgeLow)
-	{
-		float TargetOffsetX = PlayerCharacter->CameraSpringArm->TargetOffset.X;
-		bool b = TargetOffsetX > (ViewDistance);
-		if (!b)
-		{
-			PlayerCharacter->CameraSpringArm->TargetOffset = FVector(PlayerCharacter->CameraSpringArm->TargetOffset.X + (PanSpeed * UGameplayStatics::GetWorldDeltaSeconds(this) * 1.f),
-				PlayerCharacter->CameraSpringArm->TargetOffset.Y, PlayerCharacter->CameraSpringArm->TargetOffset.Z);
-			GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("Scrren Edge Low")));	
-		}
-	}
-}
-
-void APlayerCharacterController::PanX()
-{
-	APlayerCharacter* PlayerCharacter = CastChecked<APlayerCharacter>(GetPawn());
-	if (GetMousePositionPercent().X > ScreenEdgeHigh)
-	{
-		float TargetOffsetY = PlayerCharacter->CameraSpringArm->TargetOffset.Y;
-		bool b = TargetOffsetY < (ViewDistance);
-		if (b)
-		{
-			PlayerCharacter->CameraSpringArm->TargetOffset = FVector(PlayerCharacter->CameraSpringArm->TargetOffset.X,
-				PlayerCharacter->CameraSpringArm->TargetOffset.Y + (PanSpeed * UGameplayStatics::GetWorldDeltaSeconds(this)), PlayerCharacter->CameraSpringArm->TargetOffset.Z);
-			GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("Scrren Edge High")));
-		}
-	}
-	else if (GetMousePositionPercent().X < ScreenEdgeLow)
-	{
-		float TargetOffsetY = PlayerCharacter->CameraSpringArm->TargetOffset.Y;
-		bool b = TargetOffsetY > (ViewDistance * -1.f);
-		if (b)
-		{
-			PlayerCharacter->CameraSpringArm->TargetOffset = FVector(PlayerCharacter->CameraSpringArm->TargetOffset.X,
-				PlayerCharacter->CameraSpringArm->TargetOffset.Y + (PanSpeed * UGameplayStatics::GetWorldDeltaSeconds(this) * -1.f),
-				PlayerCharacter->CameraSpringArm->TargetOffset.Z);
-			
-			GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("Scrren Edge Low")));	
-		}
-	}
-}
-
-void APlayerCharacterController::ResetCamera()
-{
-	APlayerCharacter* PlayerCharacter = CastChecked<APlayerCharacter>(GetPawn());
-	PlayerCharacter->CameraSpringArm->TargetOffset =
-		UKismetMathLibrary::VInterpTo(PlayerCharacter->CameraSpringArm->TargetOffset,
-			FVector(0.f, 0.f, 0.f), UGameplayStatics::GetWorldDeltaSeconds(this), 10.f);
-	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("Camera Reset")));	
-}

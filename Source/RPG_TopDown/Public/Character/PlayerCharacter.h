@@ -27,6 +27,8 @@ public:
 
 	APlayerCharacter();
 
+	virtual void Tick(float DeltaSeconds) override;
+
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_PlayerState() override;
 
@@ -39,9 +41,10 @@ public:
 	
 	/** Camera Movement Interface */
 	virtual void CameraZoom(float ActionInput) override;
-	virtual void RotateCamera(float ActionInput) override;
+	virtual void CameraEdgeScrolling(float DeltaSeconds, const FVector2D& MousePositionPercent) override;
 
-	USpringArmComponent* GetCameraSprintArm() { return CameraSpringArm; }
+	/** Getter Functions */
+	FORCEINLINE USpringArmComponent* GetCameraSpringArm() { return CameraSpringArm; }
 
 protected:
 
@@ -50,12 +53,32 @@ protected:
 	
 private:
 
-	
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = true), Category="Camera")
+	/** Camera */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = true))
+	TObjectPtr<USpringArmComponent> CameraSpringArm;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = true))
 	TObjectPtr<UCameraComponent> Camera;
-	UPROPERTY(EditAnywhere, Category="Camera")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = true) ,Category="Camera Properties")
+	float TargetArmLength = 1000.f;
+	UPROPERTY(EditAnywhere, Category="Camera Properties")
+	float TargetArmLengthMin = 250.f;
+	UPROPERTY(EditAnywhere, Category="Camera Properties")
 	float CameraZoomSpeed = 750.f;
+	
+	/** Camera Movement */
+	FVector2D GetMousePositionPercent() const;
+	void ResetCamera() const;
+	UPROPERTY(EditAnywhere, Category="Camera Movement")
+	float ScreenEdgeHigh = 0.98;
+	UPROPERTY(EditAnywhere, Category="Camera Movement")
+	float ScreenEdgeLow = 0.02;
+	UPROPERTY(EditAnywhere, Category="Camera Movement")
+	float ViewDistance = 1500.f;
+	UPROPERTY(EditAnywhere, Category="Camera Movement")
+	float PanSpeed = 1000.f;
+	UPROPERTY(EditAnywhere, Category="Camera Movement")
+	float CameraResetInterpSpeed = 10.f;
+	bool bCameraReset = true;
 
 	/** Game Ability System */
 	UPROPERTY(EditAnywhere, Category="Game Ability System")
@@ -63,19 +86,8 @@ private:
 	UPROPERTY(EditAnywhere, Category="Game Ability System")
 	TObjectPtr<APlayerCharacterController> PlayerPC;
 
+	
 
-public:
 
-	/** Camera */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = true), Category="Camera")
-	TObjectPtr<USpringArmComponent> CameraSpringArm;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = true) ,Category="Camera")
-	float TargetArmLength = 1000.f;
-	UPROPERTY(EditAnywhere, Category="Camera")
-	float TargetArmLengthMin = 250.f;
-	// Camera rotation speed
-	UPROPERTY(EditAnywhere, Category="Camera")
-	float CameraRotationSpeed = 100.f;
-	// Current yaw rotation of the spring arm
-	float CurrentYaw;
+	
 };

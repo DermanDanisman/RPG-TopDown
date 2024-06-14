@@ -40,7 +40,7 @@ protected:
 	
 private:
 
-	/** Input Variables*/
+	/** Input Variables */
 	UPROPERTY(EditAnywhere, Category="Enhanced Input")
 	TObjectPtr<UInputMappingContext> DefaultInputMappingContext;
 
@@ -49,9 +49,6 @@ private:
 
 	UPROPERTY(EditAnywhere, Category="Enhanced Input")
 	TObjectPtr<UInputAction> InputActionCameraZoomInOut;
-	
-	UPROPERTY(EditAnywhere, Category="Enhanced Input")
-	TObjectPtr<UInputAction> InputActionCameraRotate;
 
 	UPROPERTY(EditAnywhere, Category="Enhanced Input")
 	TObjectPtr<UInputAction> InputActionCameraPan;
@@ -59,10 +56,6 @@ private:
 	/** Input Functions */
 	void Move(const FInputActionValue& InputActionValue);
 	void CameraZoomInOut(const FInputActionValue& InputActionValue);
-	void RotateCamera(const FInputActionValue& InputActionValue);
-	void StopRotateCamera(const FInputActionValue& InputActionValue);
-	void CameraPanTriggered(const FInputActionValue& InputActionValue);
-	void CameraPanStopped(const FInputActionValue& InputActionValue);
 
 	/** Mouse Cursor */
 	void CursorTrace();
@@ -72,14 +65,4 @@ private:
 	/** Camera */
 	TScriptInterface<ICameraMovementInterface> CameraMovementInterface;
 
-	/** Camera Panning */
-	FVector2D GetMousePositionPercent();
-	float ScreenEdgeHigh = 0.9;
-	float ScreenEdgeLow = 0.1;
-	float ViewDistance = 1000.f;
-	float PanSpeed = 1000.f;
-	void PanY();
-	void PanX();
-	bool bCameraReset = true;
-	void ResetCamera();
 };
