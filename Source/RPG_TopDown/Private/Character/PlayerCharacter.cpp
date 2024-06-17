@@ -61,6 +61,8 @@ void APlayerCharacter::PossessedBy(AController* NewController)
 
 	// Calling Ability System Init Ability Actor Info for the Server
 	InitAbilityActorInfo();
+	// Granting startup abilities for the player character
+	AddCharacterAbilities();
 }
 
 // Called when the PlayerState is replicated (i.e., when the PlayerState is updated on clients)

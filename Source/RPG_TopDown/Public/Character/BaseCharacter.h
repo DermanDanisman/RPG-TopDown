@@ -9,10 +9,12 @@
 #include "BaseCharacter.generated.h"
 
 
+
 /* Forward Declaration */
 class UAttributeSet;
 class UAbilitySystemComponent;
 class UGameplayEffect;
+class UGameplayAbility;
 
 
 UCLASS()
@@ -32,7 +34,9 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	
-	/** Common Variables */
+	/**
+	 * Common Variables
+	 */
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USkeletalMeshComponent> WeaponMesh;
 
@@ -52,7 +56,6 @@ protected:
 	/**
 	 * Gameplay Effect Attributes
 	 */
-
 	// This function applies a gameplay effect to the character itself.
 	void ApplyEffectToSelf(const TSubclassOf<UGameplayEffect>& GameplayEffectClass, float Level) const;
 
@@ -66,8 +69,21 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attributes|Secondary")
 	TSubclassOf<UGameplayEffect> DefaultSecondaryAttributes;
 
-	// Initialize Secondary Attributes after the Primary Attributes become Secondary Attributes are dependent on Primary Attributes
+	// Initialize Vital Attributes after the Primary Attributes become Secondary Attributes are dependent on Primary Attributes
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attributes|Vital")
 	TSubclassOf<UGameplayEffect> DefaultVitalAttributes;
 
+	/**
+	 * Gameplay Abilities
+	 */
+	// A function to give abilities to our character.
+	void AddCharacterAbilities() const;
+private:
+
+	/**
+	 * Gameplay Abilities
+	 */
+	// An array of ability classes that we want to give to our player at the start of the game.
+	UPROPERTY(EditAnywhere, Category="Abilities")
+	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
 };

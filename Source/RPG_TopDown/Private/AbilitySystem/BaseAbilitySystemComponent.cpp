@@ -3,6 +3,7 @@
 
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
 
+#include "AssetTypeCategories.h"
 #include "TopDownGameplayTags.h"
 
 void UBaseAbilitySystemComponent::BindOnGameplayEffectAppliedDelegateToSelf()
@@ -14,7 +15,7 @@ void UBaseAbilitySystemComponent::BindOnGameplayEffectAppliedDelegateToSelf()
 }
 
 void UBaseAbilitySystemComponent::EffectAppliedToSelf(UAbilitySystemComponent* AbilitySystemComponent,
-                                                const FGameplayEffectSpec& GameplayEffectSpec, FActiveGameplayEffectHandle ActiveGameplayEffectHandle)
+                                                      const FGameplayEffectSpec& GameplayEffectSpec, FActiveGameplayEffectHandle ActiveGameplayEffectHandle)
 {
 	FGameplayTagContainer GameplayTagContainer;
 	/*
@@ -48,4 +49,14 @@ void UBaseAbilitySystemComponent::EffectAppliedToSelf(UAbilitySystemComponent* A
 	 * A buff effect might grant the tag State.Buffed, enabling the player to benefit from certain abilities or resistances.
 	 */
 	//GameplayEffectSpec.GetAllGrantedTags(GameplayGrantedTagContainer);
+}
+
+void UBaseAbilitySystemComponent::AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupAbilities)
+{
+	for (const TSubclassOf<UGameplayAbility> AbilityClass : StartupAbilities)
+	{
+		FGameplayAbilitySpec GameplayAbilitySpec = FGameplayAbilitySpec(AbilityClass, 1);
+		//GiveAbility(GameplayAbilitySpec);
+		GiveAbilityAndActivateOnce(GameplayAbilitySpec);
+	}
 }
