@@ -71,8 +71,16 @@ public:
  FGameplayTag Attributes_Secondary_MaximumHealth;
  FGameplayTag Attributes_Secondary_MaximumMana;
  FGameplayTag Attributes_Secondary_MaximumStamina;
- 
-protected:
+
+ /*
+  * Input Tags
+  */
+ FGameplayTag InputTag_LMB;
+ FGameplayTag InputTag_RMB;
+ FGameplayTag InputTag_1;
+ FGameplayTag InputTag_2;
+ FGameplayTag InputTag_3;
+ FGameplayTag InputTag_4;
 
 private:
  // Static variable to hold the single instance of the class
