@@ -81,9 +81,12 @@ void ABaseCharacter::InitializeDefaultAttributes() const
 void ABaseCharacter::AddCharacterAbilities() const
 {
 	UBaseAbilitySystemComponent* BaseAbilitySystemComponent = Cast<UBaseAbilitySystemComponent>(AbilitySystemComponent);
-	
+
+	// This check ensures that only the server (or the authoritative instance) can add abilities.
+	// In multiplayer games, this prevents clients from adding abilities arbitrarily.
 	if (!HasAuthority()) return;
 
+	// Calls the function on the Ability System Component to add the startup abilities.
 	BaseAbilitySystemComponent->AddCharacterAbilities(StartupAbilities);
 }
 

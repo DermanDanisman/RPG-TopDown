@@ -22,6 +22,7 @@ public:
 	// Function to bind the gameplay effect delegates, This is also called Ability Actor Info Set.
 	void BindOnGameplayEffectAppliedDelegateToSelf();
 
+	// This function takes an array of ability classes and adds them to the Ability System Component.
 	void AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupAbilities);
 
 	FGameplayEffectAssetTags GameplayEffectAssetTags;

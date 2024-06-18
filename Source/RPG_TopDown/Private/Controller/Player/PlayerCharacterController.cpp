@@ -7,6 +7,7 @@
 #include "InputAction.h"
 #include "InputActionValue.h"
 #include "ActorComponent/CameraMovementComponent.h"
+#include "Input/TopDownInputComponent.h"
 #include "Interface/Interaction/HighlightActorInterface.h"
 #include "Interface/Camera/CameraMovementInterface.h"
 
@@ -132,7 +133,7 @@ void APlayerCharacterController::CameraZoomInOut(const FInputActionValue& InputA
 {
 	const float ActionValue = InputActionValue.Get<float>();
 
-	if (APawn* ControlledPawn = GetPawn<APawn>())
+	if (const APawn* ControlledPawn = GetPawn<APawn>())
 	{
 		CameraMovementInterface = ControlledPawn->GetComponentByClass(UCameraMovementComponent::StaticClass());
 		CameraMovementInterface->CameraZoom(ActionValue);

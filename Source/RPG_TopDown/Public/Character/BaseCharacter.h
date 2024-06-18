@@ -76,14 +76,14 @@ protected:
 	/**
 	 * Gameplay Abilities
 	 */
-	// A function to give abilities to our character.
+	// This function is responsible for adding the abilities listed in StartupAbilities to the character's Ability System Component.
 	void AddCharacterAbilities() const;
 private:
 
 	/**
 	 * Gameplay Abilities
 	 */
-	// An array of ability classes that we want to give to our player at the start of the game.
+	// This is an array that holds classes derived from UGameplayAbility. These are the abilities that the character will start with.
 	UPROPERTY(EditAnywhere, Category="Abilities")
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
 };
