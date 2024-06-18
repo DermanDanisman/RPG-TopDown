@@ -3,7 +3,6 @@
 
 #include "Controller/Player/PlayerCharacterController.h"
 #include "EnhancedInputSubsystems.h"
-#include "EnhancedInputComponent.h"
 #include "InputAction.h"
 #include "InputActionValue.h"
 #include "ActorComponent/CameraMovementComponent.h"
@@ -56,11 +55,13 @@ void APlayerCharacterController::SetupInputComponent()
 	Super::SetupInputComponent();
 
 	// Bind input actions to their respective functions
-	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
-	if (EnhancedInputComponent)
+	UTopDownInputComponent* TopDownInputComponent = CastChecked<UTopDownInputComponent>(InputComponent);
+	if (TopDownInputComponent)
 	{
-		EnhancedInputComponent->BindAction(InputActionMove, ETriggerEvent::Triggered, this, &APlayerCharacterController::Move);
-		EnhancedInputComponent->BindAction(InputActionCameraZoomInOut, ETriggerEvent::Triggered, this, &APlayerCharacterController::CameraZoomInOut);
+		TopDownInputComponent->BindAction(InputActionMove, ETriggerEvent::Triggered, this, &APlayerCharacterController::Move);
+		TopDownInputComponent->BindAction(InputActionCameraZoomInOut, ETriggerEvent::Triggered, this, &APlayerCharacterController::CameraZoomInOut);
+
+		TopDownInputComponent->BindAbilityActions(InputConfigDataAsset, this, &ThisClass::AbilityInputTagPressed, &ThisClass::AbilityInputTagReleased, &ThisClass::AbilityInputTagHeld);
 	}
 }
 
@@ -138,6 +139,21 @@ void APlayerCharacterController::CameraZoomInOut(const FInputActionValue& InputA
 		CameraMovementInterface = ControlledPawn->GetComponentByClass(UCameraMovementComponent::StaticClass());
 		CameraMovementInterface->CameraZoom(ActionValue);
 	}
+}
+
+void APlayerCharacterController::AbilityInputTagPressed(FGameplayTag InputTag)
+{
+	GEngine->AddOnScreenDebugMessage(1, 3.f, FColor::Red, *InputTag.ToString());
+}
+
+void APlayerCharacterController::AbilityInputTagReleased(FGameplayTag InputTag)
+{
+	GEngine->AddOnScreenDebugMessage(2, 3.f, FColor::Blue, *InputTag.ToString());
+}
+
+void APlayerCharacterController::AbilityInputTagHeld(FGameplayTag InputTag)
+{
+	GEngine->AddOnScreenDebugMessage(3, 3.f, FColor::Green, *InputTag.ToString());
 }
 
 void APlayerCharacterController::CursorTrace()
