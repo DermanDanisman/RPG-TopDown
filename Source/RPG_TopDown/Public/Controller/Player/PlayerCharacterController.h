@@ -8,8 +8,6 @@
 #include "GameplayTagContainer.h"
 #include "PlayerCharacterController.generated.h"
 
-
-
 /* Forward Declaration */
 class UInputMappingContext;
 class UInputAction;
@@ -17,6 +15,7 @@ class IHighlightActorInterface;
 class ICameraMovementInterface;
 class UTopDownInputConfigDataAsset;
 class UBaseAbilitySystemComponent;
+class USplineComponent;
 struct FInputActionValue;
 
 /**
@@ -45,7 +44,7 @@ protected:
 	
 private:
 
-	/** Input Variables */
+	/* Input Variables */
 	UPROPERTY(EditAnywhere, Category="Input|Enhanced")
 	TObjectPtr<UInputMappingContext> DefaultInputMappingContext;
 
@@ -61,25 +60,37 @@ private:
 	UPROPERTY(EditAnywhere, Category="Input|Enhanced")
 	TObjectPtr<UInputAction> InputActionCameraPan;
 
-	/** Input Functions */
+	/* Input Functions */
 	void Move(const FInputActionValue& InputActionValue);
 	void CameraZoomInOut(const FInputActionValue& InputActionValue);
 
-	/** Custom Input Functions */
+	/* Custom Input Functions */
 	void AbilityInputTagPressed(FGameplayTag InputTag);
 	void AbilityInputTagReleased(FGameplayTag InputTag);
 	void AbilityInputTagHeld(FGameplayTag InputTag);
 	
-	/** Mouse Cursor */
+	/* Mouse Cursor */
 	void CursorTrace();
 	TScriptInterface<IHighlightActorInterface> LastActor;
 	TScriptInterface<IHighlightActorInterface> ThisActor;
 
-	/** Camera */
+	/* Camera */
 	TScriptInterface<ICameraMovementInterface> CameraMovementInterface;
 
-	/** References */
+	/* References */
 	UPROPERTY()
 	TObjectPtr<UBaseAbilitySystemComponent> BaseAbilitySystemComponent;
 	UBaseAbilitySystemComponent* GetAbilitySystemComponent();
+
+	/* Character Movement */
+	FVector CachedMoveDestination = FVector::ZeroVector;
+	float FollowTime = 0.f;
+	float ShortPressThreshold = 0.5f;
+	bool bAutoRunning = false;
+	bool bTargeting = false;
+	UPROPERTY(EditDefaultsOnly)
+	float AutoRunAcceptanceRadius = 50.f;
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<USplineComponent> Spline;
+	void ClickAndAutoRun();
 };

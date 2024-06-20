@@ -11,3 +11,6 @@
 #define CUSTOM_DEPTH_RED 250
 #define CUSTOM_DEPTH_GREEN 249
 #define CUSTOM_DEPTH_YELLOW 251
+
+// Giving alias to the custom trace channel
+#define ECC_Navigation ECC_GameTraceChannel1

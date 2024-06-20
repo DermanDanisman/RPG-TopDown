@@ -7,18 +7,24 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputAction.h"
 #include "InputActionValue.h"
+#include "NavigationPath.h"
+#include "NavigationSystem.h"
+#include "TopDownGameplayTags.h"
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
 #include "ActorComponent/CameraMovementComponent.h"
+#include "Components/SplineComponent.h"
 #include "Input/TopDownInputComponent.h"
 #include "Interface/Interaction/HighlightActorInterface.h"
 #include "Interface/Camera/CameraMovementInterface.h"
-
+#include "RPG_TopDown/RPG_TopDown.h"
 
 
 APlayerCharacterController::APlayerCharacterController()
 {
 	// Enabling Controller replication
 	bReplicates = true;
+
+	Spline = CreateDefaultSubobject<USplineComponent>("Spline");
 }
 
 void APlayerCharacterController::PlayerTick(float DeltaTime)
@@ -26,6 +32,7 @@ void APlayerCharacterController::PlayerTick(float DeltaTime)
 	Super::PlayerTick(DeltaTime);
 
 	CursorTrace();
+	ClickAndAutoRun();
 }
 
 void APlayerCharacterController::BeginPlay()
@@ -68,6 +75,30 @@ void APlayerCharacterController::SetupInputComponent()
 	}
 }
 
+void APlayerCharacterController::ClickAndAutoRun()
+{
+	/*
+	 * Check Allow Client Side Navigation in project settings
+	 */
+	
+	if (!bAutoRunning) return;
+	
+	if (APawn* ControlledPawn = GetPawn())
+	{
+		const FVector LocationOnSpline = Spline->FindLocationClosestToWorldLocation(ControlledPawn->GetActorLocation(), ESplineCoordinateSpace::World);
+		const FVector Direction = Spline->FindDirectionClosestToWorldLocation(LocationOnSpline, ESplineCoordinateSpace::World);
+		ControlledPawn->AddMovementInput(Direction);
+
+		const float DistanceToDestination = (LocationOnSpline - CachedMoveDestination).Length();
+		if (DistanceToDestination <= AutoRunAcceptanceRadius)
+		{
+			bAutoRunning = false;
+		}
+	}
+}
+
+// Performs a line trace (raycast) from the cursor's position to detect what the cursor is pointing at.
+// It updates the highlighted actor if the cursor moves over a different actor.
 void APlayerCharacterController::CursorTrace()
 {
 	// Declare a hit result to store the outcome of the trace
@@ -95,6 +126,8 @@ void APlayerCharacterController::CursorTrace()
 	}
 }
 
+// Configures the cursor to be visible and allows both game and UI interactions.
+// The cursor is not locked to the viewport and remains visible during capture operations.
 void APlayerCharacterController::SetCursorSettings()
 {
 	// Enable the mouse cursor to be visible.
@@ -134,6 +167,8 @@ void APlayerCharacterController::Move(const FInputActionValue& InputActionValue)
 	// If the pawn is valid, apply movement input based on the forward and right direction vectors
 	if (ControlledPawn)
 	{
+		bAutoRunning = false;
+		
 		// Adds movement in the forward direction based on the Y input value (forward/backward)
 		ControlledPawn->AddMovementInput(ForwardDirection, InputAxisVector.Y);
 
@@ -160,6 +195,9 @@ void APlayerCharacterController::Move(const FInputActionValue& InputActionValue)
 	}*/
 }
 
+// Adjusts the camera zoom level based on input.
+// Checks if the input tag matches the left mouse button (LMB) tag.
+// If it does, it sets bTargeting based on whether the player is currently targeting an actor and stops auto-running.
 void APlayerCharacterController::CameraZoomInOut(const FInputActionValue& InputActionValue)
 {
 	const float ActionValue = InputActionValue.Get<float>();
@@ -172,25 +210,110 @@ void APlayerCharacterController::CameraZoomInOut(const FInputActionValue& InputA
 }
 
 // Input Callback for Pressed Action
+// Activates the ability associated with the released input tag if it's not the LMB.
+// If it is the LMB and the player is targeting, it activates the ability. Otherwise, it handles movement and pathfinding, drawing the path and setting up auto-running.
 void APlayerCharacterController::AbilityInputTagPressed(const FGameplayTag InputTag)
 {
-	//GEngine->AddOnScreenDebugMessage(1, 3.f, FColor::Red, *InputTag.ToString());
+	// Check if we are targeting something. If not we can move
+	if (InputTag.MatchesTagExact(FTopDownGameplayTags::Get().InputTag_LMB))
+	{
+		bTargeting = ThisActor ? true : false;
+		bAutoRunning = false;
+	}
 }
 
 // Input Callback for Released Action
+// Activates the ability associated with the held input tag if it's not the LMB.
+// If it is the LMB and the player is targeting, it activates the ability. Otherwise, it handles continuous movement towards the cursor position.
 void APlayerCharacterController::AbilityInputTagReleased(const FGameplayTag InputTag)
 {
-	if (GetAbilitySystemComponent() == nullptr) return;
-	GetAbilitySystemComponent()->ActivateAbilityInputTagReleased(InputTag);
+	// If the input tag is not the LMB, the function directly activates the ability associated with the held input tag.
+	if (!InputTag.MatchesTagExact(FTopDownGameplayTags::Get().InputTag_LMB))
+	{
+		if (GetAbilitySystemComponent())
+		{
+			GetAbilitySystemComponent()->ActivateAbilityInputTagReleased(InputTag);
+		}
+		return;
+	}
+
+	// If the input tag is LMB and the player is targeting something (bTargeting is true), the ability associated with the held input tag is activated.
+	if (bTargeting)
+	{
+		if (GetAbilitySystemComponent())
+		{
+			GetAbilitySystemComponent()->ActivateAbilityInputTagReleased(InputTag);
+		}
+	}
+	else
+	{
+		APawn* ControlledPawn = GetPawn();
+		if (FollowTime <= ShortPressThreshold && ControlledPawn)
+		{
+			if (UNavigationPath* NavigationPath = UNavigationSystemV1::FindPathToLocationSynchronously(this,
+				ControlledPawn->GetActorLocation(), CachedMoveDestination))
+			{
+				Spline->ClearSplinePoints();
+				for (const FVector& PointLocation : NavigationPath->PathPoints)
+				{
+					Spline->AddSplinePoint(PointLocation, ESplineCoordinateSpace::World);
+					DrawDebugSphere(GetWorld(), PointLocation, 12.f, 12, FColor::Green, false, 5.f);
+				}
+				if (NavigationPath->PathPoints.Num() > 0)
+				{
+					CachedMoveDestination = NavigationPath->PathPoints.Last();
+					bAutoRunning = true;
+				}
+			}
+		}
+		FollowTime = 0.f;
+		bTargeting = false;
+	}
 }
 
 // Input Callback for Held Action
 void APlayerCharacterController::AbilityInputTagHeld(const FGameplayTag InputTag)
 {
-	if (GetAbilitySystemComponent() == nullptr) return;
-	GetAbilitySystemComponent()->ActivateAbilityInputTagHeld(InputTag);
+	// If the input tag is not the LMB, the function directly activates the ability associated with the held input tag.
+	if (!InputTag.MatchesTagExact(FTopDownGameplayTags::Get().InputTag_LMB))
+	{
+		if (GetAbilitySystemComponent())
+		{
+			GetAbilitySystemComponent()->ActivateAbilityInputTagHeld(InputTag);
+		}
+		return;
+	}
+
+	// If the input tag is LMB and the player is targeting something (bTargeting is true), the ability associated with the held input tag is activated.
+	if (bTargeting)
+	{
+		if (GetAbilitySystemComponent())
+		{
+			GetAbilitySystemComponent()->ActivateAbilityInputTagHeld(InputTag);
+		}
+	}
+	// If the input tag is LMB and the player is not targeting anything (bTargeting is false), the character is moved towards the cursor position.
+	else
+	{
+		FollowTime += GetWorld()->GetDeltaSeconds();
+
+		FHitResult HitResult;
+		// ECC_GameTraceChannel1 = Navigation
+		if (GetHitResultUnderCursor(ECC_Navigation, false, HitResult))
+		{
+			CachedMoveDestination = HitResult.ImpactPoint;
+		}
+
+		if (APawn* ControlledPawn = GetPawn())
+		{
+			const FVector WorldDirection = (CachedMoveDestination - ControlledPawn->GetActorLocation()).GetSafeNormal();
+			ControlledPawn->AddMovementInput(WorldDirection);
+		}
+	}
 }
 
+// This function retrieves the ability system component associated with the player’s pawn.
+// If the component is not already cached, it uses UAbilitySystemBlueprintLibrary to find and cast it to UBaseAbilitySystemComponent.
 UBaseAbilitySystemComponent* APlayerCharacterController::GetAbilitySystemComponent()
 {
 	if (BaseAbilitySystemComponent == nullptr)
