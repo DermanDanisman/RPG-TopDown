@@ -7,9 +7,10 @@
 #include "Engine/DataAsset.h"
 #include "TopDownInputConfigDataAsset.generated.h"
 
-/* Forward Declaring */
+/* Forward Declaration */
 class UInputAction;
 
+// A struct that maps input actions to gameplay tags.
 USTRUCT(BlueprintType)
 struct FTopDownInputAction
 {
@@ -23,7 +24,8 @@ struct FTopDownInputAction
 };
 
 /**
- * 
+ * UTopDownInputConfigDataAsset
+ * This class holds input action configurations, mapping input actions to gameplay tags.
  */
 UCLASS()
 class RPG_TOPDOWN_API UTopDownInputConfigDataAsset : public UDataAsset
@@ -32,14 +34,14 @@ class RPG_TOPDOWN_API UTopDownInputConfigDataAsset : public UDataAsset
 
 public:
 
+	// Function to find an input action by its associated gameplay tag
 	const UInputAction* FindAbilityInputActionForTag(const FGameplayTag& InputTag, bool bLogNotFound = false) const;
-	
+
+	// An array of FTopDownInputAction to hold input configurations.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="AbilityInputActions|TArray")
 	TArray<FTopDownInputAction> AbilityInputActions;
 
-	/*
-	 * TMap for finding Ability Input Action that has matching tag
-	 */
+	// Another function to find an input action by its associated gameplay tag using a TMap
 	const UInputAction* FindAbilityInputActionForTagMap(const FGameplayTag& InputTag, bool bLogNotFound = false) const;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="AbilityInputActions|TMap")

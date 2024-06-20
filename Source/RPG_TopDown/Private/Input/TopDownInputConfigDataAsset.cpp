@@ -4,6 +4,7 @@
 #include "Input/TopDownInputConfigDataAsset.h"
 #include "InputAction.h"
 
+// Searches the AbilityInputActions array for an input action matching the provided gameplay tag.
 const UInputAction* UTopDownInputConfigDataAsset::FindAbilityInputActionForTag(const FGameplayTag& InputTag,
 	bool bLogNotFound) const
 {
@@ -23,6 +24,7 @@ const UInputAction* UTopDownInputConfigDataAsset::FindAbilityInputActionForTag(c
 	return nullptr;
 }
 
+// Searches the AbilityInputActionTags map for an input action matching the provided gameplay tag.
 const UInputAction* UTopDownInputConfigDataAsset::FindAbilityInputActionForTagMap(const FGameplayTag& InputTag,
 	bool bLogNotFound) const
 {

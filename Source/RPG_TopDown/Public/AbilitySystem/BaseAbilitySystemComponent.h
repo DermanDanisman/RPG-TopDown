@@ -10,7 +10,8 @@
 DECLARE_MULTICAST_DELEGATE_OneParam(FGameplayEffectAssetTags, const FGameplayTagContainer& /* Asset Tags */);
 
 /**
- * 
+ * UBaseAbilitySystemComponent
+ * This class extends UAbilitySystemComponent to add custom functionality for managing abilities and gameplay effects.
  */
 UCLASS()
 class RPG_TOPDOWN_API UBaseAbilitySystemComponent : public UAbilitySystemComponent
@@ -25,6 +26,10 @@ public:
 	// This function takes an array of ability classes and adds them to the Ability System Component.
 	void AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupAbilities);
 
+	// Functions to activate abilities based on input tags
+	void ActivateAbilityInputTagHeld(const FGameplayTag& InputTag);
+	void ActivateAbilityInputTagReleased(const FGameplayTag& InputTag);
+
 	FGameplayEffectAssetTags GameplayEffectAssetTags;
 	
 protected:
@@ -38,5 +43,6 @@ protected:
 	 */
 	// Bind FOnGameplayEffectAppliedDelegate OnGameplayEffectAppliedDelegateToSelf delegate to this function. This function will be called whenever the delegate is broadcasted.
 	// We typically like to do this when the actual game starts and not really in constructors as those are fired off quite early.
+	// Delegate function to handle effects applied to self
 	void EffectAppliedToSelf(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayEffectSpec& GameplayEffectSpec, FActiveGameplayEffectHandle ActiveGameplayEffectHandle);
 };

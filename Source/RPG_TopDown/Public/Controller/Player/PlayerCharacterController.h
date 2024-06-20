@@ -16,10 +16,12 @@ class UInputAction;
 class IHighlightActorInterface;
 class ICameraMovementInterface;
 class UTopDownInputConfigDataAsset;
+class UBaseAbilitySystemComponent;
 struct FInputActionValue;
 
 /**
- * 
+ * APlayerCharacterController
+ * This class manages player input and activates abilities based on input actions and gameplay tags.
  */
 UCLASS()
 class RPG_TOPDOWN_API APlayerCharacterController : public APlayerController
@@ -76,4 +78,8 @@ private:
 	/** Camera */
 	TScriptInterface<ICameraMovementInterface> CameraMovementInterface;
 
+	/** References */
+	UPROPERTY()
+	TObjectPtr<UBaseAbilitySystemComponent> BaseAbilitySystemComponent;
+	UBaseAbilitySystemComponent* GetAbilitySystemComponent();
 };

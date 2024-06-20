@@ -2,9 +2,12 @@
 
 
 #include "Controller/Player/PlayerCharacterController.h"
+
+#include "AbilitySystemBlueprintLibrary.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputAction.h"
 #include "InputActionValue.h"
+#include "AbilitySystem/BaseAbilitySystemComponent.h"
 #include "ActorComponent/CameraMovementComponent.h"
 #include "Input/TopDownInputComponent.h"
 #include "Interface/Interaction/HighlightActorInterface.h"
@@ -62,6 +65,33 @@ void APlayerCharacterController::SetupInputComponent()
 		TopDownInputComponent->BindAction(InputActionCameraZoomInOut, ETriggerEvent::Triggered, this, &APlayerCharacterController::CameraZoomInOut);
 
 		TopDownInputComponent->BindAbilityActions(InputConfigDataAsset, this, &ThisClass::AbilityInputTagPressed, &ThisClass::AbilityInputTagReleased, &ThisClass::AbilityInputTagHeld);
+	}
+}
+
+void APlayerCharacterController::CursorTrace()
+{
+	// Declare a hit result to store the outcome of the trace
+	FHitResult CursorHitResult;
+	// Perform a line trace (ray cast) under the cursor using the visibility channel
+	GetHitResultUnderCursor(ECC_Visibility, false, CursorHitResult);
+	// If the trace did not hit anything, exit the function
+	if (!CursorHitResult.bBlockingHit) return;
+	
+	// Store the actor hit by the previous trace
+	LastActor = ThisActor;
+	// Store the actor hit by the current trace
+	ThisActor = CursorHitResult.GetActor();
+	//GEngine->AddOnScreenDebugMessage(-1, 0.f, FColor::Blue,
+	//FString::Printf(TEXT("EnemyCharacter %s: HighlightActor Called"), *CursorHitResult.GetActor()->GetName()));
+    
+	// If the actor under the cursor has changed since the last frame
+	if (ThisActor != LastActor)
+	{
+		// If the previous actor is valid, unhighlight it
+		if (LastActor != nullptr) LastActor->UnHighlightActor();
+        
+		// If the current actor is valid, highlight it
+		if (ThisActor != nullptr) ThisActor->HighlightActor();
 	}
 }
 
@@ -141,44 +171,34 @@ void APlayerCharacterController::CameraZoomInOut(const FInputActionValue& InputA
 	}
 }
 
-void APlayerCharacterController::AbilityInputTagPressed(FGameplayTag InputTag)
+// Input Callback for Pressed Action
+void APlayerCharacterController::AbilityInputTagPressed(const FGameplayTag InputTag)
 {
-	GEngine->AddOnScreenDebugMessage(1, 3.f, FColor::Red, *InputTag.ToString());
+	//GEngine->AddOnScreenDebugMessage(1, 3.f, FColor::Red, *InputTag.ToString());
 }
 
-void APlayerCharacterController::AbilityInputTagReleased(FGameplayTag InputTag)
+// Input Callback for Released Action
+void APlayerCharacterController::AbilityInputTagReleased(const FGameplayTag InputTag)
 {
-	GEngine->AddOnScreenDebugMessage(2, 3.f, FColor::Blue, *InputTag.ToString());
+	if (GetAbilitySystemComponent() == nullptr) return;
+	GetAbilitySystemComponent()->ActivateAbilityInputTagReleased(InputTag);
 }
 
-void APlayerCharacterController::AbilityInputTagHeld(FGameplayTag InputTag)
+// Input Callback for Held Action
+void APlayerCharacterController::AbilityInputTagHeld(const FGameplayTag InputTag)
 {
-	GEngine->AddOnScreenDebugMessage(3, 3.f, FColor::Green, *InputTag.ToString());
+	if (GetAbilitySystemComponent() == nullptr) return;
+	GetAbilitySystemComponent()->ActivateAbilityInputTagHeld(InputTag);
 }
 
-void APlayerCharacterController::CursorTrace()
+UBaseAbilitySystemComponent* APlayerCharacterController::GetAbilitySystemComponent()
 {
-	// Declare a hit result to store the outcome of the trace
-	FHitResult CursorHitResult;
-	// Perform a line trace (ray cast) under the cursor using the visibility channel
-	GetHitResultUnderCursor(ECC_Visibility, false, CursorHitResult);
-	// If the trace did not hit anything, exit the function
-	if (!CursorHitResult.bBlockingHit) return;
-	
-	// Store the actor hit by the previous trace
-	LastActor = ThisActor;
-	// Store the actor hit by the current trace
-	ThisActor = CursorHitResult.GetActor();
-	//GEngine->AddOnScreenDebugMessage(-1, 0.f, FColor::Blue,
-		//FString::Printf(TEXT("EnemyCharacter %s: HighlightActor Called"), *CursorHitResult.GetActor()->GetName()));
-    
-	// If the actor under the cursor has changed since the last frame
-	if (ThisActor != LastActor)
+	if (BaseAbilitySystemComponent == nullptr)
 	{
-		// If the previous actor is valid, unhighlight it
-		if (LastActor != nullptr) LastActor->UnHighlightActor();
-        
-		// If the current actor is valid, highlight it
-		if (ThisActor != nullptr) ThisActor->HighlightActor();
+		BaseAbilitySystemComponent = Cast<UBaseAbilitySystemComponent>
+		(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn<APawn>()));
 	}
+	return BaseAbilitySystemComponent;
 }
+
+

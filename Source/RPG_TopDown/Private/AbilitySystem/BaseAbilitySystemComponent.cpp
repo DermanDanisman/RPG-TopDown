@@ -5,7 +5,9 @@
 
 #include "AssetTypeCategories.h"
 #include "TopDownGameplayTags.h"
+#include "AbilitySystem/Abilities/BaseGameplayAbility.h"
 
+// Binds the delegate to handle effects applied to the ability system component.
 void UBaseAbilitySystemComponent::BindOnGameplayEffectAppliedDelegateToSelf()
 {
 	OnGameplayEffectAppliedDelegateToSelf.AddUObject(this, &UBaseAbilitySystemComponent::EffectAppliedToSelf);
@@ -56,7 +58,54 @@ void UBaseAbilitySystemComponent::AddCharacterAbilities(const TArray<TSubclassOf
 	for (const TSubclassOf<UGameplayAbility> AbilityClass : StartupAbilities)
 	{
 		FGameplayAbilitySpec GameplayAbilitySpec = FGameplayAbilitySpec(AbilityClass, 1);
-		//GiveAbility(GameplayAbilitySpec);
-		GiveAbilityAndActivateOnce(GameplayAbilitySpec);
+
+		/*
+		 * Now we want our gameplay abilities to have the concept of an input tag, but we'd like to be able to change this at runtime.
+		 * For example, we might have an ability mapped to the left mouse button, and we may want to reassign it to the right mouse button.
+		 * So having a variable on the UBaseGameplayAbility class is great for something like the startup input tag,
+		 * but if we want to be able to change it, we can't really use variables on the UBaseGameplayAbility class.
+		 * Well, the GameplayAbilitySpec has a gameplay tag container specifically for tags that can be added or removed dynamically throughout the game.
+		 * So that's perfect for our input tag. And as our ability system component adds the abilities for the first time at the beginning of the game.
+		 * Since these are startup abilities, we can check that startup input tag, and we can add those to our ability spec for that given ability.
+		 */
+		
+		if (const UBaseGameplayAbility* BaseGameplayAbility = Cast<UBaseGameplayAbility>(GameplayAbilitySpec.Ability))
+		{
+			GameplayAbilitySpec.DynamicAbilityTags.AddTag(BaseGameplayAbility->StartupInputTag);
+			GiveAbility(GameplayAbilitySpec);
+		}
+	}
+}
+
+// Ability activation function when Input is held by the player for the given ability
+void UBaseAbilitySystemComponent::ActivateAbilityInputTagHeld(const FGameplayTag& InputTag)
+{
+	if (!InputTag.IsValid()) return;
+
+	for (auto& ActivatableAbilitySpecs : GetActivatableAbilities())
+	{
+		if (ActivatableAbilitySpecs.DynamicAbilityTags.HasTagExact(InputTag))
+		{
+			AbilitySpecInputPressed(ActivatableAbilitySpecs);
+			if (!ActivatableAbilitySpecs.IsActive())
+			{
+				// We have to call tri activate ability because there may be things that prevent the ability from being activated. So we have to try to activate it.
+				TryActivateAbility(ActivatableAbilitySpecs.Handle);
+			}
+		}
+	}
+}
+
+// Ability activation function when Input is released by the player for the given ability
+void UBaseAbilitySystemComponent::ActivateAbilityInputTagReleased(const FGameplayTag& InputTag)
+{
+	if (!InputTag.IsValid()) return;
+
+	for (auto& ActivatableAbilitySpecs : GetActivatableAbilities())
+	{
+		if (ActivatableAbilitySpecs.DynamicAbilityTags.HasTagExact(InputTag))
+		{
+			AbilitySpecInputReleased(ActivatableAbilitySpecs);
+		}
 	}
 }
