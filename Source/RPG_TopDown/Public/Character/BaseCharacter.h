@@ -26,7 +26,9 @@ public:
 	// Sets default values for this character's properties
 	ABaseCharacter();
 
-	/** Ability System Interface */
+	/*
+	 * Ability System Interface
+	 */
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UAttributeSet* GetAttributeSet() const;
 
@@ -34,16 +36,24 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	
-	/**
+	/*
 	 * Common Variables
 	 */
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USkeletalMeshComponent> WeaponMesh;
 
 	UPROPERTY(EditAnywhere,Category="Combat|Socket Names")
+	FName WeaponTipSocketName;
+	
+	UPROPERTY(EditAnywhere,Category="Combat|Socket Names")
 	FName WeaponAttachmentSocketName = FName("WeaponHandSocket");
 
-	/**
+	/*
+	 * Combat Interface Functions
+	 */
+	virtual FVector GetWeaponTipSocketLocation() override;
+
+	/*
 	 * Game Ability System
 	 */
 	UPROPERTY()
@@ -53,7 +63,7 @@ protected:
 	
 	virtual void InitAbilityActorInfo();
 
-	/**
+	/*
 	 * Gameplay Effect Attributes
 	 */
 	// This function applies a gameplay effect to the character itself.
@@ -73,14 +83,14 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attributes|Vital")
 	TSubclassOf<UGameplayEffect> DefaultVitalAttributes;
 
-	/**
+	/*
 	 * Gameplay Abilities
 	 */
 	// This function is responsible for adding the abilities listed in StartupAbilities to the character's Ability System Component.
 	void AddCharacterAbilities() const;
 private:
 
-	/**
+	/*
 	 * Gameplay Abilities
 	 */
 	// This is an array that holds classes derived from UGameplayAbility. These are the abilities that the character will start with.

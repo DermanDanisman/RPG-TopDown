@@ -10,13 +10,15 @@
 // Binds the delegate to handle effects applied to the ability system component.
 void UBaseAbilitySystemComponent::BindOnGameplayEffectAppliedDelegateToSelf()
 {
-	OnGameplayEffectAppliedDelegateToSelf.AddUObject(this, &UBaseAbilitySystemComponent::EffectAppliedToSelf);
+	OnGameplayEffectAppliedDelegateToSelf.AddUObject(this, &UBaseAbilitySystemComponent::ClientEffectAppliedToSelf);
 
 	//const FTopDownGameplayTags GameplayTags = FTopDownGameplayTags::Get();
 	//GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, FString::Printf(TEXT("Tag: %s"), *GameplayTags.Attributes_Primary_Strength.ToString()));
 }
 
-void UBaseAbilitySystemComponent::EffectAppliedToSelf(UAbilitySystemComponent* AbilitySystemComponent,
+// This function is a Client RPC. And once OnGameplayEffectAppliedDelegateToSelf delegate is broadcast on the server, this function will be called in the server and executed on the client.
+// So this takes care of both server and client behavior for those messages.
+void UBaseAbilitySystemComponent::ClientEffectAppliedToSelf_Implementation(UAbilitySystemComponent* AbilitySystemComponent,
                                                       const FGameplayEffectSpec& GameplayEffectSpec, FActiveGameplayEffectHandle ActiveGameplayEffectHandle)
 {
 	FGameplayTagContainer GameplayTagContainer;

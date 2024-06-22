@@ -39,24 +39,17 @@ protected:
 
 	virtual void SetupInputComponent() override;
 
-	/** Mouse Cursor */
-	void SetCursorSettings();
-	
 private:
 
 	/* Input Variables */
 	UPROPERTY(EditAnywhere, Category="Input|Enhanced")
 	TObjectPtr<UInputMappingContext> DefaultInputMappingContext;
-
 	UPROPERTY(EditAnywhere, Category="Input|Custom")
 	TObjectPtr<UTopDownInputConfigDataAsset> InputConfigDataAsset;
-
 	UPROPERTY(EditAnywhere, Category="Input|Enhanced")
 	TObjectPtr<UInputAction> InputActionMove;
-
 	UPROPERTY(EditAnywhere, Category="Input|Enhanced")
 	TObjectPtr<UInputAction> InputActionCameraZoomInOut;
-
 	UPROPERTY(EditAnywhere, Category="Input|Enhanced")
 	TObjectPtr<UInputAction> InputActionCameraPan;
 
@@ -70,9 +63,10 @@ private:
 	void AbilityInputTagHeld(FGameplayTag InputTag);
 	
 	/* Mouse Cursor */
-	void CursorTrace();
 	TScriptInterface<IHighlightActorInterface> LastActor;
 	TScriptInterface<IHighlightActorInterface> ThisActor;
+	void CursorTrace();
+	void SetCursorSettings();
 
 	/* Camera */
 	TScriptInterface<ICameraMovementInterface> CameraMovementInterface;
@@ -88,9 +82,9 @@ private:
 	float ShortPressThreshold = 0.5f;
 	bool bAutoRunning = false;
 	bool bTargeting = false;
-	UPROPERTY(EditDefaultsOnly)
-	float AutoRunAcceptanceRadius = 50.f;
+	UPROPERTY(EditDefaultsOnly,	Category="Character Movement|Click And Move")
+	float AutoRunAcceptanceRadius = 25.f;
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USplineComponent> Spline;
-	void ClickAndAutoRun();
+	void AutoRun();
 };

@@ -24,4 +24,5 @@ class RPG_TOPDOWN_API ICombatInterface
 public:
 
 	virtual int32 GetCharacterLevel();
+	virtual FVector GetWeaponTipSocketLocation();
 };

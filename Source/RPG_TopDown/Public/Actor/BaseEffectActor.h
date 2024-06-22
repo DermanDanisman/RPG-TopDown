@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameplayEffectTypes.h"
 #include "GameFramework/Actor.h"
 #include "BaseEffectActor.generated.h"
 

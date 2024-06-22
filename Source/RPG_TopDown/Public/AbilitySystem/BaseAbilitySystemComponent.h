@@ -44,5 +44,7 @@ protected:
 	// Bind FOnGameplayEffectAppliedDelegate OnGameplayEffectAppliedDelegateToSelf delegate to this function. This function will be called whenever the delegate is broadcasted.
 	// We typically like to do this when the actual game starts and not really in constructors as those are fired off quite early.
 	// Delegate function to handle effects applied to self
-	void EffectAppliedToSelf(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayEffectSpec& GameplayEffectSpec, FActiveGameplayEffectHandle ActiveGameplayEffectHandle);
+	// Client RPC, this function will be called in the server and executed on the client.
+	UFUNCTION(Client, Reliable)
+	void ClientEffectAppliedToSelf(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayEffectSpec& GameplayEffectSpec, FActiveGameplayEffectHandle ActiveGameplayEffectHandle);
 };

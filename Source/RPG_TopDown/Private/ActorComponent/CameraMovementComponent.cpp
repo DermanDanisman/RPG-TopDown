@@ -33,7 +33,7 @@ void UCameraMovementComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 
 	if (!CameraSpringArm) return;
 
-	ACharacter* OwnerCharacter = Cast<ACharacter>(GetOwner());
+	/*ACharacter* OwnerCharacter = Cast<ACharacter>(GetOwner());
 	if (OwnerCharacter && OwnerCharacter->GetCharacterMovement()->Velocity.Size() < 1.f)
 	{
 		FVector2D MousePosPercent = GetMousePositionPercent();
@@ -42,7 +42,7 @@ void UCameraMovementComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 	else
 	{
 		ResetCamera();
-	}
+	}*/
 }
 
 // Purpose: Adjusts the camera offset based on the mouse position.

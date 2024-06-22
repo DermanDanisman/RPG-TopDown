@@ -32,7 +32,7 @@ void APlayerCharacterController::PlayerTick(float DeltaTime)
 	Super::PlayerTick(DeltaTime);
 
 	CursorTrace();
-	ClickAndAutoRun();
+	AutoRun();
 }
 
 void APlayerCharacterController::BeginPlay()
@@ -75,7 +75,7 @@ void APlayerCharacterController::SetupInputComponent()
 	}
 }
 
-void APlayerCharacterController::ClickAndAutoRun()
+void APlayerCharacterController::AutoRun()
 {
 	/*
 	 * Check Allow Client Side Navigation in project settings
@@ -120,7 +120,6 @@ void APlayerCharacterController::CursorTrace()
 	{
 		// If the previous actor is valid, unhighlight it
 		if (LastActor != nullptr) LastActor->UnHighlightActor();
-        
 		// If the current actor is valid, highlight it
 		if (ThisActor != nullptr) ThisActor->HighlightActor();
 	}
@@ -168,31 +167,11 @@ void APlayerCharacterController::Move(const FInputActionValue& InputActionValue)
 	if (ControlledPawn)
 	{
 		bAutoRunning = false;
-		
 		// Adds movement in the forward direction based on the Y input value (forward/backward)
 		ControlledPawn->AddMovementInput(ForwardDirection, InputAxisVector.Y);
-
 		// Adds movement in the right direction based on the X input value (left/right)
 		ControlledPawn->AddMovementInput(RightDirection, InputAxisVector.X);
 	}
-	
-	/*
-	// Extract the 2D input vector (X and Y) from the input action value
-	const FVector2D InputAxisVector = InputActionValue.Get<FVector2D>();
-
-	// Get the pawn the controller is possessing
-	APawn* ControlledPawn = GetPawn<APawn>();
-
-	if (ControlledPawn)
-	{
-		// Create movement vectors based on input
-		const FVector ForwardDirection = FVector::ForwardVector;
-		const FVector RightDirection = FVector::RightVector;
-
-		// Add movement in the forward and right directions based on input
-		ControlledPawn->AddMovementInput(ForwardDirection, InputAxisVector.Y);
-		ControlledPawn->AddMovementInput(RightDirection, InputAxisVector.X);
-	}*/
 }
 
 // Adjusts the camera zoom level based on input.
@@ -247,7 +226,7 @@ void APlayerCharacterController::AbilityInputTagReleased(const FGameplayTag Inpu
 	}
 	else
 	{
-		APawn* ControlledPawn = GetPawn();
+		const APawn* ControlledPawn = GetPawn();
 		if (FollowTime <= ShortPressThreshold && ControlledPawn)
 		{
 			if (UNavigationPath* NavigationPath = UNavigationSystemV1::FindPathToLocationSynchronously(this,
@@ -292,8 +271,7 @@ void APlayerCharacterController::AbilityInputTagHeld(const FGameplayTag InputTag
 			GetAbilitySystemComponent()->ActivateAbilityInputTagHeld(InputTag);
 		}
 	}
-	// If the input tag is LMB and the player is not targeting anything (bTargeting is false), the character is moved towards the cursor position.
-	else
+	else // If the input tag is LMB and the player is not targeting anything (bTargeting is false), the character is moved towards the cursor position.
 	{
 		FollowTime += GetWorld()->GetDeltaSeconds();
 
