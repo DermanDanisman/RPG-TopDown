@@ -7,14 +7,13 @@
 #include "Interface/Interaction/CombatInterface.h"
 
 
-void UTopDownProjectileAbility::SpawnProjectile()
+void UTopDownProjectileAbility::SpawnProjectile(const FVector& ProjectileTargetLocation)
 {
 	/*
 	 * I want to spawn the projectile on the server. I don't want to spawn this locally. I want this projectile to be a replicated actor.
 	 * And that way if the server spawns it, then the server will be in charge of moving it,
 	 * handling its location and all that good stuff, and the clients will just see a replicated version of the projectile.
 	 */
-
 	
 	const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();
 	if (!bIsServer) return;
@@ -23,9 +22,13 @@ void UTopDownProjectileAbility::SpawnProjectile()
 	if (CombatInterface)
 	{
 		const FVector SocketLocation = CombatInterface->GetWeaponTipSocketLocation();
+		FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
+		
+		Rotation.Pitch = 0.f;
+		
 		FTransform SpawnTransform;
 		SpawnTransform.SetLocation(SocketLocation);
-		// TODO: Set the Projectile Rotation.
+		SpawnTransform.SetRotation(Rotation.Quaternion());
 
 		check(ProjectileClass);
 		/*

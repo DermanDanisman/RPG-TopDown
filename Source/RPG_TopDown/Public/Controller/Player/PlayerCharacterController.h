@@ -49,6 +49,9 @@ private:
 	UPROPERTY(EditAnywhere, Category="Input|Enhanced")
 	TObjectPtr<UInputAction> InputActionMove;
 	UPROPERTY(EditAnywhere, Category="Input|Enhanced")
+	TObjectPtr<UInputAction> InputActionShift;
+	bool bShiftKeyDown = false;
+	UPROPERTY(EditAnywhere, Category="Input|Enhanced")
 	TObjectPtr<UInputAction> InputActionCameraZoomInOut;
 	UPROPERTY(EditAnywhere, Category="Input|Enhanced")
 	TObjectPtr<UInputAction> InputActionCameraPan;
@@ -61,6 +64,8 @@ private:
 	void AbilityInputTagPressed(FGameplayTag InputTag);
 	void AbilityInputTagReleased(FGameplayTag InputTag);
 	void AbilityInputTagHeld(FGameplayTag InputTag);
+	void ShiftPressed() { bShiftKeyDown = true; }
+	void ShiftReleased() { bShiftKeyDown = false; }
 	
 	/* Mouse Cursor */
 	TScriptInterface<IHighlightActorInterface> LastActor;

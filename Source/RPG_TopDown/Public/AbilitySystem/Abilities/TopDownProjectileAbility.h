@@ -18,7 +18,7 @@ class RPG_TOPDOWN_API UTopDownProjectileAbility : public UBaseGameplayAbility
 protected:
 
 	UFUNCTION(BlueprintCallable, Category="Projectile")
-	virtual void SpawnProjectile();
+	virtual void SpawnProjectile(const FVector& ProjectileTargetLocation);
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile")
 	TSubclassOf<ATopDownProjectile> ProjectileClass;

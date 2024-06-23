@@ -70,7 +70,9 @@ void APlayerCharacterController::SetupInputComponent()
 	{
 		TopDownInputComponent->BindAction(InputActionMove, ETriggerEvent::Triggered, this, &APlayerCharacterController::Move);
 		TopDownInputComponent->BindAction(InputActionCameraZoomInOut, ETriggerEvent::Triggered, this, &APlayerCharacterController::CameraZoomInOut);
-
+		TopDownInputComponent->BindAction(InputActionShift, ETriggerEvent::Started, this, &APlayerCharacterController::ShiftPressed);
+		TopDownInputComponent->BindAction(InputActionShift, ETriggerEvent::Completed, this, &APlayerCharacterController::ShiftReleased);
+		
 		TopDownInputComponent->BindAbilityActions(InputConfigDataAsset, this, &ThisClass::AbilityInputTagPressed, &ThisClass::AbilityInputTagReleased, &ThisClass::AbilityInputTagHeld);
 	}
 }
@@ -216,15 +218,9 @@ void APlayerCharacterController::AbilityInputTagReleased(const FGameplayTag Inpu
 		return;
 	}
 
-	// If the input tag is LMB and the player is targeting something (bTargeting is true), the ability associated with the held input tag is activated.
-	if (bTargeting)
-	{
-		if (GetAbilitySystemComponent())
-		{
-			GetAbilitySystemComponent()->ActivateAbilityInputTagReleased(InputTag);
-		}
-	}
-	else
+	GetAbilitySystemComponent()->ActivateAbilityInputTagReleased(InputTag);
+	
+	if (!bTargeting && !bShiftKeyDown)
 	{
 		const APawn* ControlledPawn = GetPawn();
 		if (FollowTime <= ShortPressThreshold && ControlledPawn)
@@ -264,7 +260,7 @@ void APlayerCharacterController::AbilityInputTagHeld(const FGameplayTag InputTag
 	}
 
 	// If the input tag is LMB and the player is targeting something (bTargeting is true), the ability associated with the held input tag is activated.
-	if (bTargeting)
+	if (bTargeting || bShiftKeyDown)
 	{
 		if (GetAbilitySystemComponent())
 		{
