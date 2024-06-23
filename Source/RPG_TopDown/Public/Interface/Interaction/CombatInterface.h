@@ -25,4 +25,7 @@ public:
 
 	virtual int32 GetCharacterLevel();
 	virtual FVector GetWeaponTipSocketLocation();
+	
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category="BlueprintEvents")
+	void UpdateFacingWarpTarget(const FVector& FacingTarget);
 };
