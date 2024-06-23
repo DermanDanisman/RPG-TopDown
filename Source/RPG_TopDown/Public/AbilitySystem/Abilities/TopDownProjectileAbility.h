@@ -17,8 +17,8 @@ class RPG_TOPDOWN_API UTopDownProjectileAbility : public UBaseGameplayAbility
 
 protected:
 
-	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
-		const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
+	UFUNCTION(BlueprintCallable, Category="Projectile")
+	virtual void SpawnProjectile();
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile")
 	TSubclassOf<ATopDownProjectile> ProjectileClass;

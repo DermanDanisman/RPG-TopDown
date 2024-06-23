@@ -7,19 +7,16 @@
 #include "Interface/Interaction/CombatInterface.h"
 
 
-void UTopDownProjectileAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
-                                                const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
-                                                const FGameplayEventData* TriggerEventData)
+void UTopDownProjectileAbility::SpawnProjectile()
 {
-	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-
 	/*
 	 * I want to spawn the projectile on the server. I don't want to spawn this locally. I want this projectile to be a replicated actor.
 	 * And that way if the server spawns it, then the server will be in charge of moving it,
 	 * handling its location and all that good stuff, and the clients will just see a replicated version of the projectile.
 	 */
 
-	const bool bIsServer = HasAuthority(&ActivationInfo);
+	
+	const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();
 	if (!bIsServer) return;
 	
 	ICombatInterface* CombatInterface = Cast<ICombatInterface>(GetAvatarActorFromActorInfo());
