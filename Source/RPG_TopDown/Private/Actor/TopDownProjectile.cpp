@@ -3,8 +3,11 @@
 
 #include "Actor/TopDownProjectile.h"
 
+#include "NiagaraFunctionLibrary.h"
+#include "Components/AudioComponent.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 ATopDownProjectile::ATopDownProjectile()
 {
@@ -33,14 +36,51 @@ ATopDownProjectile::ATopDownProjectile()
 void ATopDownProjectile::BeginPlay()
 {
 	Super::BeginPlay();
+
+	Sphere->IgnoreActorWhenMoving(GetInstigator(), true);
+
+	SetLifeSpan(LifeSpan);
 	
 	Sphere->OnComponentBeginOverlap.AddDynamic(this, &ATopDownProjectile::OnSphereOverlap);
-	
+
+	if (LoopingEffectSound)
+	{
+		LoopingEffectAudioComponent = UGameplayStatics::SpawnSoundAttached(LoopingEffectSound, GetRootComponent());
+	}
+}
+
+void ATopDownProjectile::Destroyed()
+{
+	if (!bCollisionHit && !HasAuthority())
+	{
+		if (ImpactSound && ImpactEffect)
+		{
+			UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator().ZeroRotator);
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
+			LoopingEffectAudioComponent->Stop();
+		}
+	}
+		
+	Super::Destroyed();
 }
 
 void ATopDownProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+                                         UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	
+	if (ImpactSound && ImpactEffect)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator().ZeroRotator);
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
+		LoopingEffectAudioComponent->Stop();
+	}
+
+	if (HasAuthority())
+	{
+		Destroy();
+	}
+	else
+	{
+		bCollisionHit = true;
+	}
 }
 

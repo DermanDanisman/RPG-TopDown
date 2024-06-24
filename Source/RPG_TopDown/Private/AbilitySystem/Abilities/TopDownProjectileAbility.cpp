@@ -39,7 +39,9 @@ void UTopDownProjectileAbility::SpawnProjectile(const FVector& ProjectileTargetL
 		 */
 		ATopDownProjectile* Projectile = GetWorld()->SpawnActorDeferred<ATopDownProjectile>(ProjectileClass, SpawnTransform, GetOwningActorFromActorInfo(),
 			Cast<APawn>(GetAvatarActorFromActorInfo()), ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
-
+		Projectile->SetInstigator(Cast<APawn>(CurrentActorInfo->AvatarActor));
+		Projectile->SetOwner(Cast<APawn>(CurrentActorInfo->AvatarActor));
+		
 		// TODO: Give the Projectile a Gameplay Effect Spec for causing Damage.
 		Projectile->FinishSpawning(SpawnTransform);
 	}
