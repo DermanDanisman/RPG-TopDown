@@ -24,6 +24,8 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovementComponent;
 
+	
+
 protected:
 	
 	virtual void BeginPlay() override;

@@ -20,11 +20,7 @@ ATopDownProjectile::ATopDownProjectile()
 
 	Sphere = CreateDefaultSubobject<USphereComponent>("Sphere");
 	Sphere->SetupAttachment(GetRootComponent());
-	Sphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	Sphere->SetCollisionResponseToAllChannels(ECR_Ignore);
-	Sphere->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Overlap);
-	Sphere->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Overlap);
-	Sphere->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	Sphere->SetCollisionProfileName(FName("Projectile"));
 
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>("ProjectileMovementComponent");
 	ProjectileMovementComponent->InitialSpeed = 550.f;
@@ -57,10 +53,10 @@ void ATopDownProjectile::Destroyed()
 		{
 			UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator().ZeroRotator);
 			UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
-			LoopingEffectAudioComponent->Stop();
+
 		}
+		LoopingEffectAudioComponent->Stop();
 	}
-		
 	Super::Destroyed();
 }
 
@@ -71,9 +67,10 @@ void ATopDownProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponen
 	{
 		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator().ZeroRotator);
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
-		LoopingEffectAudioComponent->Stop();
+	
 	}
-
+	LoopingEffectAudioComponent->Stop();
+	
 	if (HasAuthority())
 	{
 		Destroy();

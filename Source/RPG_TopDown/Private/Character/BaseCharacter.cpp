@@ -6,6 +6,7 @@
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "RPG_TopDown/RPG_TopDown.h"
 
 // Sets default values
 ABaseCharacter::ABaseCharacter()
@@ -17,6 +18,8 @@ ABaseCharacter::ABaseCharacter()
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 	GetMesh()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
 	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
+	GetMesh()->SetCollisionResponseToChannel(ECC_Projectile, ECR_Overlap);
+	GetMesh()->SetGenerateOverlapEvents(true);
 
 	// Created Weapon Mesh for all the characters derived from BaseCharacter
 	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>("Weapon");
