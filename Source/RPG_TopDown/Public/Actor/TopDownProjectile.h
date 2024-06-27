@@ -4,13 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "GameplayEffectTypes.h"
 #include "TopDownProjectile.generated.h"
+
 
 
 /* Forward Declaration */
 class UProjectileMovementComponent;
 class USphereComponent;
 class UNiagaraSystem;
+struct FGameplayEffectSpecHandle;
 
 UCLASS()
 class RPG_TOPDOWN_API ATopDownProjectile : public AActor
@@ -24,7 +27,8 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovementComponent;
 
-	
+	UPROPERTY(BlueprintReadWrite, meta=(ExposeOnSpawn = true))
+	FGameplayEffectSpecHandle DamageEffectSpecHandle;
 
 protected:
 	

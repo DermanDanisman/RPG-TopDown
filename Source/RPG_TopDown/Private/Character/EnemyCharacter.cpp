@@ -4,7 +4,9 @@
 #include "Character/EnemyCharacter.h"
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
 #include "AbilitySystem/BaseAttributeSet.h"
+#include "Components/WidgetComponent.h"
 #include "RPG_TopDown/RPG_TopDown.h"
+#include "UI/Widget/BaseUserWidget.h"
 
 AEnemyCharacter::AEnemyCharacter()
 {
@@ -17,6 +19,10 @@ AEnemyCharacter::AEnemyCharacter()
 	
 	// Create and initialize the AttributeSet
 	AttributeSet = CreateDefaultSubobject<UBaseAttributeSet>("AttributeSet");
+
+	// Create and initialize the HealthBar
+	HealthBar = CreateDefaultSubobject<UWidgetComponent>("HealthBar");
+	HealthBar->SetupAttachment(GetRootComponent());
 }
 
 void AEnemyCharacter::BeginPlay()
@@ -59,6 +65,42 @@ void AEnemyCharacter::InitAbilityActorInfo()
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	// Binding FOnGameplayEffectAppliedDelegate OnGameplayEffectAppliedDelegateToSelf delegate.
 	Cast<UBaseAbilitySystemComponent>(AbilitySystemComponent)->BindOnGameplayEffectAppliedDelegateToSelf();
+
+	// Initializing Primary, Secondary and Vital Attributes.
+	InitializeDefaultAttributes();
+	
+	// Setting Widget Controller to Enemy Class itself.
+	if (UBaseUserWidget* BaseUserWidget = Cast<UBaseUserWidget>(HealthBar->GetUserWidgetObject()))
+	{
+		BaseUserWidget->SetWidgetController(this);
+	}
+
+	/*
+	 * Binding Lambda functions to Attribute Changes and Broadcasting OnHealthChanged and OnMaxHealthChanged.
+	 */
+	UBaseAttributeSet* BaseAttributeSet = Cast<UBaseAttributeSet>(AttributeSet);
+	if (BaseAttributeSet)
+	{
+		// Bind callback for health attribute changes.
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(BaseAttributeSet->GetHealthAttribute()).AddLambda(
+			[this](const FOnAttributeChangeData& Data)
+			{
+				OnHealthChanged.Broadcast(Data.NewValue);
+			}
+		);
+		
+		// Bind callback for max health attribute changes.
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(BaseAttributeSet->GetMaxHealthAttribute()).AddLambda(
+			[this](const FOnAttributeChangeData& Data)
+			{
+				OnMaxHealthChanged.Broadcast(Data.NewValue);
+			}
+		);
+
+		// Broadcasting initial values
+		OnHealthChanged.Broadcast(BaseAttributeSet->GetHealth());
+		OnMaxHealthChanged.Broadcast(BaseAttributeSet->GetMaxHealth());
+	}
 }
 
 //Highlight the actor by enabling custom depth rendering with a specific stencil value

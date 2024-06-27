@@ -7,6 +7,8 @@
 #include "TopDownProjectileAbility.generated.h"
 
 class ATopDownProjectile;
+class UGameplayEffect;
+
 /**
  * 
  */
@@ -22,4 +24,8 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Projectile")
 	TSubclassOf<ATopDownProjectile> ProjectileClass;
+
+	// Variable for the damage effect
+	UPROPERTY(EditDefaultsOnly, Category="Projectile|GameplayEffect")
+	TSubclassOf<UGameplayEffect> DamageEffectClass;
 };

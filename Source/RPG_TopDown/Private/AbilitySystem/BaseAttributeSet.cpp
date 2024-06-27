@@ -207,10 +207,16 @@ void UBaseAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 {
 	Super::PostGameplayEffectExecute(Data);
 
+	// The function is responsible for setting up and populating the FGameplayEffectExecutionContext struct.
+	FGameplayEffectContextDetails GameplayEffectContextDetails;
+	InitializeEffectExecutionContext(Data, GameplayEffectContextDetails);
+	
+
 	// Clamping Vital Attributes
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
 		SetHealth(FMath::Clamp(GetHealth(), 0.f, GetMaxHealth()));
+		UE_LOG(LogTemp, Warning, TEXT("Changed Health on %s, Health: %f"), *GameplayEffectContextDetails.TargetProperties->AvatarActor->GetName(), GetHealth());
 	}
 	if (Data.EvaluatedData.Attribute == GetManaAttribute())
 	{
@@ -221,9 +227,7 @@ void UBaseAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 		SetStamina(FMath::Clamp(GetStamina(), 0.f, GetMaxStamina()));
 	}
 
-	// The function is responsible for setting up and populating the FGameplayEffectExecutionContext struct.
-	FGameplayEffectContextDetails GameplayEffectContextDetails;
-	InitializeEffectExecutionContext(Data, GameplayEffectContextDetails);
+
 }
 
 /*

@@ -3,6 +3,8 @@
 
 #include "AbilitySystem/Abilities/TopDownProjectileAbility.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemComponent.h"
 #include "Actor/TopDownProjectile.h"
 #include "Interface/Interaction/CombatInterface.h"
 
@@ -41,8 +43,12 @@ void UTopDownProjectileAbility::SpawnProjectile(const FVector& ProjectileTargetL
 			Cast<APawn>(GetAvatarActorFromActorInfo()), ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 		Projectile->SetInstigator(Cast<APawn>(CurrentActorInfo->AvatarActor));
 		Projectile->SetOwner(Cast<APawn>(CurrentActorInfo->AvatarActor));
+
+		// Setting our damage gameplay effect on the projectile.
+		const UAbilitySystemComponent* SourceAbilitySystemComponent = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
+		const FGameplayEffectSpecHandle EffectSpecHandle = SourceAbilitySystemComponent->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), SourceAbilitySystemComponent->MakeEffectContext());
+		Projectile->DamageEffectSpecHandle = EffectSpecHandle;
 		
-		// TODO: Give the Projectile a Gameplay Effect Spec for causing Damage.
 		Projectile->FinishSpawning(SpawnTransform);
 	}
 }

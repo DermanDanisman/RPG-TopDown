@@ -5,7 +5,11 @@
 #include "CoreMinimal.h"
 #include "Character/BaseCharacter.h"
 #include "Interface/Interaction/HighlightActorInterface.h"
+#include "Controller/Widget/OverlayWidgetController.h"
 #include "EnemyCharacter.generated.h"
+
+/* Forward Declaration */
+class UWidgetComponent;
 
 /**
  * 
@@ -19,17 +23,24 @@ public:
 	
 	AEnemyCharacter();
 
-	/** Highlight Actor Interface */
+	/* Highlight Actor Interface */
 	virtual void HighlightActor() override;
 	virtual void UnHighlightActor() override;
 
-	/** Combat Interface */
+	/* Combat Interface */
 	virtual int32 GetCharacterLevel() override;
+
+	/* Delegate Signature from Overlay Widget */
+	UPROPERTY(BlueprintAssignable)
+	FOnAttributeChangedSignature OnHealthChanged;
+	UPROPERTY(BlueprintAssignable)
+	FOnAttributeChangedSignature OnMaxHealthChanged;
+	
 protected:
 
 	virtual void BeginPlay() override;
 
-	/** Game Ability System */
+	/* Game Ability System */
 	virtual void InitAbilityActorInfo() override;
 	
 	/*
@@ -38,5 +49,7 @@ protected:
 	 */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character Class Defaults")
 	int32 Level = 1;
-	
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<UWidgetComponent> HealthBar;
 };

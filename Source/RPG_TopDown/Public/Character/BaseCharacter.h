@@ -88,6 +88,7 @@ protected:
 	 */
 	// This function is responsible for adding the abilities listed in StartupAbilities to the character's Ability System Component.
 	void AddCharacterAbilities() const;
+	
 private:
 
 	/*

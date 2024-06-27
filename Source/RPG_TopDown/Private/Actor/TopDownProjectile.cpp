@@ -3,6 +3,8 @@
 
 #include "Actor/TopDownProjectile.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Components/AudioComponent.h"
 #include "Components/SphereComponent.h"
@@ -73,6 +75,20 @@ void ATopDownProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponen
 	
 	if (HasAuthority())
 	{
+		// Now Applying Gameplay Effect is something we should do on the server only as we don't need to do this on clients.
+		// The effect is going to change an attribute and the attribute itself is replicated.
+		// So the end result, the changing of the attribute that will be replicated.
+		if (UAbilitySystemComponent* TargetAbilitySystemComponent = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
+		{
+			/*
+			 * ApplyGameplayEffectSpecToSelf requires a GameplayEffectSpec. DamageEffectSpecHandle is an effect spec handle.
+			 * Now remember the handle itself has an internal DamageEffectSpecHandle.Data and Data itself is a wrapper we have to call DamageEffectSpecHandle.Data.Get() and
+			 * all of this returns a pointer which we have to dereference with the star.
+			 */
+			//TargetAbilitySystemComponent->ApplyGameplayEffectSpecToTarget(*DamageEffectSpecHandle.Data.Get(), TargetAbilitySystemComponent);
+			TargetAbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data.Get());
+		}
+		
 		Destroy();
 	}
 	else
