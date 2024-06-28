@@ -30,7 +30,7 @@ public:
 	/* Combat Interface */
 	virtual int32 GetCharacterLevel() override;
 
-	/* Delegate Signature from Overlay Widget */
+	/* Delegate Signature from Overlay Widget Controller */
 	UPROPERTY(BlueprintAssignable)
 	FOnAttributeChangedSignature OnHealthChanged;
 	UPROPERTY(BlueprintAssignable)
@@ -50,6 +50,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character Class Defaults")
 	int32 Level = 1;
 
+	/* Widget Component */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UWidgetComponent> HealthBar;
 };

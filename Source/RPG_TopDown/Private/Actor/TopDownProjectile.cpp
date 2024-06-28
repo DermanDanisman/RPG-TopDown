@@ -35,29 +35,26 @@ void ATopDownProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// Configures the collision sphere to ignore the instigator (the actor that spawned the projectile).
 	Sphere->IgnoreActorWhenMoving(GetInstigator(), true);
 
 	SetLifeSpan(LifeSpan);
 	
 	Sphere->OnComponentBeginOverlap.AddDynamic(this, &ATopDownProjectile::OnSphereOverlap);
 
-	if (HasAuthority())
-	{
-		const EAttachLocation::Type AttachLocationType = EAttachLocation::KeepWorldPosition;
-		LoopingEffectAudioComponent = UGameplayStatics::SpawnSoundAttached(LoopingEffectSound, Sphere, FName(), GetActorLocation(), FRotator().ZeroRotator, AttachLocationType);
-	}
+	ensure(LoopingEffectSound);
+	const EAttachLocation::Type AttachLocationType = EAttachLocation::KeepWorldPosition;
+	LoopingEffectAudioComponent = UGameplayStatics::SpawnSoundAttached(LoopingEffectSound, Sphere, FName(), GetActorLocation(), FRotator().ZeroRotator, AttachLocationType);
 }
 
 void ATopDownProjectile::Destroyed()
 {
 	if (!bCollisionHit && !HasAuthority())
 	{
-		if (ImpactSound && ImpactEffect)
-		{
-			UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator().ZeroRotator);
-			UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
-
-		}
+		ensure(ImpactSound);
+		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator().ZeroRotator);
+		ensure(ImpactEffect);
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
 		
 		if (LoopingEffectAudioComponent)
 		{
@@ -71,19 +68,16 @@ void ATopDownProjectile::Destroyed()
 void ATopDownProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                          UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (ImpactSound && ImpactEffect)
-	{
-		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator().ZeroRotator);
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
-	
-	}
+	ensure(ImpactSound);
+	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator().ZeroRotator);
+	ensure(ImpactEffect);
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
 	
 	if (LoopingEffectAudioComponent)
 	{
 		// WARNING: nullptr error on dedicated server.
 		LoopingEffectAudioComponent->Stop();
 	}
-
 	
 	if (HasAuthority())
 	{
