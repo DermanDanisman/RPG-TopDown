@@ -41,9 +41,10 @@ void ATopDownProjectile::BeginPlay()
 	
 	Sphere->OnComponentBeginOverlap.AddDynamic(this, &ATopDownProjectile::OnSphereOverlap);
 
-	if (LoopingEffectSound)
+	if (HasAuthority())
 	{
-		LoopingEffectAudioComponent = UGameplayStatics::SpawnSoundAttached(LoopingEffectSound, GetRootComponent());
+		const EAttachLocation::Type AttachLocationType = EAttachLocation::KeepWorldPosition;
+		LoopingEffectAudioComponent = UGameplayStatics::SpawnSoundAttached(LoopingEffectSound, Sphere, FName(), GetActorLocation(), FRotator().ZeroRotator, AttachLocationType);
 	}
 }
 
@@ -57,7 +58,12 @@ void ATopDownProjectile::Destroyed()
 			UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
 
 		}
-		LoopingEffectAudioComponent->Stop();
+		
+		if (LoopingEffectAudioComponent)
+		{
+			// WARNING: nullptr error on dedicated server.
+			LoopingEffectAudioComponent->Stop();
+		}
 	}
 	Super::Destroyed();
 }
@@ -71,7 +77,13 @@ void ATopDownProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponen
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
 	
 	}
-	LoopingEffectAudioComponent->Stop();
+	
+	if (LoopingEffectAudioComponent)
+	{
+		// WARNING: nullptr error on dedicated server.
+		LoopingEffectAudioComponent->Stop();
+	}
+
 	
 	if (HasAuthority())
 	{

@@ -57,6 +57,7 @@ private:
 	UPROPERTY(EditAnywhere, Category="Effects")
 	TObjectPtr<USoundBase> LoopingEffectSound;
 
+	UPROPERTY()
 	TObjectPtr<UAudioComponent> LoopingEffectAudioComponent;
 
 	bool bCollisionHit = false;
