@@ -70,7 +70,7 @@ protected:
 	void ApplyEffectToSelf(const TSubclassOf<UGameplayEffect>& GameplayEffectClass, float Level) const;
 
 	// This function initializes the character's default attributes by applying primary and secondary attribute effects to the character.
-	void InitializeDefaultAttributes() const;
+	virtual void InitializeDefaultAttributes() const;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attributes|Primary")
 	TSubclassOf<UGameplayEffect> DefaultPrimaryAttributes;

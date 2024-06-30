@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Controller/Widget/AttributeMenuWidgetController.h"
+#include "Data/CharacterClassInfoDataAsset.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "UI/HUD/TopDownHUD.h"
 #include "TopDownAbilitySystemLibrary.generated.h"
@@ -48,4 +49,8 @@ public:
 	// Gets Attribute Menu Widget Controller
 	UFUNCTION(BlueprintPure, Category="TopDownAbilitySystemLibrary|Widget Controller")
 	static UAttributeMenuWidgetController* GetAttributeMenuWidgetController(const UObject* WorldContextObject);
+
+	// A function that will initialize default attributes based on a character class and the level.
+	UFUNCTION(BlueprintCallable, Category="TopDownAbilitySystemLibrary|CharacterClassDefaults")
+	static void InitializeDefaultAttributes(const UObject* WorldContextObject, ECharacterClass CharacterClass, float Level, UAbilitySystemComponent* AbilitySystemComponent);
 };

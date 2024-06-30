@@ -4,6 +4,7 @@
 #include "Character/EnemyCharacter.h"
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
 #include "AbilitySystem/BaseAttributeSet.h"
+#include "AbilitySystem/TopDownAbilitySystemLibrary.h"
 #include "Components/WidgetComponent.h"
 #include "RPG_TopDown/RPG_TopDown.h"
 #include "UI/Widget/BaseUserWidget.h"
@@ -101,6 +102,16 @@ void AEnemyCharacter::InitAbilityActorInfo()
 		OnHealthChanged.Broadcast(BaseAttributeSet->GetHealth());
 		OnMaxHealthChanged.Broadcast(BaseAttributeSet->GetMaxHealth());
 	}
+}
+
+void AEnemyCharacter::InitializeDefaultAttributes() const
+{
+	/*
+	 * So now we're initializing the DefaultAttributes using our new function that we added to our UTopDownAbilitySystemLibrary
+	 * that gets the CharacterClassInfoDataAsset stored on the TopDownGameModeBase, gets the class information based on our character's class,
+	 * and applies a Gameplay Effect at the level passed in.
+	 */
+	UTopDownAbilitySystemLibrary::InitializeDefaultAttributes(this, CharacterCLass, Level, AbilitySystemComponent);
 }
 
 //Highlight the actor by enabling custom depth rendering with a specific stencil value

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AbilitySystem/Data/CharacterClassInfoDataAsset.h"
 #include "Character/BaseCharacter.h"
 #include "Interface/Interaction/HighlightActorInterface.h"
 #include "Controller/Widget/OverlayWidgetController.h"
@@ -42,6 +43,7 @@ protected:
 
 	/* Game Ability System */
 	virtual void InitAbilityActorInfo() override;
+	virtual void InitializeDefaultAttributes() const override;
 	
 	/*
 	 * Now the reason I'm not going to make this replicated for the enemy is because we're only going to be concerned with checking the level on the server for AI controlled enemies.
@@ -49,6 +51,9 @@ protected:
 	 */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character Class Defaults")
 	int32 Level = 1;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character Class Defaults")
+	ECharacterClass CharacterCLass = ECharacterClass::Warrior;
 
 	/* Widget Component */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
