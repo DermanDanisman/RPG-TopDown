@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AbilitySystem/Data/CharacterClassInfoDataAsset.h"
 #include "Character/BaseCharacter.h"
 #include "Interface/Interaction/HighlightActorInterface.h"
 #include "PlayerCharacter.generated.h"
@@ -30,35 +31,42 @@ public:
 
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_PlayerState() override;
+	virtual void InitializeDefaultAttributes() const override;
 
-	/** Highlight Actor Interface */
+	/* Highlight Actor Interface */
 	virtual void HighlightActor() override;
 	virtual void UnHighlightActor() override;
 
-	/** Combat Interface */
+	/* Combat Interface */
 	virtual int32 GetCharacterLevel() override;
 	
-	/** Getter Functions */
+	/* Getter Functions */
 	FORCEINLINE USpringArmComponent* GetCameraSpringArm() { return CameraSpringArm; }
 
 protected:
 
-	/** Game Ability System */
+	/* Game Ability System */
 	virtual void InitAbilityActorInfo() override;
+
+	/* Character Class Defaults */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character Class Defaults")
+	ECharacterClass CharacterCLass = ECharacterClass::Warrior;
+	UPROPERTY(EditDefaultsOnly, Category="Character Class Defaults")
+	TObjectPtr<UCharacterClassInfoDataAsset> CharacterClassInfoDataAsset;
 	
 private:
 
-	/** Actor Component */
+	/* Actor Component */
 	UPROPERTY(VisibleAnywhere)
     TObjectPtr<UCameraMovementComponent> CameraMovementComponent;
 
-	/** Camera */
+	/* Camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = true))
 	TObjectPtr<USpringArmComponent> CameraSpringArm;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = true))
 	TObjectPtr<UCameraComponent> Camera;
 
-	/** Game Ability System */
+	/* Game Ability System */
 	UPROPERTY(EditAnywhere, Category="Game Ability System")
 	TObjectPtr<ATopDownPlayerState> PlayerPS;
 	UPROPERTY(EditAnywhere, Category="Game Ability System")

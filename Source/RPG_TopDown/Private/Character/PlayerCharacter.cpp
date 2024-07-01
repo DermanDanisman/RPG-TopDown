@@ -5,6 +5,7 @@
 
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
+#include "AbilitySystem/TopDownAbilitySystemLibrary.h"
 #include "ActorComponent/CameraMovementComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Camera/CameraComponent.h"
@@ -132,6 +133,14 @@ void APlayerCharacter::InitAbilityActorInfo()
 		// This function initializes the character's default attributes by applying primary and secondary attribute effects to the character.
 		InitializeDefaultAttributes();
 	}
+}
+
+// This function initializes the character's default attributes by applying primary and secondary attribute effects to the character.
+void APlayerCharacter::InitializeDefaultAttributes() const
+{
+	ApplyEffectToSelf(CharacterClassInfoDataAsset->GetCharacterClassDefaultInfo(CharacterCLass).PrimaryAttributes, 1.f);
+	ApplyEffectToSelf(DefaultSecondaryAttributes, 1.f);
+	ApplyEffectToSelf(DefaultVitalAttributes, 1.f);
 }
 
 //Highlight the actor by enabling custom depth rendering with a specific stencil value

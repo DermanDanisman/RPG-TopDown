@@ -52,11 +52,6 @@ FVector ABaseCharacter::GetWeaponTipSocketLocation()
 	return WeaponMesh->GetSocketLocation(WeaponTipSocketName);
 }
 
-void ABaseCharacter::InitAbilityActorInfo()
-{
-	
-}
-
 // This function applies a gameplay effect to the character itself.
 void ABaseCharacter::ApplyEffectToSelf(const TSubclassOf<UGameplayEffect>& GameplayEffectClass, const float Level) const
 {
@@ -81,14 +76,6 @@ void ABaseCharacter::ApplyEffectToSelf(const TSubclassOf<UGameplayEffect>& Gamep
 	GetAbilitySystemComponent()->ApplyGameplayEffectSpecToTarget(*GameplayEffectSpecHandle.Data.Get(), GetAbilitySystemComponent());
 }
 
-// This function initializes the character's default attributes by applying primary and secondary attribute effects to the character.
-void ABaseCharacter::InitializeDefaultAttributes() const
-{
-	ApplyEffectToSelf(DefaultPrimaryAttributes, 1.f);
-	ApplyEffectToSelf(DefaultSecondaryAttributes, 1.f);
-	ApplyEffectToSelf(DefaultVitalAttributes, 1.f);
-}
-
 void ABaseCharacter::AddCharacterAbilities() const
 {
 	UBaseAbilitySystemComponent* BaseAbilitySystemComponent = Cast<UBaseAbilitySystemComponent>(AbilitySystemComponent);
@@ -101,3 +88,14 @@ void ABaseCharacter::AddCharacterAbilities() const
 	BaseAbilitySystemComponent->AddCharacterAbilities(StartupAbilities);
 }
 
+
+void ABaseCharacter::InitAbilityActorInfo()
+{
+	
+}
+
+// This function initializes the character's default attributes by applying primary and secondary attribute effects to the character.
+void ABaseCharacter::InitializeDefaultAttributes() const
+{
+	
+}

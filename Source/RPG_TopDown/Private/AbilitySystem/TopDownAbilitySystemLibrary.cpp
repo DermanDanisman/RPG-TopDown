@@ -14,7 +14,6 @@
 UOverlayWidgetController* UTopDownAbilitySystemLibrary::GetOverlayWidgetController(const UObject* WorldContextObject)
 {
 	APlayerController* PC = WorldContextObject->GetWorld()->GetFirstPlayerController();
-
 	if (PC)
 	{
 		ATopDownHUD* TopDownHUD = PC->GetHUD<ATopDownHUD>();
@@ -35,7 +34,6 @@ UOverlayWidgetController* UTopDownAbilitySystemLibrary::GetOverlayWidgetControll
 UAttributeMenuWidgetController* UTopDownAbilitySystemLibrary::GetAttributeMenuWidgetController(const UObject* WorldContextObject)
 {
 	APlayerController* PC = WorldContextObject->GetWorld()->GetFirstPlayerController();
-
 	if (PC)
 	{
 		ATopDownHUD* TopDownHUD = PC->GetHUD<ATopDownHUD>();
@@ -52,13 +50,14 @@ UAttributeMenuWidgetController* UTopDownAbilitySystemLibrary::GetAttributeMenuWi
 	return nullptr;
 }
 
-void UTopDownAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* WorldContextObject, const ECharacterClass CharacterClass, const float Level, UAbilitySystemComponent* AbilitySystemComponent)
+void UTopDownAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* WorldContextObject, const ECharacterClass CharacterClass,
+	const float Level, UAbilitySystemComponent* AbilitySystemComponent)
 {
 	const ATopDownGameModeBase* TopDownGameModeBase = Cast<ATopDownGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
 	if (TopDownGameModeBase == nullptr) return;
 
-	AActor* AvatarActor = AbilitySystemComponent->GetAvatarActor();
-
+	const AActor* AvatarActor = AbilitySystemComponent->GetAvatarActor();
+	
 	UCharacterClassInfoDataAsset* CharacterClassInfoDataAsset = TopDownGameModeBase->CharacterClassInfoDataAsset;
 	const FCharacterClassDefaultInfo CharacterClassDefaultInfoStruct = CharacterClassInfoDataAsset->GetCharacterClassDefaultInfo(CharacterClass);
 	
