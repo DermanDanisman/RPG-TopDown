@@ -177,97 +177,97 @@ public:
 	 * Secondary Attributes
 	 */
 
-	// Dependent on Strength and Weapon Damage -- Attack Power = Strength * 2 + Weapon Damage
+	// Dependent on Strength and Weapon Damage
 	// Description: Increases the damage dealt with physical attacks.
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_AttackPower, Category="Secondary Attributes")
 	FGameplayAttributeData AttackPower;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, AttackPower);
 
-	// Dependent on Intelligence -- Spell Power = (1.5 × (Intelligence + 10)) + 0
+	// Dependent on Intelligence
 	// Description: Increases the effectiveness of magical spells, boosting their damage or healing output.
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_SpellPower, Category="Secondary Attributes")
 	FGameplayAttributeData SpellPower;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, SpellPower);
 
-	// Dependent on Resilience -- Armor = (1.2 × (Resilience + 5)) + 0
+	// Dependent on Resilience
 	// Description: Provides physical damage mitigation, reducing the damage taken from physical attacks.
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Armor, Category="Secondary Attributes")
 	FGameplayAttributeData Armor;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, Armor);
 
-	// Dependent on Resilience -- Magic Resistance = (0.8 × (Resilience + 5)) + 0
+	// Dependent on Resilience
 	// Description: Reduces the damage taken from magical attacks, making the character more resilient against spells.
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_MagicResistance, Category="Secondary Attributes")
 	FGameplayAttributeData MagicResistance;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, MagicResistance);
 
-	// Dependent on Resilience -- Armor Penetration = (0.5 × (Resilience + 3)) + 0
+	// Dependent on Resilience
 	// Description: Increases the ability to bypass enemy armor, resulting in higher damage dealt to armored foes.
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_ArmorPenetration, Category="Secondary Attributes")
 	FGameplayAttributeData ArmorPenetration;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, ArmorPenetration);
 
-	// Dependent on Dexterity and Armor Penetration -- Critical Hit Chance = (0.4 × (Dexterity + 2)) + 0
+	// Dependent on Dexterity and Armor Penetration
 	// Description: Increases the likelihood of landing a critical hit, which deals additional damage.
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_CriticalHitChance, Category="Secondary Attributes")
 	FGameplayAttributeData CriticalHitChance;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, CriticalHitChance);
 
-	// Dependent on Dexterity (Physical Damage) or Intelligence (Magic Damage) -- Critical Hit Damage = (1.2 × (Intelligence + 0)) + 5
+	// Dependent on Dexterity (Physical Damage) or Intelligence (Magic Damage)
 	// Description: Increases the damage dealt by critical hits, making them more powerful.
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_CriticalHitDamage, Category="Secondary Attributes")
 	FGameplayAttributeData CriticalHitDamage;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, CriticalHitDamage);
 
-	// Dependent on Armor -- Critical Hit Resistance = (0.5 × (Armor + 1)) + 0
+	// Dependent on Armor
 	// Description: Reduces the chance of receiving a critical hit from enemies, lowering the probability of critical damage.
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_CriticalHitResistance, Category="Secondary Attributes")
 	FGameplayAttributeData CriticalHitResistance;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, CriticalHitResistance);
 
-	// Dependent on Dexterity and Resilience -- Evasion = (0.3 × (Dexterity + Resilience)) + 2
+	// Dependent on Dexterity and Resilience
 	// Description: Increases the chance to dodge attacks, avoiding damage completely.
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Evasion, Category="Secondary Attributes")
 	FGameplayAttributeData Evasion;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, Evasion);
 
-	// Dependent on Dexterity -- Movement Speed = (0.4 × (Dexterity + 5)) + 100
+	// Dependent on Dexterity
 	// Description: Increases the character's speed of movement, aiding in both combat and exploration.
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_MovementSpeed, Category="Secondary Attributes")
 	FGameplayAttributeData MovementSpeed;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, MovementSpeed);
 
-	// Dependent on Vigor -- Health Regeneration = (0.5 × (Vigor + 1)) + 0
+	// Dependent on Vigor
 	// Description: Increases the rate at which health regenerates over time, aiding in recovery outside of combat.
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_HealthRegeneration, Category="Secondary Attributes")
 	FGameplayAttributeData HealthRegeneration;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, HealthRegeneration);
 
-	// Dependent on Intelligence -- Mana Regeneration = (1.0 × (Intelligence + 0)) + 3
+	// Dependent on Intelligence
 	// Description: Increases the rate at which mana regenerates over time, ensuring a steady supply of mana for spells.
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_ManaRegeneration, Category="Secondary Attributes")
 	FGameplayAttributeData ManaRegeneration;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, ManaRegeneration);
 
-	// Dependent on Vigor -- Stamina Regeneration = (0.5 × (Vigor + 1)) + 0
+	// Dependent on Vigor
 	// Description: Increases the rate at which stamina regenerates over time, aiding in recovery outside of combat.
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_StaminaRegeneration, Category="Secondary Attributes")
 	FGameplayAttributeData StaminaRegeneration;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, StaminaRegeneration);
 
-	// Dependent on Vigor -- Max Health = (10 × (Vigor + 0)) + 50
+	// Dependent on Vigor
 	// Description: Increases the total amount of health, allowing the character to endure more damage before falling in battle.
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_MaxHealth, Category="Secondary Attributes")
 	FGameplayAttributeData MaxHealth;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, MaxHealth);
 
-	// Dependent on Intelligence -- Max Mana = (5 × (Intelligence + 0)) + 25
+	// Dependent on Intelligence
 	// Description: Increases the total amount of mana, providing a larger pool for casting spells.
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_MaxMana, Category="Secondary Attributes")
 	FGameplayAttributeData MaxMana;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, MaxMana);
 
-	// Dependent on Vigor -- Max Stamina = (10 × (Vigor + 0)) + 50
+	// Dependent on Vigor
 	// Description: Increases the total amount of stamina, providing a larger pool for physical activities and abilities.
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_MaxStamina, Category="Secondary Attributes")
 	FGameplayAttributeData MaxStamina;
@@ -293,7 +293,20 @@ public:
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Stamina, Category="Vital Attributes")
 	FGameplayAttributeData Stamina;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, Stamina);
-#pragma endregion 
+#pragma endregion
+	
+#pragma region Meta Attributes
+	
+	/*
+	 * Meta Attributes
+	 */
+
+	UPROPERTY(BlueprintReadOnly, Category="Meta Attributes")
+	FGameplayAttributeData IncomingDamage;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, IncomingDamage);
+	
+#pragma endregion
+	
 #pragma endregion
 
 #pragma region Attribute OnRep Functions	
