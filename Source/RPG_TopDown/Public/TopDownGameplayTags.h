@@ -82,6 +82,11 @@ public:
  FGameplayTag InputTag_3;
  FGameplayTag InputTag_4;
 
+ /*
+  *
+  */
+ FGameplayTag Damage;
+
 private:
  // Static variable to hold the single instance of the class
  // Now, for a static variable like this, we need to go into the CPP file and explicitly declare the type there.

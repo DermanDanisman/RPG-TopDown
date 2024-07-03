@@ -7,6 +7,7 @@
 #include "AbilitySystemComponent.h"
 #include "Actor/TopDownProjectile.h"
 #include "Interface/Interaction/CombatInterface.h"
+#include "TopDownGameplayTags.h"
 
 
 void UTopDownProjectileAbility::SpawnProjectile(const FVector& ProjectileTargetLocation)
@@ -47,6 +48,11 @@ void UTopDownProjectileAbility::SpawnProjectile(const FVector& ProjectileTargetL
 		// Setting our damage gameplay effect on the projectile.
 		const UAbilitySystemComponent* SourceAbilitySystemComponent = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
 		const FGameplayEffectSpecHandle EffectSpecHandle = SourceAbilitySystemComponent->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), SourceAbilitySystemComponent->MakeEffectContext());
+
+		FTopDownGameplayTags GameplayTags = FTopDownGameplayTags::Get();
+		// This adds include. and does the same thing as EffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(GameplayTags.Damage, 50.f);
+		//UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle, GameplayTags.Damage, 50.f);
+		EffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(GameplayTags.Damage, 50.f);
 		Projectile->DamageEffectSpecHandle = EffectSpecHandle;
 		
 		Projectile->FinishSpawning(SpawnTransform);
