@@ -8,6 +8,8 @@
 #include "Actor/TopDownProjectile.h"
 #include "Interface/Interaction/CombatInterface.h"
 #include "TopDownGameplayTags.h"
+#include "AbilitySystem/BaseAbilitySystemComponent.h"
+#include "AbilitySystem/BaseAttributeSet.h"
 
 
 void UTopDownProjectileAbility::SpawnProjectile(const FVector& ProjectileTargetLocation)
@@ -46,15 +48,28 @@ void UTopDownProjectileAbility::SpawnProjectile(const FVector& ProjectileTargetL
 		Projectile->SetOwner(Cast<APawn>(CurrentActorInfo->AvatarActor));
 
 		// Setting our damage gameplay effect on the projectile.
+		// Get the ability system component.
 		const UAbilitySystemComponent* SourceAbilitySystemComponent = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
+		// Get the attribute set containing the SpellPower attribute.
+		const UBaseAttributeSet* BaseAttributeSet = Cast<UBaseAttributeSet>(SourceAbilitySystemComponent->GetAttributeSet(BaseAttributeSetClass));
+        
+		// Create the gameplay effect spec handle for the damage effect.
 		const FGameplayEffectSpecHandle EffectSpecHandle = SourceAbilitySystemComponent->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), SourceAbilitySystemComponent->MakeEffectContext());
 
 		FTopDownGameplayTags GameplayTags = FTopDownGameplayTags::Get();
+		// Get the current value of the SpellPower attribute
+		bool bFound;
+		const float ScaledDamage = SourceAbilitySystemComponent->GetGameplayAttributeValue(BaseAttributeSet->GetSpellPowerAttribute(), bFound) * Damage.GetValueAtLevel(20);
+		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red, FString::Printf(TEXT("FireBolt Damage: %f"), ScaledDamage));
 		// This adds include. and does the same thing as EffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(GameplayTags.Damage, 50.f);
 		//UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle, GameplayTags.Damage, 50.f);
-		EffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(GameplayTags.Damage, 50.f);
+		// Set the damage value in the effect spec handle.
+		EffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(GameplayTags.Damage, ScaledDamage);
+
+		// Assign the damage effect spec handle to the projectile.
 		Projectile->DamageEffectSpecHandle = EffectSpecHandle;
-		
+
+		// Finalize the spawning process for the projectile.
 		Projectile->FinishSpawning(SpawnTransform);
 	}
 }

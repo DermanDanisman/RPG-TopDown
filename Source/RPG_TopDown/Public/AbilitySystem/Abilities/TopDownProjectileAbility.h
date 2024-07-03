@@ -6,6 +6,7 @@
 #include "AbilitySystem/Abilities/BaseGameplayAbility.h"
 #include "TopDownProjectileAbility.generated.h"
 
+class UBaseAttributeSet;
 class ATopDownProjectile;
 class UGameplayEffect;
 
@@ -28,4 +29,7 @@ protected:
 	// Variable for the damage effect
 	UPROPERTY(EditDefaultsOnly, Category="Projectile|GameplayEffect")
 	TSubclassOf<UGameplayEffect> DamageEffectClass;
+
+	UPROPERTY(EditDefaultsOnly, Category="Class References")
+	TSubclassOf<UBaseAttributeSet> BaseAttributeSetClass;
 };
