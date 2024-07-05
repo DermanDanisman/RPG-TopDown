@@ -8,6 +8,7 @@
 #include "GameplayTagContainer.h"
 #include "PlayerCharacterController.generated.h"
 
+
 /* Forward Declaration */
 class UInputMappingContext;
 class UInputAction;
@@ -16,6 +17,7 @@ class ICameraMovementInterface;
 class UTopDownInputConfigDataAsset;
 class UBaseAbilitySystemComponent;
 class USplineComponent;
+class UDamageTextWidgetComponent;
 struct FInputActionValue;
 
 /**
@@ -33,6 +35,10 @@ public:
 
 	virtual void PlayerTick(float DeltaTime) override;
 
+	// Client RPC
+	UFUNCTION(Client, Reliable)
+	void ShowDamageNumber(float DamageAmount, ACharacter* Target);
+
 protected:
 	
 	virtual void BeginPlay() override;
@@ -40,6 +46,17 @@ protected:
 	virtual void SetupInputComponent() override;
 
 private:
+
+	/* Input Functions */
+	void Move(const FInputActionValue& InputActionValue);
+	void CameraZoomInOut(const FInputActionValue& InputActionValue);
+
+	/* Custom Input Functions */
+	void AbilityInputTagPressed(FGameplayTag InputTag);
+	void AbilityInputTagReleased(FGameplayTag InputTag);
+	void AbilityInputTagHeld(FGameplayTag InputTag);
+	void ShiftPressed() { bShiftKeyDown = true; }
+	void ShiftReleased() { bShiftKeyDown = false; }
 
 	/* Input Variables */
 	UPROPERTY(EditAnywhere, Category="Input|Enhanced")
@@ -55,33 +72,25 @@ private:
 	TObjectPtr<UInputAction> InputActionCameraZoomInOut;
 	UPROPERTY(EditAnywhere, Category="Input|Enhanced")
 	TObjectPtr<UInputAction> InputActionCameraPan;
-
-	/* Input Functions */
-	void Move(const FInputActionValue& InputActionValue);
-	void CameraZoomInOut(const FInputActionValue& InputActionValue);
-
-	/* Custom Input Functions */
-	void AbilityInputTagPressed(FGameplayTag InputTag);
-	void AbilityInputTagReleased(FGameplayTag InputTag);
-	void AbilityInputTagHeld(FGameplayTag InputTag);
-	void ShiftPressed() { bShiftKeyDown = true; }
-	void ShiftReleased() { bShiftKeyDown = false; }
 	
 	/* Mouse Cursor */
-	TScriptInterface<IHighlightActorInterface> LastActor;
-	TScriptInterface<IHighlightActorInterface> ThisActor;
 	void CursorTrace();
 	void SetCursorSettings();
-
+	TScriptInterface<IHighlightActorInterface> LastActor;
+	TScriptInterface<IHighlightActorInterface> ThisActor;
+	
 	/* Camera */
 	TScriptInterface<ICameraMovementInterface> CameraMovementInterface;
 
 	/* References */
+	UBaseAbilitySystemComponent* GetAbilitySystemComponent();
 	UPROPERTY()
 	TObjectPtr<UBaseAbilitySystemComponent> BaseAbilitySystemComponent;
-	UBaseAbilitySystemComponent* GetAbilitySystemComponent();
+	UPROPERTY(EditDefaultsOnly, Category="References|Classes")
+	TSubclassOf<UDamageTextWidgetComponent> DamageTextWidgetComponentClass;
 
 	/* Character Movement */
+	void AutoRun();
 	FVector CachedMoveDestination = FVector::ZeroVector;
 	float FollowTime = 0.f;
 	float ShortPressThreshold = 0.5f;
@@ -91,5 +100,5 @@ private:
 	float AutoRunAcceptanceRadius = 25.f;
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USplineComponent> Spline;
-	void AutoRun();
+	
 };

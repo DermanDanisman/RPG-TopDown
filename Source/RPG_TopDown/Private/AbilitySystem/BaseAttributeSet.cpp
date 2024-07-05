@@ -6,8 +6,10 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "GameplayEffectExtension.h"
 #include "TopDownGameplayTags.h"
+#include "Controller/Player/PlayerCharacterController.h"
 #include "GameFramework/Character.h"
 #include "Interface/Interaction/CombatInterface.h"
+#include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 
 	/*
@@ -268,8 +270,21 @@ void UBaseAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
             	// Try to activate any abilities associated with the hit reaction tag.
             	GameplayEffectContextDetails.TargetProperties->AbilitySystemComponent->TryActivateAbilitiesByTag(GameplayTagContainer);
             }
+        	ShowFloatingDamageText(GameplayEffectContextDetails, LocalIncomingDamage);
         }
     }
+}
+
+void UBaseAttributeSet::ShowFloatingDamageText(const FGameplayEffectContextDetails& GameplayEffectContextDetails, const float Damage) const
+{
+	if (GameplayEffectContextDetails.SourceProperties->Character != GameplayEffectContextDetails.TargetProperties->Character)
+	{
+		if (APlayerCharacterController* PlayerCharacterController = Cast<APlayerCharacterController>(
+			UGameplayStatics::GetPlayerController(GameplayEffectContextDetails.SourceProperties->Character, 0)))
+		{
+			PlayerCharacterController->ShowDamageNumber(Damage, GameplayEffectContextDetails.TargetProperties->Character);
+		}
+	}
 }
 
 /*

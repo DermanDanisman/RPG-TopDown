@@ -417,4 +417,5 @@ private:
 	 * The function is responsible for setting up and populating the FGameplayEffectExecutionContext struct.
 	 */
 	void InitializeEffectExecutionContext(const FGameplayEffectModCallbackData& Data, FGameplayEffectContextDetails& GameplayEffectContextDetails) const;
+	void ShowFloatingDamageText(const FGameplayEffectContextDetails& GameplayEffectContextDetails, float Damage) const;
 };

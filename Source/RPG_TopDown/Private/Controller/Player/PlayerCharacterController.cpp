@@ -13,10 +13,12 @@
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
 #include "ActorComponent/CameraMovementComponent.h"
 #include "Components/SplineComponent.h"
+#include "GameFramework/Character.h"
 #include "Input/TopDownInputComponent.h"
 #include "Interface/Interaction/HighlightActorInterface.h"
 #include "Interface/Camera/CameraMovementInterface.h"
 #include "RPG_TopDown/RPG_TopDown.h"
+#include "UI/Widget/DamageTextWidgetComponent.h"
 
 
 APlayerCharacterController::APlayerCharacterController()
@@ -298,4 +300,16 @@ UBaseAbilitySystemComponent* APlayerCharacterController::GetAbilitySystemCompone
 	return BaseAbilitySystemComponent;
 }
 
+void APlayerCharacterController::ShowDamageNumber_Implementation(float DamageAmount, ACharacter* Target)
+{
+	if (IsValid(Target) && DamageTextWidgetComponentClass)
+	{
+		UDamageTextWidgetComponent* DamageText = NewObject<UDamageTextWidgetComponent>(Target, DamageTextWidgetComponentClass);
+		// After creating a component dynamically, we need to register it manually.
+		DamageText->RegisterComponent();
+		DamageText->AttachToComponent(Target->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+		DamageText->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+		DamageText->SetDamageText(DamageAmount);
+	}
+}
 
