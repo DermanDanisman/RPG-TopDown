@@ -86,6 +86,7 @@ public:
   *
   */
  FGameplayTag Damage;
+ FGameplayTag Effects_HitReact;
 
 private:
  // Static variable to hold the single instance of the class

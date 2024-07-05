@@ -31,11 +31,21 @@ public:
 	/* Combat Interface */
 	virtual int32 GetCharacterLevel() override;
 
+	/* Hit React Callback */
+	void HitReactTagChange(const FGameplayTag CallbackTag, int32 NewCount);
+
+
+
 	/* Delegate Signature from Overlay Widget Controller */
 	UPROPERTY(BlueprintAssignable)
 	FOnAttributeChangedSignature OnHealthChanged;
 	UPROPERTY(BlueprintAssignable)
 	FOnAttributeChangedSignature OnMaxHealthChanged;
+
+	UPROPERTY(BlueprintReadOnly, Category="Combat")
+	bool bHitReacting = false;
+	UPROPERTY(BlueprintReadOnly, Category="Combat")
+	float BaseWalkSpeed = 250.f;
 	
 protected:
 

@@ -71,9 +71,4 @@ private:
 	TObjectPtr<ATopDownPlayerState> PlayerPS;
 	UPROPERTY(EditAnywhere, Category="Game Ability System")
 	TObjectPtr<APlayerCharacterController> PlayerPC;
-
-	
-
-
-	
 };

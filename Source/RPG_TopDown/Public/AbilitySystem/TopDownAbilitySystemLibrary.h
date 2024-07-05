@@ -53,4 +53,8 @@ public:
 	// A function that will initialize default attributes based on a character class and the level.
 	UFUNCTION(BlueprintCallable, Category="TopDownAbilitySystemLibrary|CharacterClassDefaults")
 	static void InitializeDefaultAttributes(const UObject* WorldContextObject, ECharacterClass CharacterClass, float Level, UAbilitySystemComponent* AbilitySystemComponent);
+
+	// This is for AI Controlled characters.
+	UFUNCTION(BlueprintCallable, Category="TopDownAbilitySystemLibrary|CharacterClassDefaults")
+	static void GiveStartupAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* AbilitySystemComponent);
 };

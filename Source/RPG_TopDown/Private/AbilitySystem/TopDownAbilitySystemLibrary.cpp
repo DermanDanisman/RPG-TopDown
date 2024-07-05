@@ -85,3 +85,17 @@ void UTopDownAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* Wo
 		Level, VitalAttributesGameplayEffectContextHandle);
 	AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*VitalAttributesGameplayEffectSpecHandle.Data.Get());
 }
+
+void UTopDownAbilitySystemLibrary::GiveStartupAbilities(const UObject* WorldContextObject,
+	UAbilitySystemComponent* AbilitySystemComponent)
+{
+	const ATopDownGameModeBase* TopDownGameModeBase = Cast<ATopDownGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
+	if (TopDownGameModeBase == nullptr) return;
+
+	UCharacterClassInfoDataAsset* CharacterClassInfoDataAsset = TopDownGameModeBase->CharacterClassInfoDataAsset;
+	for (const auto AbilityClass : CharacterClassInfoDataAsset->CommonGameplayAbilities)
+	{
+		FGameplayAbilitySpec GameplayAbilitySpec = FGameplayAbilitySpec(AbilityClass, 1);
+		AbilitySystemComponent->GiveAbility(GameplayAbilitySpec);
+	}
+}

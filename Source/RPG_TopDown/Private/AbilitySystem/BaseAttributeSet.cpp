@@ -5,6 +5,7 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "GameplayEffectExtension.h"
+#include "TopDownGameplayTags.h"
 #include "GameFramework/Character.h"
 #include "Net/UnrealNetwork.h"
 
@@ -235,10 +236,14 @@ void UBaseAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 			SetHealth(FMath::Clamp(NewHealth, 0.f, GetMaxHealth()));
 
 			const bool bFatal = NewHealth <= 0.f;
+			if (!bFatal)
+			{
+				FGameplayTagContainer GameplayTagContainer;
+				GameplayTagContainer.AddTag(FTopDownGameplayTags::Get().Effects_HitReact);
+				GameplayEffectContextDetails.TargetProperties->AbilitySystemComponent->TryActivateAbilitiesByTag(GameplayTagContainer);
+			}
 		}
 	}
-
-
 }
 
 /*

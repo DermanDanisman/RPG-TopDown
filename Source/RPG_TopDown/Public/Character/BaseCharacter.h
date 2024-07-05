@@ -52,6 +52,7 @@ protected:
 	 * Combat Interface Functions
 	 */
 	virtual FVector GetWeaponTipSocketLocation() override;
+	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
 
 	/*
 	 * Game Ability System
@@ -97,4 +98,10 @@ private:
 	// This is an array that holds classes derived from UGameplayAbility. These are the abilities that the character will start with.
 	UPROPERTY(EditAnywhere, Category="Abilities")
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
+
+	/*
+	 * Anim Montage
+	 */
+	UPROPERTY(EditAnywhere, Category="Combat|Anim Montage")
+	TObjectPtr<UAnimMontage> HitReactMontage;
 };

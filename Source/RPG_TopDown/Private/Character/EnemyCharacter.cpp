@@ -2,10 +2,13 @@
 
 
 #include "Character/EnemyCharacter.h"
+
+#include "TopDownGameplayTags.h"
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
 #include "AbilitySystem/BaseAttributeSet.h"
 #include "AbilitySystem/TopDownAbilitySystemLibrary.h"
 #include "Components/WidgetComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "RPG_TopDown/RPG_TopDown.h"
 #include "UI/Widget/BaseUserWidget.h"
 
@@ -30,8 +33,16 @@ void AEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// Set WalkSpeed to BaseWalkSpeed
+	GetCharacterMovement()->MaxWalkSpeed = bHitReacting ? 0.f : BaseWalkSpeed;
+
 	// Calling Ability System Init Ability Actor Info
 	InitAbilityActorInfo();
+
+	// Giving Startup Abilities to Enemy such as Hit React ability to play Hit React Montage.
+	UTopDownAbilitySystemLibrary::GiveStartupAbilities(this, AbilitySystemComponent);
+
+	
 }
 
 void AEnemyCharacter::InitAbilityActorInfo()
@@ -97,11 +108,21 @@ void AEnemyCharacter::InitAbilityActorInfo()
 				OnMaxHealthChanged.Broadcast(Data.NewValue);
 			}
 		);
+		
+		AbilitySystemComponent->RegisterGameplayTagEvent(FTopDownGameplayTags::Get().Effects_HitReact,
+			EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AEnemyCharacter::HitReactTagChange);
 
 		// Broadcasting initial values
 		OnHealthChanged.Broadcast(BaseAttributeSet->GetHealth());
 		OnMaxHealthChanged.Broadcast(BaseAttributeSet->GetMaxHealth());
 	}
+}
+
+// Callback function to RegisterGameplayTagEvent when the enemy gets hit by a player
+void AEnemyCharacter::HitReactTagChange(const FGameplayTag CallbackTag, int32 NewCount)
+{
+	bHitReacting = NewCount > 0;
+	GetCharacterMovement()->MaxWalkSpeed = bHitReacting ? 0.f : BaseWalkSpeed;
 }
 
 void AEnemyCharacter::InitializeDefaultAttributes() const

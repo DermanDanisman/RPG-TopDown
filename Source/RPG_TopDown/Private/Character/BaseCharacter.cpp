@@ -52,6 +52,11 @@ FVector ABaseCharacter::GetWeaponTipSocketLocation()
 	return WeaponMesh->GetSocketLocation(WeaponTipSocketName);
 }
 
+UAnimMontage* ABaseCharacter::GetHitReactMontage_Implementation()
+{
+	return HitReactMontage;
+}
+
 // This function applies a gameplay effect to the character itself.
 void ABaseCharacter::ApplyEffectToSelf(const TSubclassOf<UGameplayEffect>& GameplayEffectClass, const float Level) const
 {
