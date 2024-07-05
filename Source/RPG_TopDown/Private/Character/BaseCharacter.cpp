@@ -57,6 +57,30 @@ UAnimMontage* ABaseCharacter::GetHitReactMontage_Implementation()
 	return HitReactMontage;
 }
 
+void ABaseCharacter::Die()
+{
+	// Detaching weapon from the character
+	// Detachment is something that will automatically be a replicated action. So if we detach on the server, we don't have to detach on clients.
+	WeaponMesh->DetachFromComponent(FDetachmentTransformRules(EDetachmentRule::KeepWorld, true));
+	MulticastHandleDeath();
+}
+
+// Multicast RPC for handling death of a character
+void ABaseCharacter::MulticastHandleDeath_Implementation()
+{
+	WeaponMesh->SetSimulatePhysics(true);
+	WeaponMesh->SetEnableGravity(true);
+	WeaponMesh->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+
+	GetMesh()->SetSimulatePhysics(true);
+	GetMesh()->SetEnableGravity(true);
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+	GetMesh()->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+	
+	GetCapsuleComponent()->SetCollisionResponseToAllChannels(ECR_Ignore);
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+}
+
 // This function applies a gameplay effect to the character itself.
 void ABaseCharacter::ApplyEffectToSelf(const TSubclassOf<UGameplayEffect>& GameplayEffectClass, const float Level) const
 {

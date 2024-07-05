@@ -11,76 +11,88 @@
 #include "PlayerState/TopDownPlayerState.h"
 #include "UI/HUD/TopDownHUD.h"
 
+// Retrieves the overlay widget controller from the HUD associated with the player controller.
 UOverlayWidgetController* UTopDownAbilitySystemLibrary::GetOverlayWidgetController(const UObject* WorldContextObject)
 {
+	// Get the first player controller in the world
 	APlayerController* PC = WorldContextObject->GetWorld()->GetFirstPlayerController();
 	if (PC)
 	{
+		// Get the HUD associated with the player controller
 		ATopDownHUD* TopDownHUD = PC->GetHUD<ATopDownHUD>();
 		if (TopDownHUD)
 		{
+			// Get the player state and its components
 			ATopDownPlayerState* PS = PC->GetPlayerState<ATopDownPlayerState>();
 			UAbilitySystemComponent* ASC = PS->GetAbilitySystemComponent();
 			UAttributeSet* AS = PS->GetAttributeSet();
 			const FWidgetControllerVariables WidgetControllerVariables(PC, PS, ASC, AS);
+			// Return the overlay widget controller from the HUD
 			return TopDownHUD->GetOverlayWidgetController(WidgetControllerVariables);
 		}
 	}
-
 	return nullptr;
 }
 
 // We call this in WBP_AttributeMenu
+// Retrieves the attribute menu widget controller from the HUD associated with the player controller.
 UAttributeMenuWidgetController* UTopDownAbilitySystemLibrary::GetAttributeMenuWidgetController(const UObject* WorldContextObject)
 {
+	// Get the first player controller in the world
 	APlayerController* PC = WorldContextObject->GetWorld()->GetFirstPlayerController();
 	if (PC)
 	{
+		// Get the HUD associated with the player controller
 		ATopDownHUD* TopDownHUD = PC->GetHUD<ATopDownHUD>();
 		if (TopDownHUD)
 		{
+			// Get the player state and its components
 			ATopDownPlayerState* PS = PC->GetPlayerState<ATopDownPlayerState>();
 			UAbilitySystemComponent* ASC = PS->GetAbilitySystemComponent();
 			UAttributeSet* AS = PS->GetAttributeSet();
 			const FWidgetControllerVariables WidgetControllerVariables(PC, PS, ASC, AS);
+			// Return the attribute menu widget controller from the HUD
 			return TopDownHUD->GetAttributeMenuWidgetController(WidgetControllerVariables);
 		}
 	}
-	
 	return nullptr;
 }
 
+// Initializes default attributes for a character based on their class and level.
 void UTopDownAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* WorldContextObject, const ECharacterClass CharacterClass,
 	const float Level, UAbilitySystemComponent* AbilitySystemComponent)
 {
+	// Get the game mode and cast it to ATopDownGameModeBase
 	const ATopDownGameModeBase* TopDownGameModeBase = Cast<ATopDownGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
 	if (TopDownGameModeBase == nullptr) return;
 
+	// Get the avatar actor associated with the ability system component
 	const AActor* AvatarActor = AbilitySystemComponent->GetAvatarActor();
-	
+
+	// Get the character class info data asset from the game mode
 	UCharacterClassInfoDataAsset* CharacterClassInfoDataAsset = TopDownGameModeBase->CharacterClassInfoDataAsset;
 	const FCharacterClassDefaultInfo CharacterClassDefaultInfoStruct = CharacterClassInfoDataAsset->GetCharacterClassDefaultInfo(CharacterClass);
-	
-	// Primary Attributes
+
+	// Initialize primary attributes
 	FGameplayEffectContextHandle PrimaryAttributesGameplayEffectContextHandle = AbilitySystemComponent->MakeEffectContext();
 	PrimaryAttributesGameplayEffectContextHandle.AddSourceObject(AvatarActor);
-	
+
 	const FGameplayEffectSpecHandle PrimaryAttributesGameplayEffectSpecHandle = AbilitySystemComponent->MakeOutgoingSpec(CharacterClassDefaultInfoStruct.PrimaryAttributes,
 		Level, PrimaryAttributesGameplayEffectContextHandle);
 	AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*PrimaryAttributesGameplayEffectSpecHandle.Data.Get());
-	
-	// Secondary Attributes
+
+	// Initialize secondary attributes
 	FGameplayEffectContextHandle SecondaryAttributesGameplayEffectContextHandle = AbilitySystemComponent->MakeEffectContext();
 	SecondaryAttributesGameplayEffectContextHandle.AddSourceObject(AvatarActor);
-	
+
 	const FGameplayEffectSpecHandle SecondaryAttributesGameplayEffectSpecHandle = AbilitySystemComponent->MakeOutgoingSpec(CharacterClassInfoDataAsset->SecondaryAttributes,
-	 Level, SecondaryAttributesGameplayEffectContextHandle);
+		Level, SecondaryAttributesGameplayEffectContextHandle);
 	AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SecondaryAttributesGameplayEffectSpecHandle.Data.Get());
 
-	// Vital Attributes
+	// Initialize vital attributes
 	FGameplayEffectContextHandle VitalAttributesGameplayEffectContextHandle = AbilitySystemComponent->MakeEffectContext();
 	VitalAttributesGameplayEffectContextHandle.AddSourceObject(AvatarActor);
-	
+
 	const FGameplayEffectSpecHandle VitalAttributesGameplayEffectSpecHandle = AbilitySystemComponent->MakeOutgoingSpec(CharacterClassInfoDataAsset->VitalAttributes,
 		Level, VitalAttributesGameplayEffectContextHandle);
 	AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*VitalAttributesGameplayEffectSpecHandle.Data.Get());
@@ -89,13 +101,16 @@ void UTopDownAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* Wo
 void UTopDownAbilitySystemLibrary::GiveStartupAbilities(const UObject* WorldContextObject,
 	UAbilitySystemComponent* AbilitySystemComponent)
 {
+	// Get the game mode and cast it to ATopDownGameModeBase
 	const ATopDownGameModeBase* TopDownGameModeBase = Cast<ATopDownGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
 	if (TopDownGameModeBase == nullptr) return;
 
+	// Get the character class info data asset from the game mode
 	UCharacterClassInfoDataAsset* CharacterClassInfoDataAsset = TopDownGameModeBase->CharacterClassInfoDataAsset;
-	for (const auto AbilityClass : CharacterClassInfoDataAsset->CommonGameplayAbilities)
+	for (const TSubclassOf<UGameplayAbility> AbilityClass : CharacterClassInfoDataAsset->CommonGameplayAbilities)
 	{
-		FGameplayAbilitySpec GameplayAbilitySpec = FGameplayAbilitySpec(AbilityClass, 1);
+		// Create a gameplay ability spec and give the ability to the ability system component
+		FGameplayAbilitySpec GameplayAbilitySpec = FGameplayAbilitySpec(AbilityClass, 1.f);
 		AbilitySystemComponent->GiveAbility(GameplayAbilitySpec);
 	}
 }

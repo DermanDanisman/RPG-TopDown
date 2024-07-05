@@ -32,9 +32,38 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UAttributeSet* GetAttributeSet() const;
 
+	/*
+	 * Combat Interface Functions
+	 */
+	virtual FVector GetWeaponTipSocketLocation() override;
+	// We need to add Implementation to be able to override BlueprintImplementableEvent functions from Interfaces.  
+	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
+	virtual void Die() override;
+
+	/*
+	 * Multicast RPC
+	 */
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void MulticastHandleDeath();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual void InitAbilityActorInfo();
+
+	/*
+	 * Gameplay Abilities
+	 */
+	// This function is responsible for adding the abilities listed in StartupAbilities to the character's Ability System Component.
+	void AddCharacterAbilities() const;
+
+	/*
+	 * Gameplay Effect Attributes
+	 */
+	// This function applies a gameplay effect to the character itself.
+	void ApplyEffectToSelf(const TSubclassOf<UGameplayEffect>& GameplayEffectClass, float Level) const;
+	// This function initializes the character's default attributes by applying primary and secondary attribute effects to the character.
+	virtual void InitializeDefaultAttributes() const;
 	
 	/*
 	 * Common Variables
@@ -49,30 +78,16 @@ protected:
 	FName WeaponAttachmentSocketName = FName("WeaponHandSocket");
 
 	/*
-	 * Combat Interface Functions
-	 */
-	virtual FVector GetWeaponTipSocketLocation() override;
-	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
-
-	/*
 	 * Game Ability System
 	 */
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 	UPROPERTY()
 	TObjectPtr<UAttributeSet> AttributeSet;
-	
-	virtual void InitAbilityActorInfo();
 
 	/*
 	 * Gameplay Effect Attributes
 	 */
-	// This function applies a gameplay effect to the character itself.
-	void ApplyEffectToSelf(const TSubclassOf<UGameplayEffect>& GameplayEffectClass, float Level) const;
-
-	// This function initializes the character's default attributes by applying primary and secondary attribute effects to the character.
-	virtual void InitializeDefaultAttributes() const;
-	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attributes|Primary")
 	TSubclassOf<UGameplayEffect> DefaultPrimaryAttributes;
 
@@ -83,12 +98,6 @@ protected:
 	// Initialize Vital Attributes after the Primary Attributes become Secondary Attributes are dependent on Primary Attributes
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attributes|Vital")
 	TSubclassOf<UGameplayEffect> DefaultVitalAttributes;
-
-	/*
-	 * Gameplay Abilities
-	 */
-	// This function is responsible for adding the abilities listed in StartupAbilities to the character's Ability System Component.
-	void AddCharacterAbilities() const;
 	
 private:
 

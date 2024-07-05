@@ -7,6 +7,7 @@
 #include "GameplayEffectExtension.h"
 #include "TopDownGameplayTags.h"
 #include "GameFramework/Character.h"
+#include "Interface/Interaction/CombatInterface.h"
 #include "Net/UnrealNetwork.h"
 
 	/*
@@ -205,76 +206,91 @@ void UBaseAttributeSet::InitializeEffectExecutionContext(const FGameplayEffectMo
  */
 void UBaseAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
 {
-	Super::PostGameplayEffectExecute(Data);
+    Super::PostGameplayEffectExecute(Data);
 
-	// The function is responsible for setting up and populating the FGameplayEffectExecutionContext struct.
-	FGameplayEffectContextDetails GameplayEffectContextDetails;
-	InitializeEffectExecutionContext(Data, GameplayEffectContextDetails);
-	
+    // The function is responsible for setting up and populating the FGameplayEffectExecutionContext struct.
+    FGameplayEffectContextDetails GameplayEffectContextDetails;
+    InitializeEffectExecutionContext(Data, GameplayEffectContextDetails);
 
-	// Clamping Vital Attributes
-	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
-	{
-		SetHealth(FMath::Clamp(GetHealth(), 0.f, GetMaxHealth()));
-		UE_LOG(LogTemp, Warning, TEXT("Changed Health on %s, Health: %f"), *GameplayEffectContextDetails.TargetProperties->AvatarActor->GetName(), GetHealth());
-	}
-	if (Data.EvaluatedData.Attribute == GetManaAttribute())
-	{
-		SetMana(FMath::Clamp(GetMana(), 0.f, GetMaxMana()));
-	}
-	if (Data.EvaluatedData.Attribute == GetStaminaAttribute())
-	{
-		SetStamina(FMath::Clamp(GetStamina(), 0.f, GetMaxStamina()));
-	}
-	if (Data.EvaluatedData.Attribute == GetIncomingDamageAttribute())
-	{
-		const float LocalIncomingDamage = GetIncomingDamage();
-		SetIncomingDamage(0.f);
-		if (LocalIncomingDamage > 0.f)
-		{
-			const float NewHealth = GetHealth() - LocalIncomingDamage;
-			SetHealth(FMath::Clamp(NewHealth, 0.f, GetMaxHealth()));
+    // Clamping Vital Attributes: Ensures that the vital attributes (Health, Mana, Stamina) are within their valid ranges.
+    
+    // If the attribute modified by the gameplay effect is Health, clamp the health value between 0 and MaxHealth.
+    if (Data.EvaluatedData.Attribute == GetHealthAttribute())
+    {
+        // Clamps the Health value to ensure it does not go below 0 or above MaxHealth.
+        SetHealth(FMath::Clamp(GetHealth(), 0.f, GetMaxHealth()));
+        // Logs the new Health value for debugging purposes.
+        UE_LOG(LogTemp, Warning, TEXT("Changed Health on %s, Health: %f"), *GameplayEffectContextDetails.TargetProperties->AvatarActor->GetName(), GetHealth());
+    }
 
-			const bool bFatal = NewHealth <= 0.f;
-			if (!bFatal)
-			{
-				FGameplayTagContainer GameplayTagContainer;
-				GameplayTagContainer.AddTag(FTopDownGameplayTags::Get().Effects_HitReact);
-				GameplayEffectContextDetails.TargetProperties->AbilitySystemComponent->TryActivateAbilitiesByTag(GameplayTagContainer);
-			}
-		}
-	}
+    // If the attribute modified by the gameplay effect is Mana, clamp the Mana value between 0 and MaxMana.
+    if (Data.EvaluatedData.Attribute == GetManaAttribute())
+    {
+        SetMana(FMath::Clamp(GetMana(), 0.f, GetMaxMana()));
+    }
+
+    // If the attribute modified by the gameplay effect is Stamina, clamp the Stamina value between 0 and MaxStamina.
+    if (Data.EvaluatedData.Attribute == GetStaminaAttribute())
+    {
+        SetStamina(FMath::Clamp(GetStamina(), 0.f, GetMaxStamina()));
+    }
+
+    // If the attribute modified by the gameplay effect is IncomingDamage, handle the incoming damage.
+    if (Data.EvaluatedData.Attribute == GetIncomingDamageAttribute())
+    {
+        // Store the current value of IncomingDamage and then reset it to 0.
+        const float LocalIncomingDamage = GetIncomingDamage();
+        SetIncomingDamage(0.f);
+
+        // If there is any incoming damage to process, reduce the Health accordingly.
+        if (LocalIncomingDamage > 0.f)
+        {
+            // Calculate the new Health value after taking damage.
+            const float NewHealth = GetHealth() - LocalIncomingDamage;
+            // Clamp the new Health value to ensure it does not go below 0 or above MaxHealth.
+            SetHealth(FMath::Clamp(NewHealth, 0.f, GetMaxHealth()));
+
+            // Determine if the damage was fatal (i.e., Health dropped to 0 or below).
+            const bool bFatal = NewHealth <= 0.f;
+            if (bFatal)
+            {
+            	ICombatInterface* CombatInterface = Cast<ICombatInterface>(GameplayEffectContextDetails.TargetProperties->AvatarActor);
+            	if (CombatInterface)
+            	{
+            		CombatInterface->Die();
+            	}
+            }
+            else
+            {
+            	// If the damage was not fatal, trigger a hit reaction ability.
+            	FGameplayTagContainer GameplayTagContainer;
+            	GameplayTagContainer.AddTag(FTopDownGameplayTags::Get().Effects_HitReact);
+            	// Try to activate any abilities associated with the hit reaction tag.
+            	GameplayEffectContextDetails.TargetProperties->AbilitySystemComponent->TryActivateAbilitiesByTag(GameplayTagContainer);
+            }
+        }
+    }
 }
-
-/*
- * Vital Attributes
- */
 
 /*
  * The OnRep_Health function is called on the client when the Health attribute is updated on the server.
  * The GAMEPLAYATTRIBUTE_REPNOTIFY macro ensures the attribute is correctly replicated.
  * This function also adds a debug message to display the old and new Health values.
  */
+
+/*
+ * Vital Attributes
+ */
 void UBaseAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth) const
 {
     GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, Health, OldHealth);
 }
 
-/*
- * The OnRep_Mana function is called on the client when the Mana attribute is updated on the server.
- * The GAMEPLAYATTRIBUTE_REPNOTIFY macro ensures the attribute is correctly replicated.
- * This function also adds a debug message to display the old and new Mana values.
- */
 void UBaseAttributeSet::OnRep_Mana(const FGameplayAttributeData& OldMana) const
 {
     GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, Mana, OldMana);
 }
 
-/*
- * The OnRep_Stamina function is called on the client when the Stamina attribute is updated on the server.
- * The GAMEPLAYATTRIBUTE_REPNOTIFY macro ensures the attribute is correctly replicated.
- * This function also adds a debug message to display the old and new MaxMana values.
- */
 void UBaseAttributeSet::OnRep_Stamina(const FGameplayAttributeData& OldStamina) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, Stamina, OldStamina);
@@ -377,31 +393,16 @@ void UBaseAttributeSet::OnRep_StaminaRegeneration(const FGameplayAttributeData& 
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, StaminaRegeneration, OldStaminaRegeneration);
 }
 
-/*
- * The OnRep_MaxHealth function is called on the client when the MaxHealth attribute is updated on the server.
- * The GAMEPLAYATTRIBUTE_REPNOTIFY macro ensures the attribute is correctly replicated.
- * This function also adds a debug message to display the old and new MaxHealth values.
- */
 void UBaseAttributeSet::OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, MaxHealth, OldMaxHealth);
 }
 
-/*
- * The OnRep_MaxMana function is called on the client when the MaxMana attribute is updated on the server.
- * The GAMEPLAYATTRIBUTE_REPNOTIFY macro ensures the attribute is correctly replicated.
- * This function also adds a debug message to display the old and new MaxMana values.
- */
 void UBaseAttributeSet::OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, MaxMana, OldMaxMana);
 }
 
-/*
- * The OnRep_MaxStamina function is called on the client when the MaxStamina attribute is updated on the server.
- * The GAMEPLAYATTRIBUTE_REPNOTIFY macro ensures the attribute is correctly replicated.
- * This function also adds a debug message to display the old and new MaxMana values.
- */
 void UBaseAttributeSet::OnRep_MaxStamina(const FGameplayAttributeData& OldMaxStamina) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, MaxStamina, OldMaxStamina);

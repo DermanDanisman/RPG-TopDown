@@ -41,8 +41,6 @@ void AEnemyCharacter::BeginPlay()
 
 	// Giving Startup Abilities to Enemy such as Hit React ability to play Hit React Montage.
 	UTopDownAbilitySystemLibrary::GiveStartupAbilities(this, AbilitySystemComponent);
-
-	
 }
 
 void AEnemyCharacter::InitAbilityActorInfo()
@@ -81,12 +79,14 @@ void AEnemyCharacter::InitAbilityActorInfo()
 	// Initializing Primary, Secondary and Vital Attributes.
 	InitializeDefaultAttributes();
 	
-	// Setting Widget Controller to Enemy Class itself.
-	if (UBaseUserWidget* BaseUserWidget = Cast<UBaseUserWidget>(HealthBar->GetUserWidgetObject()))
-	{
-		BaseUserWidget->SetWidgetController(this);
-	}
+	InitializeHealthBarWidgetController();
+	
+	BindAndBroadcastAttributeChanges();
+}
 
+// The function is designed to bind lambda functions to attribute change delegates and broadcast the initial values of the health attributes.
+void AEnemyCharacter::BindAndBroadcastAttributeChanges()
+{
 	/*
 	 * Binding Lambda functions to Attribute Changes and Broadcasting OnHealthChanged and OnMaxHealthChanged.
 	 */
@@ -110,7 +110,7 @@ void AEnemyCharacter::InitAbilityActorInfo()
 		);
 		
 		AbilitySystemComponent->RegisterGameplayTagEvent(FTopDownGameplayTags::Get().Effects_HitReact,
-			EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AEnemyCharacter::HitReactTagChange);
+														 EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AEnemyCharacter::HitReactTagChange);
 
 		// Broadcasting initial values
 		OnHealthChanged.Broadcast(BaseAttributeSet->GetHealth());
@@ -118,8 +118,18 @@ void AEnemyCharacter::InitAbilityActorInfo()
 	}
 }
 
+// The function is designed to initialize the health bar widget controller by setting it to the enemy class itself.
+void AEnemyCharacter::InitializeHealthBarWidgetController()
+{
+	// Setting Widget Controller to Enemy Class itself.
+	if (UBaseUserWidget* BaseUserWidget = Cast<UBaseUserWidget>(HealthBar->GetUserWidgetObject()))
+	{
+		BaseUserWidget->SetWidgetController(this);
+	}
+}
+
 // Callback function to RegisterGameplayTagEvent when the enemy gets hit by a player
-void AEnemyCharacter::HitReactTagChange(const FGameplayTag CallbackTag, int32 NewCount)
+void AEnemyCharacter::HitReactTagChange(const FGameplayTag CallbackTag, const int32 NewCount)
 {
 	bHitReacting = NewCount > 0;
 	GetCharacterMovement()->MaxWalkSpeed = bHitReacting ? 0.f : BaseWalkSpeed;
@@ -162,4 +172,11 @@ void AEnemyCharacter::UnHighlightActor()
 int32 AEnemyCharacter::GetCharacterLevel()
 {
 	return Level;
+}
+
+void AEnemyCharacter::Die()
+{
+	SetLifeSpan(LifeSpan);
+	Super::Die();
+	
 }

@@ -59,7 +59,7 @@ void UTopDownProjectileAbility::SpawnProjectile(const FVector& ProjectileTargetL
 		FTopDownGameplayTags GameplayTags = FTopDownGameplayTags::Get();
 		// Get the current value of the SpellPower attribute
 		bool bFound;
-		const float ScaledDamage = SourceAbilitySystemComponent->GetGameplayAttributeValue(BaseAttributeSet->GetSpellPowerAttribute(), bFound) * Damage.GetValueAtLevel(20);
+		const float ScaledDamage = SourceAbilitySystemComponent->GetGameplayAttributeValue(BaseAttributeSet->GetSpellPowerAttribute(), bFound) * Damage.GetValueAtLevel(1);
 		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red, FString::Printf(TEXT("FireBolt Damage: %f"), ScaledDamage));
 		// This adds include. and does the same thing as EffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(GameplayTags.Damage, 50.f);
 		//UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle, GameplayTags.Damage, 50.f);

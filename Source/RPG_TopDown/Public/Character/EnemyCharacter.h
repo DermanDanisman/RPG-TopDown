@@ -24,36 +24,44 @@ public:
 	
 	AEnemyCharacter();
 
-	/* Highlight Actor Interface */
-	virtual void HighlightActor() override;
-	virtual void UnHighlightActor() override;
-
-	/* Combat Interface */
-	virtual int32 GetCharacterLevel() override;
-
-	/* Hit React Callback */
-	void HitReactTagChange(const FGameplayTag CallbackTag, int32 NewCount);
-
-
-
 	/* Delegate Signature from Overlay Widget Controller */
 	UPROPERTY(BlueprintAssignable)
 	FOnAttributeChangedSignature OnHealthChanged;
 	UPROPERTY(BlueprintAssignable)
 	FOnAttributeChangedSignature OnMaxHealthChanged;
 
+	/* Highlight Actor Interface */
+	virtual void HighlightActor() override;
+	virtual void UnHighlightActor() override;
+
+	/* Combat Interface */
+	virtual int32 GetCharacterLevel() override;
+	virtual void Die() override;
+
+	/* Hit React Callback */
+	void HitReactTagChange(const FGameplayTag CallbackTag, int32 NewCount);
+
 	UPROPERTY(BlueprintReadOnly, Category="Combat")
 	bool bHitReacting = false;
 	UPROPERTY(BlueprintReadOnly, Category="Combat")
 	float BaseWalkSpeed = 250.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Combat")
+	float LifeSpan = 5.f;
 	
 protected:
 
 	virtual void BeginPlay() override;
 
+
 	/* Game Ability System */
 	virtual void InitAbilityActorInfo() override;
 	virtual void InitializeDefaultAttributes() const override;
+
+	/* Widget Initialization */
+	void InitializeHealthBarWidgetController();
+    
+	/* Attribute Binding */
+	void BindAndBroadcastAttributeChanges();
 	
 	/*
 	 * Now the reason I'm not going to make this replicated for the enemy is because we're only going to be concerned with checking the level on the server for AI controlled enemies.

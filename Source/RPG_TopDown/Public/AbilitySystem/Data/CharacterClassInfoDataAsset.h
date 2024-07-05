@@ -58,6 +58,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="Common Class Defaults|Attributes")
 	TSubclassOf<UGameplayEffect> VitalAttributes;
 
+	// Filled in Blueprint
 	UPROPERTY(EditDefaultsOnly, Category="Common Class Defaults|Abilities")
 	TArray<TSubclassOf<UGameplayAbility>> CommonGameplayAbilities;
 };
