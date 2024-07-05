@@ -79,6 +79,8 @@ void ABaseCharacter::MulticastHandleDeath_Implementation()
 	
 	GetCapsuleComponent()->SetCollisionResponseToAllChannels(ECR_Ignore);
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+
+	DissolveEffect();
 }
 
 // This function applies a gameplay effect to the character itself.
@@ -115,6 +117,22 @@ void ABaseCharacter::AddCharacterAbilities() const
 
 	// Calls the function on the Ability System Component to add the startup abilities.
 	BaseAbilitySystemComponent->AddCharacterAbilities(StartupAbilities);
+}
+
+void ABaseCharacter::DissolveEffect()
+{
+	if (IsValid(DissolveMaterialInstance))
+	{
+		UMaterialInstanceDynamic* DynamicMaterialInstance = UMaterialInstanceDynamic::Create(DissolveMaterialInstance, this);
+		GetMesh()->SetMaterial(0, DynamicMaterialInstance);
+		StartCharacterMeshDissolveTimeline(DynamicMaterialInstance);
+	}
+	if (IsValid(WeaponDissolveMaterialInstance))
+	{
+		UMaterialInstanceDynamic* DynamicMaterialInstance = UMaterialInstanceDynamic::Create(WeaponDissolveMaterialInstance, this);
+		WeaponMesh->SetMaterial(0, DynamicMaterialInstance);
+		StartWeaponMeshDissolveTimeline(DynamicMaterialInstance);
+	}
 }
 
 

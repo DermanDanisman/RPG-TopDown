@@ -50,20 +50,6 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	virtual void InitAbilityActorInfo();
-
-	/*
-	 * Gameplay Abilities
-	 */
-	// This function is responsible for adding the abilities listed in StartupAbilities to the character's Ability System Component.
-	void AddCharacterAbilities() const;
-
-	/*
-	 * Gameplay Effect Attributes
-	 */
-	// This function applies a gameplay effect to the character itself.
-	void ApplyEffectToSelf(const TSubclassOf<UGameplayEffect>& GameplayEffectClass, float Level) const;
-	// This function initializes the character's default attributes by applying primary and secondary attribute effects to the character.
-	virtual void InitializeDefaultAttributes() const;
 	
 	/*
 	 * Common Variables
@@ -80,14 +66,24 @@ protected:
 	/*
 	 * Game Ability System
 	 */
+	// This function is responsible for adding the abilities listed in StartupAbilities to the character's Ability System Component.
+	void AddCharacterAbilities() const;
+	
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
+	
 	UPROPERTY()
 	TObjectPtr<UAttributeSet> AttributeSet;
 
 	/*
 	 * Gameplay Effect Attributes
 	 */
+	// This function applies a gameplay effect to the character itself.
+	void ApplyEffectToSelf(const TSubclassOf<UGameplayEffect>& GameplayEffectClass, float Level) const;
+	
+	// This function initializes the character's default attributes by applying primary and secondary attribute effects to the character.
+	virtual void InitializeDefaultAttributes() const;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attributes|Primary")
 	TSubclassOf<UGameplayEffect> DefaultPrimaryAttributes;
 
@@ -98,6 +94,23 @@ protected:
 	// Initialize Vital Attributes after the Primary Attributes become Secondary Attributes are dependent on Primary Attributes
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attributes|Vital")
 	TSubclassOf<UGameplayEffect> DefaultVitalAttributes;
+
+	/*
+	 * Dissolve Effects
+	 */
+	void DissolveEffect();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void StartCharacterMeshDissolveTimeline(UMaterialInstanceDynamic* DynamicMaterialInstance);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void StartWeaponMeshDissolveTimeline(UMaterialInstanceDynamic* DynamicMaterialInstance);
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Effects")
+	TObjectPtr<UMaterialInstance> DissolveMaterialInstance;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Effects")
+	TObjectPtr<UMaterialInstance> WeaponDissolveMaterialInstance;
 	
 private:
 
