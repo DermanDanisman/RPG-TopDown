@@ -173,6 +173,11 @@ int32 APlayerCharacter::GetCharacterLevel()
 	return PlayerPS->GetPlayerLevel();
 }
 
+ECharacterClass APlayerCharacter::GetCharacterClass()
+{
+	return CharacterCLass;
+}
+
 
 
 

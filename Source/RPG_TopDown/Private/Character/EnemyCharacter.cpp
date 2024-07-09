@@ -174,9 +174,16 @@ int32 AEnemyCharacter::GetCharacterLevel()
 	return Level;
 }
 
+ECharacterClass AEnemyCharacter::GetCharacterClass()
+{
+	return CharacterCLass;
+}
+
 void AEnemyCharacter::Die()
 {
 	SetLifeSpan(LifeSpan);
 	Super::Die();
 	
 }
+
+

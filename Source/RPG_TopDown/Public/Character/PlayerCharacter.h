@@ -39,6 +39,7 @@ public:
 
 	/* Combat Interface */
 	virtual int32 GetCharacterLevel() override;
+	virtual ECharacterClass GetCharacterClass() override;
 	
 	/* Getter Functions */
 	FORCEINLINE USpringArmComponent* GetCameraSpringArm() { return CameraSpringArm; }

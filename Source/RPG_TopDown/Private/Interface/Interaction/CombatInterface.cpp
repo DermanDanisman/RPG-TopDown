@@ -9,6 +9,11 @@ int32 ICombatInterface::GetCharacterLevel()
 	return 0;
 }
 
+ECharacterClass ICombatInterface::GetCharacterClass()
+{
+	return ECharacterClass::Warrior;
+}
+
 FVector ICombatInterface::GetWeaponTipSocketLocation()
 {
 	return FVector();

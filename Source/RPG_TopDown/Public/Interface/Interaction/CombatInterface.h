@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AbilitySystem/Data/CharacterClassInfoDataAsset.h"
 #include "UObject/Interface.h"
 #include "CombatInterface.generated.h"
 
@@ -26,6 +27,7 @@ class RPG_TOPDOWN_API ICombatInterface
 public:
 
 	virtual int32 GetCharacterLevel();
+	virtual ECharacterClass GetCharacterClass();
 	virtual FVector GetWeaponTipSocketLocation();
 	
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category="BlueprintEvents")
