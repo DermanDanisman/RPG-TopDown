@@ -37,14 +37,14 @@ class RPG_TOPDOWN_API UCharacterClassInfoDataAsset : public UDataAsset
 	GENERATED_BODY()
 
 public:
-
+	
+	FCharacterClassDefaultInfo GetCharacterClassDefaultInfo(ECharacterClass CharacterClass);
 	/*
 	 * Now our data asset needs a way to store these structs one for each one of our classes, so we can use a TArray.
 	 * Or we could use a TMap. A TMap is nice because we could map the enum to the struct.
 	 */
 	UPROPERTY(EditDefaultsOnly, Category="Character Class Defaults")
 	TMap<ECharacterClass, FCharacterClassDefaultInfo> CharacterClassInformation;
-	FCharacterClassDefaultInfo GetCharacterClassDefaultInfo(ECharacterClass CharacterClass);
 
 	/* Shared Attributes */
 	/*
@@ -61,4 +61,7 @@ public:
 	// Filled in Blueprint
 	UPROPERTY(EditDefaultsOnly, Category="Common Class Defaults|Abilities")
 	TArray<TSubclassOf<UGameplayAbility>> CommonGameplayAbilities;
+
+	UPROPERTY(EditDefaultsOnly, Category="Common Class Defaults|Curve Tables")
+	TObjectPtr<UCurveTable> DamageCalculationCoefficients;
 };

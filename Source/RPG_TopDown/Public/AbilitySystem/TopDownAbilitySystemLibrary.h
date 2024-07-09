@@ -57,4 +57,7 @@ public:
 	// This is for AI Controlled characters.
 	UFUNCTION(BlueprintCallable, Category="TopDownAbilitySystemLibrary|CharacterClassDefaults")
 	static void GiveStartupAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* AbilitySystemComponent);
+
+	UFUNCTION(BlueprintCallable, Category="TopDownAbilitySystemLibrary|CharacterClassDefaults")
+	static UCharacterClassInfoDataAsset* GetCharacterClassInfoDataAsset(const UObject* WorldContextObject);
 };

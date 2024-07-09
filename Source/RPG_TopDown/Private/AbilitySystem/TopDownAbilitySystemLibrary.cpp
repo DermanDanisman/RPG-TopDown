@@ -62,15 +62,13 @@ UAttributeMenuWidgetController* UTopDownAbilitySystemLibrary::GetAttributeMenuWi
 void UTopDownAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* WorldContextObject, const ECharacterClass CharacterClass,
 	const float Level, UAbilitySystemComponent* AbilitySystemComponent)
 {
-	// Get the game mode and cast it to ATopDownGameModeBase
-	const ATopDownGameModeBase* TopDownGameModeBase = Cast<ATopDownGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
-	if (TopDownGameModeBase == nullptr) return;
-
 	// Get the avatar actor associated with the ability system component
 	const AActor* AvatarActor = AbilitySystemComponent->GetAvatarActor();
-
+	
+	if (GetCharacterClassInfoDataAsset(WorldContextObject) == nullptr) return;
+	
 	// Get the character class info data asset from the game mode
-	UCharacterClassInfoDataAsset* CharacterClassInfoDataAsset = TopDownGameModeBase->CharacterClassInfoDataAsset;
+	UCharacterClassInfoDataAsset* CharacterClassInfoDataAsset = GetCharacterClassInfoDataAsset(WorldContextObject);
 	const FCharacterClassDefaultInfo CharacterClassDefaultInfoStruct = CharacterClassInfoDataAsset->GetCharacterClassDefaultInfo(CharacterClass);
 
 	// Initialize primary attributes
@@ -101,16 +99,25 @@ void UTopDownAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* Wo
 void UTopDownAbilitySystemLibrary::GiveStartupAbilities(const UObject* WorldContextObject,
 	UAbilitySystemComponent* AbilitySystemComponent)
 {
-	// Get the game mode and cast it to ATopDownGameModeBase
-	const ATopDownGameModeBase* TopDownGameModeBase = Cast<ATopDownGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
-	if (TopDownGameModeBase == nullptr) return;
-
+	if (GetCharacterClassInfoDataAsset(WorldContextObject) == nullptr) return;
+	
 	// Get the character class info data asset from the game mode
-	UCharacterClassInfoDataAsset* CharacterClassInfoDataAsset = TopDownGameModeBase->CharacterClassInfoDataAsset;
+	UCharacterClassInfoDataAsset* CharacterClassInfoDataAsset = GetCharacterClassInfoDataAsset(WorldContextObject);
 	for (const TSubclassOf<UGameplayAbility> AbilityClass : CharacterClassInfoDataAsset->CommonGameplayAbilities)
 	{
 		// Create a gameplay ability spec and give the ability to the ability system component
 		FGameplayAbilitySpec GameplayAbilitySpec = FGameplayAbilitySpec(AbilityClass, 1.f);
 		AbilitySystemComponent->GiveAbility(GameplayAbilitySpec);
 	}
+}
+
+UCharacterClassInfoDataAsset* UTopDownAbilitySystemLibrary::GetCharacterClassInfoDataAsset(
+	const UObject* WorldContextObject)
+{
+	// Get the game mode and cast it to ATopDownGameModeBase
+	const ATopDownGameModeBase* TopDownGameModeBase = Cast<ATopDownGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
+	if (TopDownGameModeBase == nullptr) return nullptr;
+
+	// Get the character class info data asset from the game mode
+	return TopDownGameModeBase->CharacterClassInfoDataAsset;
 }

@@ -6,6 +6,7 @@
 #include "AbilitySystemComponent.h"
 #include "TopDownGameplayTags.h"
 #include "AbilitySystem/BaseAttributeSet.h"
+#include "AbilitySystem/TopDownAbilitySystemLibrary.h"
 #include "Interface/Interaction/CombatInterface.h"
 
 struct TopDownDamageStatics
@@ -45,8 +46,10 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	const UAbilitySystemComponent* TargetAbilitySystemComponent = ExecutionParams.GetTargetAbilitySystemComponent();
 
 	AActor* SourceAvatarActor = SourceAbilitySystemComponent ? SourceAbilitySystemComponent->GetAvatarActor() : nullptr;
-	const AActor* TargetAvatarActor = TargetAbilitySystemComponent ? TargetAbilitySystemComponent->GetAvatarActor() : nullptr;
-
+	ICombatInterface* SourceCombatInterface = Cast<ICombatInterface>(SourceAvatarActor);
+	AActor* TargetAvatarActor = TargetAbilitySystemComponent ? TargetAbilitySystemComponent->GetAvatarActor() : nullptr;
+	ICombatInterface* TargetCombatInterface = Cast<ICombatInterface>(TargetAvatarActor);
+	
 	const FGameplayEffectSpec GameplayEffectSpec = ExecutionParams.GetOwningSpec();
 
 	const FGameplayTagContainer* SourceTags = GameplayEffectSpec.CapturedSourceTags.GetAggregatedTags();
@@ -86,17 +89,16 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().ArmorPenetrationDef, EvaluationParameters, SourceArmorPenetration);
 	SourceArmorPenetration = FMath::Max<float>(SourceArmorPenetration, 0.f);
 
-	const float EffectiveArmor = TargetArmor *= (100 - SourceArmorPenetration * 0.25f) / 100.f;
-	Damage *= (100 - EffectiveArmor) / 100.f;
+	const UCharacterClassInfoDataAsset* SourceCharacterClassInfoDataAsset = UTopDownAbilitySystemLibrary::GetCharacterClassInfoDataAsset(SourceAvatarActor);
+	const FRealCurve* ArmorPenetrationCurve = SourceCharacterClassInfoDataAsset->DamageCalculationCoefficients->FindCurve(FName("ArmorPenetration"), FString());
+	const float ArmorPenetrationCoefficient = ArmorPenetrationCurve->Eval(SourceCombatInterface->GetCharacterLevel());
 
-	ICombatInterface* CombatInterfaceSource = Cast<ICombatInterface>(SourceAvatarActor);
-	if (CombatInterfaceSource)
-	{
-		if (CombatInterfaceSource->GetCharacterClass() == ECharacterClass::Sorcerer)
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("Source is Sorcerer")));
-		}
-	}
+	const float EffectiveArmor = TargetArmor * (100 - SourceArmorPenetration * ArmorPenetrationCoefficient) / 100.f;
+
+	const UCharacterClassInfoDataAsset* TargetCharacterClassInfoDataAsset = UTopDownAbilitySystemLibrary::GetCharacterClassInfoDataAsset(TargetAvatarActor);
+	const FRealCurve* EffectiveArmorCurve = TargetCharacterClassInfoDataAsset->DamageCalculationCoefficients->FindCurve(FName("EffectiveArmor"), FString());
+	const float EffectiveArmorCoefficient = EffectiveArmorCurve->Eval(TargetCombatInterface->GetCharacterLevel());
+	Damage *= (100 - EffectiveArmor * EffectiveArmorCoefficient) / 100.f;
 	
 	const FGameplayModifierEvaluatedData EvaluatedData(UBaseAttributeSet::GetIncomingDamageAttribute(), EGameplayModOp::Additive, Damage);
 	OutExecutionOutput.AddOutputModifier(EvaluatedData);
