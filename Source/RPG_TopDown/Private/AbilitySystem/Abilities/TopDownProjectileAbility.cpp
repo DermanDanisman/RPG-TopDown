@@ -50,11 +50,21 @@ void UTopDownProjectileAbility::SpawnProjectile(const FVector& ProjectileTargetL
 		// Setting our damage gameplay effect on the projectile.
 		// Get the ability system component.
 		const UAbilitySystemComponent* SourceAbilitySystemComponent = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
+		FGameplayEffectContextHandle EffectContextHandle = SourceAbilitySystemComponent->MakeEffectContext();
+		EffectContextHandle.SetAbility(this);
+		EffectContextHandle.AddSourceObject(Projectile);
+		TArray<TWeakObjectPtr<AActor>> Actors;
+		Actors.Add(Projectile);
+		EffectContextHandle.AddActors(Actors);
+		FHitResult HitResult;
+		HitResult.Location = ProjectileTargetLocation;
+		EffectContextHandle.AddHitResult(HitResult);
+		
 		// Get the attribute set containing the SpellPower attribute.
 		const UBaseAttributeSet* BaseAttributeSet = Cast<UBaseAttributeSet>(SourceAbilitySystemComponent->GetAttributeSet(BaseAttributeSetClass));
         
 		// Create the gameplay effect spec handle for the damage effect.
-		const FGameplayEffectSpecHandle EffectSpecHandle = SourceAbilitySystemComponent->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), SourceAbilitySystemComponent->MakeEffectContext());
+		const FGameplayEffectSpecHandle EffectSpecHandle = SourceAbilitySystemComponent->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), EffectContextHandle);
 
 		FTopDownGameplayTags GameplayTags = FTopDownGameplayTags::Get();
 		// Get the current value of the SpellPower attribute
