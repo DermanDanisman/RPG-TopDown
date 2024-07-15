@@ -3,6 +3,7 @@
 #include "GameplayEffectTypes.h"
 #include "TopDownCustomAbilityTypes.generated.h"
 
+// Declare a custom struct inheriting from FGameplayEffectContext
 USTRUCT(BlueprintType)
 struct FTopDownGameplayEffectContext : public FGameplayEffectContext
 {
@@ -10,10 +11,14 @@ struct FTopDownGameplayEffectContext : public FGameplayEffectContext
 
 public:
 
+	// Getter for evasion status
 	bool IsEvaded() const { return bIsEvaded; }
+	// Getter for critical hit status
 	bool IsCriticalHit() const { return bIsCriticalHit; }
-	
+    
+	// Setter for evasion status
 	void SetIsEvaded(bool bInIsEvaded) { bIsEvaded = bInIsEvaded; }
+	// Setter for critical hit status
 	void SetIsCriticalHit(bool bInIsCriticalHit) { bIsCriticalHit = bInIsCriticalHit; }
 	
 	/** Returns the actual struct used for serialization, subclasses must override this! */
@@ -45,14 +50,17 @@ public:
 
 protected:
 
+	// Property to store evasion status
 	UPROPERTY()
 	bool bIsEvaded = false;
-	
+    
+	// Property to store critical hit status
 	UPROPERTY()
 	bool bIsCriticalHit = false;
 	
 };
 
+// Custom serialization traits for FTopDownGameplayEffectContext
 template<>
 struct TStructOpsTypeTraits<FTopDownGameplayEffectContext> : public TStructOpsTypeTraitsBase2<FTopDownGameplayEffectContext>
 {
