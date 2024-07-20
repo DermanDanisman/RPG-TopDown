@@ -37,7 +37,7 @@ public:
 
 	// Client RPC
 	UFUNCTION(Client, Reliable)
-	void ShowDamageNumber(float DamageAmount, ACharacter* Target);
+	void ShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter, bool bEvadedHit, bool bCriticalHit, bool bBlockChance);
 
 protected:
 	

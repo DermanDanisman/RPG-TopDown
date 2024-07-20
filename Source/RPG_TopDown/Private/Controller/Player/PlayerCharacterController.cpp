@@ -300,16 +300,16 @@ UBaseAbilitySystemComponent* APlayerCharacterController::GetAbilitySystemCompone
 	return BaseAbilitySystemComponent;
 }
 
-void APlayerCharacterController::ShowDamageNumber_Implementation(float DamageAmount, ACharacter* Target)
+void APlayerCharacterController::ShowDamageNumber_Implementation(float DamageAmount, ACharacter* TargetCharacter, bool bEvadedHit, bool bCriticalHit, bool bBlockChance)
 {
-	if (IsValid(Target) && DamageTextWidgetComponentClass)
+	if (IsValid(TargetCharacter) && DamageTextWidgetComponentClass)
 	{
-		UDamageTextWidgetComponent* DamageText = NewObject<UDamageTextWidgetComponent>(Target, DamageTextWidgetComponentClass);
+		UDamageTextWidgetComponent* DamageText = NewObject<UDamageTextWidgetComponent>(TargetCharacter, DamageTextWidgetComponentClass);
 		// After creating a component dynamically, we need to register it manually.
 		DamageText->RegisterComponent();
-		DamageText->AttachToComponent(Target->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+		DamageText->AttachToComponent(TargetCharacter->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 		DamageText->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
-		DamageText->SetDamageText(DamageAmount);
+		DamageText->SetDamageText(DamageAmount, bEvadedHit, bCriticalHit, bBlockChance);
 	}
 }
 

@@ -207,6 +207,12 @@ public:
 	FGameplayAttributeData ArmorPenetration;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, ArmorPenetration);
 
+	// Dependent on Armor
+	// Description: A chance to block of incoming damage by certain percentage after armor value reduction.
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_BlockChance, Category="Secondary Attributes")
+	FGameplayAttributeData BlockChance;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, BlockChance);
+
 	// Dependent on Dexterity and Armor Penetration
 	// Description: Increases the likelihood of landing a critical hit, which deals additional damage.
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_CriticalHitChance, Category="Secondary Attributes")
@@ -375,6 +381,9 @@ public:
 	
 	UFUNCTION()
 	void OnRep_ArmorPenetration(const FGameplayAttributeData& OldArmorPenetration) const;
+
+	UFUNCTION()
+	void OnRep_BlockChance(const FGameplayAttributeData& OldBlockChance) const;
 	
 	UFUNCTION()
 	void OnRep_CriticalHitChance(const FGameplayAttributeData& OldCriticalHitChance) const;
@@ -417,5 +426,5 @@ private:
 	 * The function is responsible for setting up and populating the FGameplayEffectExecutionContext struct.
 	 */
 	void InitializeEffectExecutionContext(const FGameplayEffectModCallbackData& Data, FGameplayEffectContextDetails& GameplayEffectContextDetails) const;
-	void ShowFloatingDamageText(const FGameplayEffectContextDetails& GameplayEffectContextDetails, float Damage) const;
+	void ShowFloatingDamageText(const FGameplayEffectContextDetails& GameplayEffectContextDetails, float Damage, bool bEvadedHit, bool bCriticalHit, bool bBlockChance) const;
 };

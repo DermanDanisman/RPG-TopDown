@@ -121,3 +121,55 @@ UCharacterClassInfoDataAsset* UTopDownAbilitySystemLibrary::GetCharacterClassInf
 	// Get the character class info data asset from the game mode
 	return TopDownGameModeBase->CharacterClassInfoDataAsset;
 }
+
+bool UTopDownAbilitySystemLibrary::GetIsEvaded(const FGameplayEffectContextHandle& GameplayEffectContextHandle)
+{
+	if (const FTopDownGameplayEffectContext* TopDownGameplayEffectContext = static_cast<const FTopDownGameplayEffectContext*>(GameplayEffectContextHandle.Get()))
+	{
+		return TopDownGameplayEffectContext->GetIsEvaded();
+	}
+	return false;
+}
+
+bool UTopDownAbilitySystemLibrary::GetIsCriticalHit(const FGameplayEffectContextHandle& GameplayEffectContextHandle)
+{
+	if (const FTopDownGameplayEffectContext* TopDownGameplayEffectContext = static_cast<const FTopDownGameplayEffectContext*>(GameplayEffectContextHandle.Get()))
+	{
+		return TopDownGameplayEffectContext->GetIsCriticalHit();
+	}
+	return false;
+}
+
+bool UTopDownAbilitySystemLibrary::GetIsBlockedHit(const FGameplayEffectContextHandle& GameplayEffectContextHandle)
+{
+	if (const FTopDownGameplayEffectContext* TopDownGameplayEffectContext = static_cast<const FTopDownGameplayEffectContext*>(GameplayEffectContextHandle.Get()))
+	{
+		return TopDownGameplayEffectContext->GetIsBlockedHit();
+	}
+	return false;
+}
+
+void UTopDownAbilitySystemLibrary::SetIsEvaded(FGameplayEffectContextHandle& GameplayEffectContextHandle, bool bInIsEvaded)
+{
+	if (FTopDownGameplayEffectContext* TopDownGameplayEffectContext = static_cast<FTopDownGameplayEffectContext*>(GameplayEffectContextHandle.Get()))
+	{
+		TopDownGameplayEffectContext->SetIsEvaded(bInIsEvaded);
+	}
+}
+
+void UTopDownAbilitySystemLibrary::SetIsCriticalHit(FGameplayEffectContextHandle& GameplayEffectContextHandle, bool bInIsCriticalHit)
+{
+	if (FTopDownGameplayEffectContext* TopDownGameplayEffectContext = static_cast<FTopDownGameplayEffectContext*>(GameplayEffectContextHandle.Get()))
+	{
+		TopDownGameplayEffectContext->SetIsCriticalHit(bInIsCriticalHit);
+	}
+}
+
+void UTopDownAbilitySystemLibrary::SetIsBlockedHit(FGameplayEffectContextHandle& GameplayEffectContextHandle,
+	bool bInIsBlockedHit)
+{
+	if (FTopDownGameplayEffectContext* TopDownGameplayEffectContext = static_cast<FTopDownGameplayEffectContext*>(GameplayEffectContextHandle.Get()))
+	{
+		TopDownGameplayEffectContext->SetIsBlockedHit(bInIsBlockedHit);
+	}
+}

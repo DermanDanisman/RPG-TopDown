@@ -118,6 +118,17 @@ void AEnemyCharacter::BindAndBroadcastAttributeChanges()
 	}
 }
 
+
+void AEnemyCharacter::InitializeDefaultAttributes() const
+{
+	/*
+	 * So now we're initializing the DefaultAttributes using our new function that we added to our UTopDownAbilitySystemLibrary
+	 * that gets the CharacterClassInfoDataAsset stored on the TopDownGameModeBase, gets the class information based on our character's class,
+	 * and applies a Gameplay Effect at the level passed in.
+	 */
+	UTopDownAbilitySystemLibrary::InitializeDefaultAttributes(this, CharacterCLass, Level, AbilitySystemComponent);
+}
+
 // The function is designed to initialize the health bar widget controller by setting it to the enemy class itself.
 void AEnemyCharacter::InitializeHealthBarWidgetController()
 {
@@ -133,16 +144,6 @@ void AEnemyCharacter::HitReactTagChange(const FGameplayTag CallbackTag, const in
 {
 	bHitReacting = NewCount > 0;
 	GetCharacterMovement()->MaxWalkSpeed = bHitReacting ? 0.f : BaseWalkSpeed;
-}
-
-void AEnemyCharacter::InitializeDefaultAttributes() const
-{
-	/*
-	 * So now we're initializing the DefaultAttributes using our new function that we added to our UTopDownAbilitySystemLibrary
-	 * that gets the CharacterClassInfoDataAsset stored on the TopDownGameModeBase, gets the class information based on our character's class,
-	 * and applies a Gameplay Effect at the level passed in.
-	 */
-	UTopDownAbilitySystemLibrary::InitializeDefaultAttributes(this, CharacterCLass, Level, AbilitySystemComponent);
 }
 
 //Highlight the actor by enabling custom depth rendering with a specific stencil value

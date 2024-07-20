@@ -84,16 +84,16 @@ protected:
 	// This function initializes the character's default attributes by applying primary and secondary attribute effects to the character.
 	virtual void InitializeDefaultAttributes() const;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attributes|Primary")
-	TSubclassOf<UGameplayEffect> DefaultPrimaryAttributes;
+	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attributes|Primary")
+	//TSubclassOf<UGameplayEffect> DefaultPrimaryAttributes;
 
 	// Initialize Secondary Attributes after the Primary Attributes become Secondary Attributes are dependent on Primary Attributes
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attributes|Secondary")
-	TSubclassOf<UGameplayEffect> DefaultSecondaryAttributes;
+	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attributes|Secondary")
+	//TSubclassOf<UGameplayEffect> DefaultSecondaryAttributes;
 
 	// Initialize Vital Attributes after the Primary Attributes become Secondary Attributes are dependent on Primary Attributes
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attributes|Vital")
-	TSubclassOf<UGameplayEffect> DefaultVitalAttributes;
+	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attributes|Vital")
+	//TSubclassOf<UGameplayEffect> DefaultVitalAttributes;
 
 	/*
 	 * Dissolve Effects

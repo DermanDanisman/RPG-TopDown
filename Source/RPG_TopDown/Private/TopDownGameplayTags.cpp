@@ -47,6 +47,9 @@ void FTopDownGameplayTags::InitializeNativeGameplayTags()
 	
 	GameplayTags.Attributes_Secondary_ArmorPenetration = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.ArmorPenetration"),
 			FString("Increases the ability to bypass enemy armor, resulting in higher damage dealt to armored foes. "));
+
+	GameplayTags.Attributes_Secondary_BlockChance = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.BlockChance"),
+		FString("Increases the ability to bypass enemy armor, resulting in higher damage dealt to armored foes. "));
 	
 	GameplayTags.Attributes_Secondary_CriticalHitChance = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.CriticalHitChance"),
 			FString("Increases the likelihood of landing a critical hit, which deals additional damage. "));

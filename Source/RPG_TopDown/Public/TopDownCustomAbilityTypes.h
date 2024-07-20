@@ -12,14 +12,18 @@ struct FTopDownGameplayEffectContext : public FGameplayEffectContext
 public:
 
 	// Getter for evasion status
-	bool IsEvaded() const { return bIsEvaded; }
+	bool GetIsEvaded() const { return bIsEvaded; }
 	// Getter for critical hit status
-	bool IsCriticalHit() const { return bIsCriticalHit; }
-    
+	bool GetIsCriticalHit() const { return bIsCriticalHit; }
+	// Getter for block chance status
+	bool GetIsBlockedHit() const { return bIsBlockedHit; }
+	
 	// Setter for evasion status
 	void SetIsEvaded(bool bInIsEvaded) { bIsEvaded = bInIsEvaded; }
 	// Setter for critical hit status
 	void SetIsCriticalHit(bool bInIsCriticalHit) { bIsCriticalHit = bInIsCriticalHit; }
+	// Setter for critical hit status
+	void SetIsBlockedHit(bool bInIsBlockedHit) { bIsBlockedHit = bInIsBlockedHit; }
 	
 	/** Returns the actual struct used for serialization, subclasses must override this! */
 	virtual UScriptStruct* GetScriptStruct() const override
@@ -57,6 +61,10 @@ protected:
 	// Property to store critical hit status
 	UPROPERTY()
 	bool bIsCriticalHit = false;
+
+	// Property to store block chance status
+	UPROPERTY()
+	bool bIsBlockedHit = false;
 	
 };
 

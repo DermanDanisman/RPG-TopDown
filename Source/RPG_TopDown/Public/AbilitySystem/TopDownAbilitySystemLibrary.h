@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "TopDownCustomAbilityTypes.h"
 #include "Controller/Widget/AttributeMenuWidgetController.h"
 #include "Data/CharacterClassInfoDataAsset.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
@@ -60,4 +61,30 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="TopDownAbilitySystemLibrary|CharacterClassDefaults")
 	static UCharacterClassInfoDataAsset* GetCharacterClassInfoDataAsset(const UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintPure, Category="TopDownAbilitySystemLibrary|GameplayEffects")
+	static bool GetIsEvaded(const FGameplayEffectContextHandle& GameplayEffectContextHandle);
+	
+	UFUNCTION(BlueprintPure, Category="TopDownAbilitySystemLibrary|GameplayEffects")
+	static bool GetIsCriticalHit(const FGameplayEffectContextHandle& GameplayEffectContextHandle);
+
+	UFUNCTION(BlueprintPure, Category="TopDownAbilitySystemLibrary|GameplayEffects")
+	static bool GetIsBlockedHit(const FGameplayEffectContextHandle& GameplayEffectContextHandle);
+
+
+	/* UPARAM(ref)
+	 * In Unreal engine, if a function input is a non-const reference, that means that it's typically an out parameter.
+	 * It's meant to be passed in but the function fills it out, and then it's an output execution pin. That's by default.
+	 * If we want this to be an input execution pin, we use UPARAM(ref) and this way that we tell the function that this is going to be an input parameter in the blueprint.
+	 * With non-const reference if we put this in the function signature, then it's going to know that this should be an input and not an output.
+	 */
+	
+	UFUNCTION(BlueprintCallable, Category="TopDownAbilitySystemLibrary|GameplayEffects")
+	static void SetIsEvaded(UPARAM(ref) FGameplayEffectContextHandle& GameplayEffectContextHandle, bool bInIsEvaded);
+	
+	UFUNCTION(BlueprintCallable, Category="TopDownAbilitySystemLibrary|GameplayEffects")
+	static void SetIsCriticalHit(UPARAM(ref) FGameplayEffectContextHandle& GameplayEffectContextHandle, bool bInIsCriticalHit);
+
+	UFUNCTION(BlueprintCallable, Category="TopDownAbilitySystemLibrary|GameplayEffects")
+	static void SetIsBlockedHit(UPARAM(ref) FGameplayEffectContextHandle& GameplayEffectContextHandle, bool bInIsBlockedHit);
 };

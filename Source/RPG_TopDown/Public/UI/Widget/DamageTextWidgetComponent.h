@@ -17,5 +17,5 @@ class RPG_TOPDOWN_API UDamageTextWidgetComponent : public UWidgetComponent
 public:
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void SetDamageText(float Damage);
+	void SetDamageText(float Damage, bool bEvadedHit, bool bCriticalHit, bool bBlockChance);
 };

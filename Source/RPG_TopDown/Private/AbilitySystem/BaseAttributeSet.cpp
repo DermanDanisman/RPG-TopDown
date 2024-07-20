@@ -6,6 +6,7 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "GameplayEffectExtension.h"
 #include "TopDownGameplayTags.h"
+#include "AbilitySystem/TopDownAbilitySystemLibrary.h"
 #include "Controller/Player/PlayerCharacterController.h"
 #include "GameFramework/Character.h"
 #include "Interface/Interaction/CombatInterface.h"
@@ -69,6 +70,9 @@ void UBaseAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 
 	// Setup replication for ArmorPenetration attribute
 	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, ArmorPenetration, COND_None, REPNOTIFY_Always);
+
+	// Setup replication for BlockChance attribute
+	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, BlockChance, COND_None, REPNOTIFY_Always);
 
 	// Setup replication for CriticalHitChance attribute
 	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, CriticalHitChance, COND_None, REPNOTIFY_Always);
@@ -244,45 +248,55 @@ void UBaseAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
         const float LocalIncomingDamage = GetIncomingDamage();
         SetIncomingDamage(0.f);
 
+    	// Calculate the new Health value after taking damage.
+    	const float NewHealth = GetHealth() - LocalIncomingDamage;
+    	// Clamp the new Health value to ensure it does not go below 0 or above MaxHealth.
+    	SetHealth(FMath::Clamp(NewHealth, 0.f, GetMaxHealth()));
+
+    	// Determine if the damage was fatal (i.e., Health dropped to 0 or below).
+    	const bool bFatal = NewHealth <= 0.f;
+    	if (bFatal)
+    	{
+    		const bool bEvadedHit = UTopDownAbilitySystemLibrary::GetIsEvaded(*GameplayEffectContextDetails.GameplayEffectContextHandle.Get());
+    		const bool bCriticalHit = UTopDownAbilitySystemLibrary::GetIsCriticalHit(*GameplayEffectContextDetails.GameplayEffectContextHandle.Get());
+    		const bool bBlockChance = UTopDownAbilitySystemLibrary::GetIsBlockedHit(*GameplayEffectContextDetails.GameplayEffectContextHandle.Get());
+    		ShowFloatingDamageText(GameplayEffectContextDetails, LocalIncomingDamage, bEvadedHit, bCriticalHit, bBlockChance);
+    		
+    		ICombatInterface* CombatInterface = Cast<ICombatInterface>(GameplayEffectContextDetails.TargetProperties->AvatarActor);
+    		if (CombatInterface)
+    		{
+    			CombatInterface->Die();
+    		}
+    	}
+    	else
+    	{
+    		// If the damage was not fatal, trigger a hit reaction ability.
+    		FGameplayTagContainer GameplayTagContainer;
+    		GameplayTagContainer.AddTag(FTopDownGameplayTags::Get().Effects_HitReact);
+    		// Try to activate any abilities associated with the hit reaction tag.
+    		GameplayEffectContextDetails.TargetProperties->AbilitySystemComponent->TryActivateAbilitiesByTag(GameplayTagContainer);
+    		const bool bEvadedHit = UTopDownAbilitySystemLibrary::GetIsEvaded(*GameplayEffectContextDetails.GameplayEffectContextHandle.Get());
+    		const bool bCriticalHit = UTopDownAbilitySystemLibrary::GetIsCriticalHit(*GameplayEffectContextDetails.GameplayEffectContextHandle.Get());
+    		const bool bBlockChance = UTopDownAbilitySystemLibrary::GetIsBlockedHit(*GameplayEffectContextDetails.GameplayEffectContextHandle.Get());
+    		ShowFloatingDamageText(GameplayEffectContextDetails, LocalIncomingDamage, bEvadedHit, bCriticalHit, bBlockChance);
+    	}
+    	
         // If there is any incoming damage to process, reduce the Health accordingly.
         if (LocalIncomingDamage > 0.f)
         {
-            // Calculate the new Health value after taking damage.
-            const float NewHealth = GetHealth() - LocalIncomingDamage;
-            // Clamp the new Health value to ensure it does not go below 0 or above MaxHealth.
-            SetHealth(FMath::Clamp(NewHealth, 0.f, GetMaxHealth()));
-
-            // Determine if the damage was fatal (i.e., Health dropped to 0 or below).
-            const bool bFatal = NewHealth <= 0.f;
-            if (bFatal)
-            {
-            	ICombatInterface* CombatInterface = Cast<ICombatInterface>(GameplayEffectContextDetails.TargetProperties->AvatarActor);
-            	if (CombatInterface)
-            	{
-            		CombatInterface->Die();
-            	}
-            }
-            else
-            {
-            	// If the damage was not fatal, trigger a hit reaction ability.
-            	FGameplayTagContainer GameplayTagContainer;
-            	GameplayTagContainer.AddTag(FTopDownGameplayTags::Get().Effects_HitReact);
-            	// Try to activate any abilities associated with the hit reaction tag.
-            	GameplayEffectContextDetails.TargetProperties->AbilitySystemComponent->TryActivateAbilitiesByTag(GameplayTagContainer);
-            }
-        	ShowFloatingDamageText(GameplayEffectContextDetails, LocalIncomingDamage);
+            
         }
     }
 }
 
-void UBaseAttributeSet::ShowFloatingDamageText(const FGameplayEffectContextDetails& GameplayEffectContextDetails, const float Damage) const
+void UBaseAttributeSet::ShowFloatingDamageText(const FGameplayEffectContextDetails& GameplayEffectContextDetails, const float Damage, bool bEvadedHit, bool bCriticalHit, bool bBlockChance) const
 {
 	if (GameplayEffectContextDetails.SourceProperties->Character != GameplayEffectContextDetails.TargetProperties->Character)
 	{
 		if (APlayerCharacterController* PlayerCharacterController = Cast<APlayerCharacterController>(
 			UGameplayStatics::GetPlayerController(GameplayEffectContextDetails.SourceProperties->Character, 0)))
 		{
-			PlayerCharacterController->ShowDamageNumber(Damage, GameplayEffectContextDetails.TargetProperties->Character);
+			PlayerCharacterController->ShowDamageNumber(Damage, GameplayEffectContextDetails.TargetProperties->Character, bEvadedHit, bCriticalHit, bBlockChance);
 		}
 	}
 }
@@ -292,24 +306,6 @@ void UBaseAttributeSet::ShowFloatingDamageText(const FGameplayEffectContextDetai
  * The GAMEPLAYATTRIBUTE_REPNOTIFY macro ensures the attribute is correctly replicated.
  * This function also adds a debug message to display the old and new Health values.
  */
-
-/*
- * Vital Attributes
- */
-void UBaseAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth) const
-{
-    GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, Health, OldHealth);
-}
-
-void UBaseAttributeSet::OnRep_Mana(const FGameplayAttributeData& OldMana) const
-{
-    GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, Mana, OldMana);
-}
-
-void UBaseAttributeSet::OnRep_Stamina(const FGameplayAttributeData& OldStamina) const
-{
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, Stamina, OldStamina);
-}
 
 /*
  * Primary Attributes
@@ -368,6 +364,11 @@ void UBaseAttributeSet::OnRep_ArmorPenetration(const FGameplayAttributeData& Old
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, ArmorPenetration, OldArmorPenetration);
 }
 
+void UBaseAttributeSet::OnRep_BlockChance(const FGameplayAttributeData& OldBlockChance) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, BlockChance, OldBlockChance);
+}
+
 void UBaseAttributeSet::OnRep_CriticalHitChance(const FGameplayAttributeData& OldCriticalHitChance) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, CriticalHitChance, OldCriticalHitChance);
@@ -423,3 +424,20 @@ void UBaseAttributeSet::OnRep_MaxStamina(const FGameplayAttributeData& OldMaxSta
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, MaxStamina, OldMaxStamina);
 }
 
+/*
+ * Vital Attributes
+ */
+void UBaseAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, Health, OldHealth);
+}
+
+void UBaseAttributeSet::OnRep_Mana(const FGameplayAttributeData& OldMana) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, Mana, OldMana);
+}
+
+void UBaseAttributeSet::OnRep_Stamina(const FGameplayAttributeData& OldStamina) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, Stamina, OldStamina);
+}
